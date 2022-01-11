@@ -15,7 +15,6 @@ import {
 } from "antd";
 import { EyeOutlined } from '@ant-design/icons';
 import PopconfirmButton from "components/Utils/PopconfirmButton";
-
 const {Search} = Input
 
 const granularity = {
@@ -97,7 +96,7 @@ export default function AnomalysTable(props) {
 
   const columns = [
     {
-      title: "Dataset",
+      title: "Datsdsdaset",
       dataIndex: "datasetName",
       key: "datasetName",
       sorter: () => {},
