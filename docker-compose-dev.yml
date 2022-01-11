@@ -1,22 +1,17 @@
 version: '3.3'
 services:
-  cueo-nginx:
-    container_name: "cueo-nginx"
+  cue-search-nginx:
     image: nginx:1.17
     volumes:
       - ./ui/nginx-dev.conf.template:/etc/nginx/conf.d/nginx-dev.conf.template
       - ./ui/nginx-entrypoint.sh:/etc/nginx/conf.d/nginx-entrypoint.sh
     command:
       bash -c "./etc/nginx/conf.d/nginx-entrypoint.sh && nginx -g 'daemon off;'"
-    environment:
-      ENVIRONMENT:
-      NGINX_API_URL:
-      NGINX_ALERT_API_URL:
-      NGINX_UI_URL:
-      NGINX_SEARCH_API_URL:
+    env-file:
+      - .env
     network_mode: "host"
 
-  cueo-backend:
+  cue-search-backend:
     build:
       context: api
       dockerfile: Dockerfile
@@ -46,31 +41,17 @@ services:
         limits:
           memory: 4120M
 
-  cueo-alerts:
-    build:
-      context: alerts-api
-      dockerfile: Dockerfile
-    volumes:
-      - ./alerts-api:/code:rw
-    network_mode: "host"
-
-  cueo-search:
+  cue-search-search:
     build:
       context: search-api
       dockerfile: Dockerfile
     env_file:
       - .env.dev
-    # environment:
-    #   - SEARCH_POSTGRES_DB_HOST
-    #   - SEARCH_POSTGRES_DB_SCHEMA
-    #   - SEARCH_POSTGRES_DB_USERNAME
-    #   - SEARCH_POSTGRES_DB_PASSWORD
-    #   - SEARCH_POSTGRES_DB_PORT
     volumes:
       - ./search-api:/code:rw
     network_mode: "host"
 
-  cueo-frontend:
+  cue-search-frontend:
     build:
       context: ui
       dockerfile: Dockerfile.dev
@@ -79,7 +60,7 @@ services:
       - ./ui/src:/app/src:rw
     network_mode: "host"
     
-  # cueo-postgresql:
+  # cue-search-postgresql:
   #   image: postgres:13
   #   environment:
   #     - PGDATA=/pg_data
@@ -90,13 +71,9 @@ services:
   #     - pgdata:/pg_data
   #   network_mode: "host"
 
-  cueo-redis:
+  cue-search-redis:
     image: redis
     network_mode: "host"
 
 volumes:
   pgdata:
-
-networks:
-  backend:
-    driver: bridge

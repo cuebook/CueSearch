@@ -1,4 +1,4 @@
-FROM cuebook/cue-observe-backend:base
+FROM cuebook/cue-search-backend:base
 
 WORKDIR /code
 
