@@ -7,8 +7,8 @@ services:
       - ./ui/nginx-entrypoint.sh:/etc/nginx/conf.d/nginx-entrypoint.sh
     command:
       bash -c "./etc/nginx/conf.d/nginx-entrypoint.sh && nginx -g 'daemon off;'"
-    env-file:
-      - .env
+    env_file:
+      - .env.dev
     network_mode: "host"
 
   cue-search-backend:
@@ -19,22 +19,8 @@ services:
       - ./api:/code:rw
     command:
       bash -c "chmod +x /code/start_server_new.sh && /code/start_server_new.sh"
-    environment:
-      ENVIRONMENT: ${ENVIRONMENT}
-      API_URL: ${API_URL}
-      ALERT_API_URL: ${ALERT_API_URL}
-      POSTGRES_DB_HOST: ${POSTGRES_DB_HOST}
-      POSTGRES_DB_USERNAME: ${POSTGRES_DB_USERNAME}
-      POSTGRES_DB_PASSWORD: ${POSTGRES_DB_PASSWORD}
-      POSTGRES_DB_SCHEMA: ${POSTGRES_DB_SCHEMA}
-      POSTGRES_DB_PORT: ${POSTGRES_DB_PORT}
-      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
-      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
-      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
-      IS_AUTHENTICATION_REQUIRED: ${IS_AUTHENTICATION_REQUIRED}
-      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
-      DETECTION_SERVICE_PLATFORM:
-      AWS_LAMBDA_URL:
+    env_file:
+      - .env.dev
     network_mode: "host"
     deploy:
       resources:

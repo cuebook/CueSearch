@@ -2,7 +2,7 @@ version: '3.1'
 services:
   cue-search-backend:
     image: cuebook/cue-search-backend:0.3.1
-    env-file:
+    env_file:
       - .env
     volumes:
       - sqliteDB:/code/db:rw

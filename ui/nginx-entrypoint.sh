@@ -6,10 +6,10 @@ set -eu
 if [[ "$ENVIRONMENT" = "PRODUCTION" ]] 
 then
 	echo "Running for PRODUCTION"
-	envsubst '${NGINX_API_URL} ${NGINX_ALERT_API_URL} ${NGINX_SEARCH_API_URL} ${NGINX_UI_URL}' < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/default.conf
+	envsubst '${NGINX_API_URL} ${NGINX_UI_URL}' < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/default.conf
 else
 	echo "Running for DEVELOPMENT"
-	envsubst '${NGINX_API_URL} ${NGINX_ALERT_API_URL} ${NGINX_SEARCH_API_URL} ${NGINX_UI_URL}' < /etc/nginx/conf.d/nginx-dev.conf.template > /etc/nginx/conf.d/default.conf
+	envsubst '${NGINX_API_URL} ${NGINX_SEARCH_API_URL} ${NGINX_UI_URL}' < /etc/nginx/conf.d/nginx-dev.conf.template > /etc/nginx/conf.d/default.conf
 fi
 
 exec "$@"
