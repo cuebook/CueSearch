@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Form, Input, Switch, message, Select } from "antd";
 import style from "./style.module.scss";
 
-import globalDimensionService from "services/search/globalDimension.js"
+import globalDimensionService from "services/main/globalDimension.js"
+// import globalDimensionService from "services/search/globalDimension.js"
 
 const { Option } = Select;
 

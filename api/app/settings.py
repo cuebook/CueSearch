@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "anomaly",
     "users",
+    "cueSearch",
     "rest_framework",
 ]
 AUTH_USER_MODEL = "users.CustomUser"
