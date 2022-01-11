@@ -1,0 +1,77 @@
+.dataset {
+	.datasetName {
+		padding: 5px;
+		padding-bottom: 20px;
+		.nameInput {
+		  font-size: 1.35rem;
+		  border: none;
+		  padding: 10px 0 !important;
+		  background: none;
+		  border-radius: 0;
+		  border-bottom: 2px solid #a6adb5;
+		  height: 30px;
+		  box-shadow: none;
+		}
+	}
+
+	.selectConnection {
+		padding: 5px;
+	}
+
+	.SQLEditor {
+		padding: 5px;
+	}
+
+	.dataTable {
+		padding: 2px;
+		padding-top: 10px;
+	}
+
+	.antdTable {
+	  height: 100%;
+	  border: none;
+	  overflow: auto;
+	  td{
+	    padding: 2px !important;
+	  }
+	}
+
+	.typeSelectorTable {
+
+		padding:  5px;
+		padding-top: 20px;
+		p {
+			font-size: 18px ;
+			padding-bottom: 5px;
+		}
+
+	}
+
+	.granularity {
+		display:  flex;
+		padding: 5px;
+		padding-top: 20px;
+		/*padding-left: 25px;*/
+		p {
+			padding-right: 5px;
+			font-size: 16px;
+			margin-bottom: 0px;
+		}
+	}
+
+	.buttons {
+		padding: 5px;
+		padding-top: 25px;
+		display: flex;
+		.run {
+			margin-right: 5px;
+		}
+
+		.save {
+
+		}
+	}
+
+
+
+}
