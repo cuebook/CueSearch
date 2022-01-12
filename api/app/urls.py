@@ -20,6 +20,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("accounts/", include("allauth.urls")),
     path("api/anomaly/", include("anomaly.urls")),
+<<<<<<< HEAD
     path("api/dataset/", include("dataset.urls")),
+=======
+    path("api/cueSearch/", include("cueSearch.urls")),
+>>>>>>> 1edb5966fd0f3a3b9253bcedceee863eb4a7fb5f
     path("api/", include("users.urls")),
 ]

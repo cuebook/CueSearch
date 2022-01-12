@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     "anomaly",
     "dataset",
     "users",
+    "cueSearch",
     "rest_framework",
 ]
 AUTH_USER_MODEL = "users.CustomUser"
