@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "django_celery_beat",
     "anomaly",
+    "dataset",
     "users",
     "cueSearch",
     "rest_framework",
