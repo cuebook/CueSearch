@@ -5,7 +5,7 @@ import { message } from "antd"
 class ScheduleService{
 
     async getSchedules(){
-        const response = await apiService.get("anomaly/schedules/")
+        const response = await apiService.get("dataset/schedules/")
         if(response.success == true)
             return response.data
         else    
@@ -13,7 +13,7 @@ class ScheduleService{
     }
 
     async deleteSchedule(scheduleId){
-        const response = await apiService.delete("anomaly/schedules/" + scheduleId)
+        const response = await apiService.delete("dataset/schedules/" + scheduleId)
         if(response.success == true)
             return response
         else    
@@ -22,7 +22,7 @@ class ScheduleService{
     
 
     async getSingleSchedule(scheduleId){
-        const response = await apiService.get("anomaly/schedules/" + scheduleId)
+        const response = await apiService.get("dataset/schedules/" + scheduleId)
         if(response.success == true)
             return response.data
         else    
@@ -31,7 +31,7 @@ class ScheduleService{
 
 
     async getTimezones(){
-        const response = await apiService.get("anomaly/timezones/")
+        const response = await apiService.get("dataset/timezones/")
         if(response.success == true)
             return response.data
         else 
@@ -39,22 +39,22 @@ class ScheduleService{
     }
 
     async addSchedule(cronTabSchedule, selectedTimezone, scheduleName){
-        const response = await apiService.post("anomaly/schedules/", {"crontab": cronTabSchedule, "timezone": selectedTimezone, "name": scheduleName})
+        const response = await apiService.post("dataset/schedules/", {"crontab": cronTabSchedule, "timezone": selectedTimezone, "name": scheduleName})
         return response
     }
 
     async updateSchedule(selectedScheduleId,cronTabSchedule, selectedTimezone, scheduleName){
-        const response = await apiService.put("anomaly/schedules/", {"id":selectedScheduleId,"crontab": cronTabSchedule, "timezone": selectedTimezone, "name": scheduleName})
+        const response = await apiService.put("dataset/schedules/", {"id":selectedScheduleId,"crontab": cronTabSchedule, "timezone": selectedTimezone, "name": scheduleName})
         return response
     }
 
     async addAnomalyDefSchedule(anomalyDefId, scheduleId){
-        const response = await apiService.post("anomaly/anomalyDefJob/", {anomalyDefId: anomalyDefId,scheduleId: scheduleId})
+        const response = await apiService.post("dataset/anomalyDefJob/", {anomalyDefId: anomalyDefId,scheduleId: scheduleId})
         return response
     }
 
     async unassignSchedule(anomalyDefId){
-        const response = await apiService.delete("anomaly/anomalyDefJob/" + anomalyDefId)
+        const response = await apiService.delete("dataset/anomalyDefJob/" + anomalyDefId)
         return response
     }
 

@@ -3,7 +3,7 @@ import { message } from "antd"
 
 class SettingService {
     getSettings(){
-        return apiService.get("anomaly/settings")
+        return apiService.get("dataset/settings")
         .then(response => {
             if(response.success == true){
                 return response.data
@@ -19,7 +19,7 @@ class SettingService {
     }
 
     updateSettings(payload){
-        return apiService.post("anomaly/settings", payload)
+        return apiService.post("dataset/settings", payload)
         .then(response => {
             if(response.success == true){
                 return true

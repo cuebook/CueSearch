@@ -3,7 +3,7 @@ import { message } from "antd"
 
 class DatasetService {
     getDatasets(){
-        return apiService.get("anomaly/datasets")
+        return apiService.get("dataset/datasets")
         .then(response => {
             if(response.success == true){
                 return response.data
@@ -19,7 +19,7 @@ class DatasetService {
     }
 
     getDataset(datasetId){
-        return apiService.get("anomaly/dataset/" + datasetId)
+        return apiService.get("dataset/dataset/" + datasetId)
         .then(response => {
             if(response.success == true){
                 return response.data
@@ -35,7 +35,7 @@ class DatasetService {
     }
 
     updateDataset(datasetId, payload){
-        return apiService.post("anomaly/dataset/" + datasetId, payload)
+        return apiService.post("dataset/dataset/" + datasetId, payload)
         .then(response => {
             if(response.success == true){
                 message.success(response.message)
@@ -52,7 +52,7 @@ class DatasetService {
     }
 
     deleteDataset(datasetId){
-        return apiService.delete("anomaly/dataset/" + datasetId)
+        return apiService.delete("dataset/dataset/" + datasetId)
         .then(response => {
             if(response.success == true){
                 message.success(response.message)
@@ -69,7 +69,7 @@ class DatasetService {
     }
 
     createDataset(payload){
-        return apiService.post("anomaly/dataset/create", payload)
+        return apiService.post("dataset/dataset/create", payload)
         .then(response => {
             if(response.success == true){
                 message.success(response.message)
@@ -86,7 +86,7 @@ class DatasetService {
     }
 
     runSQL(payload){
-        return apiService.post("anomaly/dataset/run", payload)
+        return apiService.post("dataset/dataset/run", payload)
         .then(response => {
             if(response.success == true){
                 return response.data
