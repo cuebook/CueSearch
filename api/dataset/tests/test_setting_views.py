@@ -13,7 +13,7 @@ def test_setting(client, mocker):
     path = reverse('settings')
     res = ApiResponse("Successfully tested setting")
     mockResponse = mocker.patch(
-        "anomaly.services.settings.Settings.updateSettings",
+        "dataset.services.settings.Settings.updateSettings",
         new=mock.MagicMock(
             autospec=True, return_value=res
         ),

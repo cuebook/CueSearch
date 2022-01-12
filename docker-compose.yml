@@ -4,7 +4,7 @@ services:
     build:
       context: api
       dockerfile: Dockerfile
-    env-file:
+    env_file:
       - .env
     volumes:
       - sqliteDB:/code/db:rw

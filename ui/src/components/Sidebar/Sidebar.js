@@ -25,16 +25,6 @@ export default function Sidebar(props) {
   let urlPrefix = ""
   const menuItems = [
     {
-      "label": "Anomalies",
-      "path": "/anomalies",
-      "icon": "fa-exclamation-triangle"
-    },
-    {
-      "label": "Anomaly Definitions",
-      "path": "/anomalyDefinitions",
-      "icon": "fa-cog"
-    },
-    {
       "label": "Datasets",
       "path": "/datasets",
       "icon": "fa-table"
@@ -43,11 +33,6 @@ export default function Sidebar(props) {
       "label": "Connections",
       "path": "/connections",
       "icon": "fa-plug"
-    },
-    {
-      "label": "Schedules",
-      "path": "/schedules",
-      "icon": "fa-calendar"
     },
     {
       "label": "Settings",

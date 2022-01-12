@@ -11,8 +11,8 @@ from dataset.services import (
     Querys,
     Settings,
 )
-#from anomaly.services.telemetry import getInstallationId
 
+# from dataset.services.telemetry import getInstallationId
 
 
 class DatasetsView(APIView):
@@ -136,9 +136,9 @@ class SettingsView(APIView):
         res = Settings.updateSettings(data)
         return Response(res.json())
 
+
 """class InstallationView(APIView):
     #Provides views on Installation 
     def get(self, request):
         res = getInstallationId()
         return Response(res.json())"""
-

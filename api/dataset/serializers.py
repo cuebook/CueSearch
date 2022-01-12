@@ -89,7 +89,6 @@ class DatasetsSerializer(serializers.ModelSerializer):
     Serializes data related to anomaly tree 
     """
     connection = ConnectionSerializer()
-    anomalyDefinitionCount = serializers.SerializerMethodField()
     connectionName = serializers.SerializerMethodField()
     def get_connectionName(self, obj):
         """

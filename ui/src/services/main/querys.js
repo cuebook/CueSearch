@@ -3,7 +3,7 @@ import { message } from "antd"
 
 class QueryService {
     runQuery(payload){
-        return apiService.post("anomaly/runQuery", payload)
+        return apiService.post("dataset/runQuery", payload)
         .then(response => {
             if(response.success == true){
                 return response.data

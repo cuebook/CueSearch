@@ -12,8 +12,8 @@ def test_connections(client, mocker):
     """
 
     # Add Connection
-    connectionType = mixer.blend("anomaly.connectionType")
-    ConnectionParam = mixer.blend("anomaly.ConnectionParam", connectionType = connectionType, name="file")
+    connectionType = mixer.blend("dataset.connectionType")
+    ConnectionParam = mixer.blend("dataset.ConnectionParam", connectionType = connectionType, name="file")
     path = reverse("connections")
     mockResponse = mocker.patch(
         "dbConnections.bigquery.BigQuery.checkConnection",

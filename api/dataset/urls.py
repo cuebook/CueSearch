@@ -13,8 +13,10 @@ urlpatterns = [
     path("connections", views.connections, name="connections"),
     path("connection/<int:connection_id>", views.connection, name="connection"),
     path("connectiontypes", views.connectionTypes, name="connectionTypes"),
+    # Query
+    path("runQuery", views.QueryView.as_view(), name="querys"),
     # Settings
     path("settings", views.SettingsView.as_view(), name="settings"),
     # Installtion
-    #path("installationId", views.InstallationView.as_view(), name="installationId" )
+    # path("installationId", views.InstallationView.as_view(), name="installationId" )
 ]

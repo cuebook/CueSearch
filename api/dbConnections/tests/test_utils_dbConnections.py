@@ -5,7 +5,7 @@ from dbConnections.utils import limitSql
 from django.test import TestCase
 from django.urls import reverse
 from mixer.backend.django import mixer
-from anomaly.models import Connection, ConnectionType, ConnectionParam
+from dataset.models import Connection, ConnectionType, ConnectionParam
 from conftest import populate_seed_data
 
 
@@ -20,9 +20,9 @@ def test_limitSql():
 def testDbConnection(client, mocker ):
 	""" Test DB connection"""
 	# Test cases for Druid connection 
-	connectionType = mixer.blend("anomaly.connectionType", name= "Druid")
-	mixer.blend("anomaly.connectionParam", connectionType = connectionType, name ="host")
-	mixer.blend("anomaly.connectionParam", connectionType = connectionType, name ="port")
+	connectionType = mixer.blend("dataset.connectionType", name= "Druid")
+	mixer.blend("dataset.connectionParam", connectionType = connectionType, name ="host")
+	mixer.blend("dataset.connectionParam", connectionType = connectionType, name ="port")
 	path = reverse("connections")
 
 	mockResponse = mocker.patch(
@@ -40,12 +40,12 @@ def testDbConnection(client, mocker ):
 	assert Connection.objects.all().count() == 1
 
 	# Test cases for Postgres connection
-	postgresConnectionType = mixer.blend("anomaly.connectionType", name= "Postgres")
-	mixer.blend("anomaly.connectionParam", connectionType = postgresConnectionType, name ="host")
-	mixer.blend("anomaly.connectionParam", connectionType = postgresConnectionType, name ="port")
-	mixer.blend("anomaly.connectionParam", connectionType = postgresConnectionType, name ="database")
-	mixer.blend("anomaly.connectionParam", connectionType = postgresConnectionType, name ="username")
-	mixer.blend("anomaly.connectionParam", connectionType = postgresConnectionType, name ="password")
+	postgresConnectionType = mixer.blend("dataset.connectionType", name= "Postgres")
+	mixer.blend("dataset.connectionParam", connectionType = postgresConnectionType, name ="host")
+	mixer.blend("dataset.connectionParam", connectionType = postgresConnectionType, name ="port")
+	mixer.blend("dataset.connectionParam", connectionType = postgresConnectionType, name ="database")
+	mixer.blend("dataset.connectionParam", connectionType = postgresConnectionType, name ="username")
+	mixer.blend("dataset.connectionParam", connectionType = postgresConnectionType, name ="password")
 
 
 	path = reverse("connections")
@@ -66,12 +66,12 @@ def testDbConnection(client, mocker ):
 	assert Connection.objects.all().count() == 2
 
 	# Test cases for MySQL connection  
-	mysqlConnectionType = mixer.blend("anomaly.connectionType", name= "MySQL")
-	mixer.blend("anomaly.connectionParam", connectionType = mysqlConnectionType, name ="host")
-	mixer.blend("anomaly.connectionParam", connectionType = mysqlConnectionType, name ="port")
-	mixer.blend("anomaly.connectionParam", connectionType = mysqlConnectionType, name ="database")
-	mixer.blend("anomaly.connectionParam", connectionType = mysqlConnectionType, name ="username")
-	mixer.blend("anomaly.connectionParam", connectionType = mysqlConnectionType, name ="password")
+	mysqlConnectionType = mixer.blend("dataset.connectionType", name= "MySQL")
+	mixer.blend("dataset.connectionParam", connectionType = mysqlConnectionType, name ="host")
+	mixer.blend("dataset.connectionParam", connectionType = mysqlConnectionType, name ="port")
+	mixer.blend("dataset.connectionParam", connectionType = mysqlConnectionType, name ="database")
+	mixer.blend("dataset.connectionParam", connectionType = mysqlConnectionType, name ="username")
+	mixer.blend("dataset.connectionParam", connectionType = mysqlConnectionType, name ="password")
 
 
 	path = reverse("connections")
