@@ -51,7 +51,7 @@ def test_datasets(client, mocker):
     assert response.status_code == 200
     assert response.data['data']
     assert response.data['data']['name'] == "something"
-    assert set(response.data['data'].keys()) == set(['id', 'name', 'sql', 'connection', 'dimensions', 'metrics', 'granularity', 'timestampColumn', 'isNonRollup'])
+    assert set(response.data['data'].keys()) == set(['id', 'name', 'sql', 'connection', 'dimensions', 'metrics', 'granularity', 'timestampColumn'])
 
 
     # Update dataset
