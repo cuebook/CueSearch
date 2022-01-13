@@ -9,10 +9,6 @@ app = Celery(
 )
 
 # app.config_from_object("django.conf:settings")
-app.conf.task_routes = settings.CELERY_TASK_ROUTES
-
-app.conf.task_acks_late = settings.CELERY_TASKS_ACKS_LATE
-app.conf.worker_prefetch_multiplier = settings.CELERY_WORKER_PREFETCH_MULTIPLIER
 
 app.autodiscover_tasks()
 

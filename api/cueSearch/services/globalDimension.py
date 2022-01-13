@@ -1,11 +1,12 @@
 # from requests.models import Response
 import traceback
+
 # from search import app, db
 # from sqlalchemy import desc
 import logging
 from utils.apiResponse import ApiResponse
 import requests
-from anomaly.models import  Dataset
+from dataset.models import Dataset
 from cueSearch.models import GlobalDimensionValues, GlobalDimension
 from cueSearch.serializers import AllDimensionsSerializer, GlobalDimensionSerializer
 from access.data import Data
@@ -16,10 +17,12 @@ from access.data import Data
 # from config import DIMENSION_URL
 from cueSearch.elasticSearch import ESIndexingUtils
 
+
 class GlobalDimensionServices:
-    """ Services for Global Dimension """
+    """Services for Global Dimension"""
+
     def createGlobalDimension(payloads):
-        """ Create global dimension"""
+        """Create global dimension"""
         try:
             print("payloads", payloads)
             res = ApiResponse("Error in creating dimensionalValues")
@@ -30,9 +33,13 @@ class GlobalDimensionServices:
             for obj in objs:
                 datasetId = obj["datasetId"]
                 dataset = Dataset.objects.get(id=datasetId)
-                GlobalDimensionValues.objects.create( dataset = dataset, dimension = obj["dimension"], globalDimension = globalDimension)
+                GlobalDimensionValues.objects.create(
+                    dataset=dataset,
+                    dimension=obj["dimension"],
+                    globalDimension=globalDimension,
+                )
                 # dimensionalValueObjs.append(gdValues)
-            
+
             # db.session.bulk_save_objects(dimensionalValueObjs)
             try:
                 # app.logger.info("Indexing starts")
@@ -45,15 +52,17 @@ class GlobalDimensionServices:
             # res = {"success":True}
             res.update(True, "GlobalDimension created successfully")
         except Exception as ex:
-            res.update(False,"Global Dimension name already exists")
+            res.update(False, "Global Dimension name already exists")
             # res = {"success":False, "message":"Global Dimension name already exists."}
         return res
 
     def deleteGlobalDimension(globalDimensionId):
         try:
             res = ApiResponse("Error occurs while deleting global dimension")
-            globalDimension = GlobalDimension.objects.filter(id=globalDimensionId).delete()
-            res.update(True,"successfully deleted")
+            globalDimension = GlobalDimension.objects.filter(
+                id=globalDimensionId
+            ).delete()
+            res.update(True, "successfully deleted")
         except Exception as ex:
             # app.logger.error("Error occured while delete global dimension of Id : ",id)
             # db.session.rollback()
@@ -61,16 +70,15 @@ class GlobalDimensionServices:
             res.update(False, "Error occured while deleting global dimension ")
         return res
 
-
     def getDimension():
-        """ Get dimension from cueObserve"""
+        """Get dimension from cueObserve"""
         try:
             res = ApiResponse()
             # url = DIMENSION_URL
             # response = requests.get(url)
             # payloads  = response.json().get("data", [])
 
-            datasets = Dataset.objects.all() # Get all datasets
+            datasets = Dataset.objects.all()  # Get all datasets
             data = AllDimensionsSerializer(datasets, many=True).data
             payloads = data
             payloadDicts = []
@@ -91,26 +99,24 @@ class GlobalDimensionServices:
             # res = {"success":False, "data":[], "message":"Error occured to get dimension from cueObserve"}
         return res
 
-
     def getGlobalDimensions():
-        """ Services to get Global dimension and their linked dimension"""
+        """Services to get Global dimension and their linked dimension"""
         res = ApiResponse("Error while fetching global dimensions")
         try:
             # globalDimensions = GlobalDimension.query.order_by(desc(GlobalDimension.id)).all()
             globalDimensions = GlobalDimension.objects.all().order_by("-id")
             # data = GlobalDimensionSchema(many=True).dump(globalDimensions)
             data = GlobalDimensionSerializer(globalDimensions, many=True).data
-            res.update(True,"Successfully fetched global dimension data", data)
+            res.update(True, "Successfully fetched global dimension data", data)
             # res = {"success":True, "data":data}
         except Exception as ex:
             # app.logger.error("Failed to get global dimension %s", ex)
             # res = {"success":False, "data":[], "message":"Error occured to get data in global dimension"}
-            res.update(False,"Error occured to get data in global dimension",[])
+            res.update(False, "Error occured to get data in global dimension", [])
         return res
 
-
     def publishGlobalDimension(payload):
-        """ Service to publish / unpublish global dimension """
+        """Service to publish / unpublish global dimension"""
         try:
             res = ApiResponse()
             published = payload.get("published", False)
@@ -133,7 +139,7 @@ class GlobalDimensionServices:
         return res
 
     def getGlobalDimensionById(id):
-        """ Service to get global dimension of given id """
+        """Service to get global dimension of given id"""
         try:
             res = ApiResponse("Error occurs while fetching global dimension by Id")
             globalDimensionObj = GlobalDimension.objects.get(id=id)
@@ -147,7 +153,7 @@ class GlobalDimensionServices:
             # app.logger.error("Failed to get global dimension of id %s", id)
             # app.logger.error("Error %s", ex)
             # res = {"success":True, "data": [], "message":"Failed to get global dimension of id : " + id }
-            res.update(False,"Error occurs while fetching global dimension by Id",[])
+            res.update(False, "Error occurs while fetching global dimension by Id", [])
         return res
 
     def updateGlobalDimensionById(id, payload):
@@ -163,14 +169,18 @@ class GlobalDimensionServices:
             # db.session.delete(globalDimension)
             # db.session.flush()
             # app.logger.info("flushed global dimension %s", globalDimension)
-            gd = GlobalDimension.objects.create(id=newId, name=name, published=published)
+            gd = GlobalDimension.objects.create(
+                id=newId, name=name, published=published
+            )
             # db.session.add(gd)
             # db.session.flush()
-            
+
             for obj in objs:
                 datasetId = obj["datasetId"]
                 dataset = Dataset.objects.get(id=datasetId)
-                gdValues = GlobalDimensionValues.objects.create(dataset = dataset, dimension = obj["dimension"], globalDimension= gd)
+                gdValues = GlobalDimensionValues.objects.create(
+                    dataset=dataset, dimension=obj["dimension"], globalDimension=gd
+                )
                 # dimensionalValueObjs.append(gdValues)
             # db.session.bulk_save_objects(dimensionalValueObjs)
             # db.session.commit()
@@ -187,7 +197,7 @@ class GlobalDimensionServices:
             # app.logger.error("Traces of failure %s", ex)
             # db.session.rollback()
             # res = {"success":False, "message":"Error occured while updating global dimension"}
-            res.update(False,"Error occured while updating global dimension")
+            res.update(False, "Error occured while updating global dimension")
         return res
 
     # def getDimValues(payload):

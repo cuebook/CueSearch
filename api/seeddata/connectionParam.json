@@ -1,6 +1,6 @@
 [
     {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 1,
         "fields": {
           "name": "host",
@@ -20,7 +20,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 2,
         "fields": {
           "name": "database",
@@ -40,7 +40,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 3,
         "fields": {
           "name": "port",
@@ -60,7 +60,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 4,
         "fields": {
           "name": "username",
@@ -80,7 +80,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 5,
         "fields": {
           "name": "password",
@@ -100,7 +100,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 6,
         "fields": {
           "name": "sslRequired",
@@ -116,7 +116,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 7,
         "fields": {
           "name": "host",
@@ -136,7 +136,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 8,
         "fields": {
           "name": "database",
@@ -156,7 +156,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 9,
         "fields": {
           "name": "port",
@@ -176,7 +176,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 10,
         "fields": {
           "name": "username",
@@ -196,7 +196,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 11,
         "fields": {
           "name": "password",
@@ -216,7 +216,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 12,
         "fields": {
           "name": "sslRequired",
@@ -232,7 +232,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 13,
         "fields": {
           "name": "file",
@@ -253,7 +253,7 @@
       },
 
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 14,
         "fields": {
           "name": "endPoint",
@@ -273,7 +273,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 15,
         "fields": {
           "name": "username",
@@ -293,7 +293,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 16,
         "fields": {
           "name": "password",
@@ -314,7 +314,7 @@
       },
 
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 17,
         "fields": {
           "name": "account",
@@ -334,7 +334,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 18,
         "fields": {
           "name": "username",
@@ -354,7 +354,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 19,
         "fields": {
           "name": "password",
@@ -374,7 +374,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 20,
         "fields": {
           "name": "host",
@@ -394,7 +394,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 21,
         "fields": {
           "name": "port",
@@ -414,7 +414,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 22,
         "fields": {
           "name": "username",
@@ -434,7 +434,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 23,
         "fields": {
           "name": "password",
@@ -454,7 +454,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 24,
         "fields": {
           "name": "host",
@@ -474,7 +474,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 25,
         "fields": {
           "name": "url",
@@ -494,7 +494,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 26,
         "fields": {
           "name": "host",
@@ -514,7 +514,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 27,
         "fields": {
           "name": "port",
@@ -534,7 +534,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 28,
         "fields": {
           "name": "user",
@@ -554,7 +554,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 29,
         "fields": {
           "name": "password",
@@ -574,7 +574,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 30,
         "fields": {
           "name": "database",
@@ -594,7 +594,7 @@
         }
       },
       {
-        "model": "anomaly.connectionparam",
+        "model": "dataset.connectionparam",
         "pk": 31,
         "fields": {
           "name": "timeout",

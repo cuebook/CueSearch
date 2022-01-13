@@ -1,6 +1,8 @@
 from django.db import models
-from anomaly.models import Dataset
+from dataset.models import Dataset
+
 # Create your models here.
+
 
 class GlobalDimension(models.Model):
 
@@ -9,6 +11,7 @@ class GlobalDimension(models.Model):
 
     def __repr__(self):
         return self.name
+
 
 class GlobalDimensionValues(models.Model):
 

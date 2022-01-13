@@ -1,7 +1,7 @@
 import json
 from rest_framework import serializers
-from anomaly.models import  Dataset
-from cueSearch.models import GlobalDimension, GlobalDimensionValues, SearchCardTemplate
+from dataset.models import  Dataset
+from cueSearch.models import GlobalDimension, SearchCardTemplate
 
 class AllDimensionsSerializer(serializers.ModelSerializer):
     """

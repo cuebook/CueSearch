@@ -3,7 +3,7 @@ import { message , notification} from "antd"
 
 class Installation {
     async getInstallationId(){
-        return  apiService.get("anomaly/installationId")
+        return  apiService.get("dataset/installationId")
         .then(response => {
             if(response.success == true){
                 return response

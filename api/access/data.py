@@ -9,7 +9,7 @@ from dbConnections import (
     MSSQL,
     ClickHouse,
 )
-from anomaly.serializers import ConnectionDetailSerializer
+from dataset.serializers import ConnectionDetailSerializer
 
 
 class Data:
@@ -45,7 +45,7 @@ class Data:
         return dataframe
 
     @staticmethod
-    def fetchDatasetDataframe(dataset, customSql = None):
+    def fetchDatasetDataframe(dataset, customSql=None):
         connectionParams = {}
         for val in dataset.connection.cpvc.all():
             connectionParams[val.connectionParam.name] = val.value

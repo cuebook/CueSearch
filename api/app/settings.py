@@ -72,7 +72,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "django_celery_beat",
-    "anomaly",
+    "dataset",
     "users",
     "cueSearch",
     "rest_framework",
@@ -197,22 +197,6 @@ CELERY_RESULT_BACKEND = os.environ.get(
     "CELERY_RESULT_BACKEND", "redis://localhost:6379/1"
 )
 CELERY_IMPORTS = ("ops.tasks",)
-CELERY_TASK_ROUTES = os.environ.get(
-    "CELERY_TASK_ROUTES",
-    (
-        [
-            (
-                "ops.tasks.anomalyDetectionTasks._anomalyDetectionSubTask",
-                {"queue": "anomalySubTask"},
-            ),
-            ("ops.tasks.telemetryTask.telemetryJob", {"queue": "telemetry"}),
-        ],
-    ),
-)
-CELERY_TASKS_ACKS_LATE = os.environ.get("CELERY_TASKS_ACKS_LATE", True)
-CELERY_WORKER_PREFETCH_MULTIPLIER = os.environ.get(
-    "CELERY_WORKER_PREFETCH_MULTIPLIER", 1
-)
 
 # EMAIL
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
