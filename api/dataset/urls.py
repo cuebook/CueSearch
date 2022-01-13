@@ -18,5 +18,5 @@ urlpatterns = [
     # Settings
     path("settings", views.SettingsView.as_view(), name="settings"),
     # Installtion
-    # path("installationId", views.InstallationView.as_view(), name="installationId" )
+    # path("installationId", views.InstallationView.as_view(), name="installationId" ),
 ]

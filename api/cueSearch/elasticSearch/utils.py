@@ -7,7 +7,7 @@ from utils.apiResponse import ApiResponse
 from cueSearch.models import  GlobalDimension
 # from search.globalDimensions.serializer import GlobalDimensionSchema
 from cueSearch.serializers import GlobalDimensionSerializer
-from anomaly.models import Dataset
+from dataset.models import Dataset
 from access.data import Data
 
 

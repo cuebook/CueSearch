@@ -31,7 +31,7 @@ class GlobalDimensionServices:
             objs = payloads["dimensionalValues"]
             dimensionalValueObjs = []
             for obj in objs:
-                datasetId = obj["datasetId"]
+                datasetId = int(obj["datasetId"])
                 dataset = Dataset.objects.get(id=datasetId)
                 GlobalDimensionValues.objects.create(
                     dataset=dataset,
@@ -78,7 +78,7 @@ class GlobalDimensionServices:
             # response = requests.get(url)
             # payloads  = response.json().get("data", [])
 
-            datasets = Dataset.objects.all()  # Get all datasets
+            datasets = Dataset.objects.all().order_by("-id")  # Get all datasets
             data = AllDimensionsSerializer(datasets, many=True).data
             payloads = data
             payloadDicts = []
@@ -159,6 +159,7 @@ class GlobalDimensionServices:
     def updateGlobalDimensionById(id, payload):
         try:
             res = ApiResponse()
+            print("payload", payload)
             name = payload.get("name", "")
             objs = payload.get("dimensionalValues", [])
             published = payload.get("published", False)
@@ -176,7 +177,7 @@ class GlobalDimensionServices:
             # db.session.flush()
 
             for obj in objs:
-                datasetId = obj["datasetId"]
+                datasetId = int(obj["datasetId"])
                 dataset = Dataset.objects.get(id=datasetId)
                 gdValues = GlobalDimensionValues.objects.create(
                     dataset=dataset, dimension=obj["dimension"], globalDimension=gd
@@ -185,10 +186,11 @@ class GlobalDimensionServices:
             # db.session.bulk_save_objects(dimensionalValueObjs)
             # db.session.commit()
             # Global dimension indexing on Global dimension update
-            # try:
-            #     ESIndexingUtils.indexGlobalDimension()
+            try:
+                ESIndexingUtils.indexGlobalDimension()
             #     app.logger.info("Indexing completed")
-            # except Exception as ex:
+            except Exception as ex:
+                logging.error("Indexing Failed")
             #     app.logger.error("Indexing Failed %s", ex)
             # res = {"success":True, "message":"Global Dimension updated successfully"}
             res.update(True, "Global Dimension updated successfully")
