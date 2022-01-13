@@ -2,17 +2,19 @@
 import traceback
 # from search import app, db
 # from sqlalchemy import desc
+import logging
 from utils.apiResponse import ApiResponse
 import requests
 from anomaly.models import  Dataset
 from cueSearch.models import GlobalDimensionValues, GlobalDimension
 from cueSearch.serializers import AllDimensionsSerializer, GlobalDimensionSerializer
+from access.data import Data
 
 
 # from .models import GlobalDimension, GlobalDimensionValues
 # from .serializer import GlobalDimensionSchema
 # from config import DIMENSION_URL
-# from elasticSearch import ESIndexingUtils
+from cueSearch.elasticSearch import ESIndexingUtils
 
 class GlobalDimensionServices:
     """ Services for Global Dimension """
@@ -32,11 +34,12 @@ class GlobalDimensionServices:
                 # dimensionalValueObjs.append(gdValues)
             
             # db.session.bulk_save_objects(dimensionalValueObjs)
-            # try:
+            try:
                 # app.logger.info("Indexing starts")
-                # ESIndexingUtils.indexGlobalDimension()
+                ESIndexingUtils.indexGlobalDimension()
                 # app.logger.info("Indexing completed")
-            # except Exception as ex:
+            except Exception as ex:
+                logging.error("Indexing failed ")
                 # app.logger.error("Indexing Failed %s", ex)
 
             # res = {"success":True}
@@ -187,3 +190,17 @@ class GlobalDimensionServices:
             res.update(False,"Error occured while updating global dimension")
         return res
 
+    # def getDimValues(payload):
+    #     res = ApiResponse()
+    #     try:
+    #         datasetId = int(payload.get("datasetId"))
+    #         dimension = payload.get("dimension",'')
+    #         dataset = Dataset.objects.get(id=datasetId)
+    #         df = Data.fetchDatasetDataframe(dataset)
+    #         data = df[dimension].to_list()[:30]
+    #         res.update(True, "Successfully data transfer between CueObserve and Search services", data)
+    #         return res
+    #     except Exception as ex:
+    #         # logging.error("DatasetId OR dimension does not exists %s", ex)
+    #         res.update(False, "No dimension values found", [])
+    #         return res

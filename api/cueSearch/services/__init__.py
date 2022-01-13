@@ -1,1 +1,2 @@
 from .globalDimension import GlobalDimensionServices
+from .searchCardTemplate import SearchCardTemplateServices

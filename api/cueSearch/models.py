@@ -18,3 +18,14 @@ class GlobalDimensionValues(models.Model):
 
     def __str__(self):
         return  self.dimension
+
+
+class SearchCardTemplate(models.Model):
+    templateName = models.TextField(null=True, blank=True)
+    title = models.TextField(null=True, blank=True)
+    bodyText = models.TextField(null=True, blank=True)
+    sql = models.TextField(null=True, blank=True)
+    supportedVariables = models.TextField(null=True, blank=True)
+
+    def __repr__(self):
+        return self.templateName
