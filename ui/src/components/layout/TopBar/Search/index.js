@@ -9,7 +9,9 @@ import ApiService from "services/api";
 import _ from "lodash";
 import { Tag, Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import SearchResultService from "services/search/searchResult.js"
+// import SearchResultService from "services/search/searchResult.js"
+import SearchResultService from "services/main/searchResult.js"
+
 // import AutosizeInput from "react-input-autosize";
 // import { search } from "utilities/general";
 

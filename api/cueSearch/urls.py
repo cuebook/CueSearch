@@ -5,7 +5,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Search
+    # Global Dimension
     path("dimension/", views.DimensionView.as_view(), name="dimension"),
     # path("metrics/", views.MetricsView.as_view(), name="metrics"),
     # path("dimVals/", views.DimValsView.as_view(), name="dimensionalValues"),
@@ -15,4 +15,11 @@ urlpatterns = [
     path("global-dimension/publish", views.pubGlobalDimension, name="pubGlobalDimension"),
     path("global-dimension/<int:id>", views.globalDimensionById, name="globalDimensionId"),
     path("global-dimension/update/<int:id>", views.updateGlobalDimension, name="updateGlobalDimension"),
+
+    # Card Templates
+    path("cardTemplates/",views.getCardTemplates, name="getCardTemplate"),
+    path("getCards/",views.getSearchCards, name="getSearchCards"),
+    path("searchsuggestions/",views.getSearchSuggestionsView, name="getSearchSuggestionsView"),
+    path("runIndexing/", views.elasticSearchIndexingView, name="runIndexing"),
+
 ]

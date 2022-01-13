@@ -3,17 +3,19 @@ import traceback
 
 # from search import app, db
 # from sqlalchemy import desc
+import logging
 from utils.apiResponse import ApiResponse
 import requests
 from dataset.models import Dataset
 from cueSearch.models import GlobalDimensionValues, GlobalDimension
 from cueSearch.serializers import AllDimensionsSerializer, GlobalDimensionSerializer
+from access.data import Data
 
 
 # from .models import GlobalDimension, GlobalDimensionValues
 # from .serializer import GlobalDimensionSchema
 # from config import DIMENSION_URL
-# from elasticSearch import ESIndexingUtils
+from cueSearch.elasticSearch import ESIndexingUtils
 
 
 class GlobalDimensionServices:
@@ -29,7 +31,7 @@ class GlobalDimensionServices:
             objs = payloads["dimensionalValues"]
             dimensionalValueObjs = []
             for obj in objs:
-                datasetId = obj["datasetId"]
+                datasetId = int(obj["datasetId"])
                 dataset = Dataset.objects.get(id=datasetId)
                 GlobalDimensionValues.objects.create(
                     dataset=dataset,
@@ -39,12 +41,13 @@ class GlobalDimensionServices:
                 # dimensionalValueObjs.append(gdValues)
 
             # db.session.bulk_save_objects(dimensionalValueObjs)
-            # try:
-            # app.logger.info("Indexing starts")
-            # ESIndexingUtils.indexGlobalDimension()
-            # app.logger.info("Indexing completed")
-            # except Exception as ex:
-            # app.logger.error("Indexing Failed %s", ex)
+            try:
+                # app.logger.info("Indexing starts")
+                ESIndexingUtils.indexGlobalDimension()
+                # app.logger.info("Indexing completed")
+            except Exception as ex:
+                logging.error("Indexing failed ")
+                # app.logger.error("Indexing Failed %s", ex)
 
             # res = {"success":True}
             res.update(True, "GlobalDimension created successfully")
@@ -75,7 +78,7 @@ class GlobalDimensionServices:
             # response = requests.get(url)
             # payloads  = response.json().get("data", [])
 
-            datasets = Dataset.objects.all()  # Get all datasets
+            datasets = Dataset.objects.all().order_by("-id")  # Get all datasets
             data = AllDimensionsSerializer(datasets, many=True).data
             payloads = data
             payloadDicts = []
@@ -156,6 +159,7 @@ class GlobalDimensionServices:
     def updateGlobalDimensionById(id, payload):
         try:
             res = ApiResponse()
+            print("payload", payload)
             name = payload.get("name", "")
             objs = payload.get("dimensionalValues", [])
             published = payload.get("published", False)
@@ -173,7 +177,7 @@ class GlobalDimensionServices:
             # db.session.flush()
 
             for obj in objs:
-                datasetId = obj["datasetId"]
+                datasetId = int(obj["datasetId"])
                 dataset = Dataset.objects.get(id=datasetId)
                 gdValues = GlobalDimensionValues.objects.create(
                     dataset=dataset, dimension=obj["dimension"], globalDimension=gd
@@ -182,10 +186,11 @@ class GlobalDimensionServices:
             # db.session.bulk_save_objects(dimensionalValueObjs)
             # db.session.commit()
             # Global dimension indexing on Global dimension update
-            # try:
-            #     ESIndexingUtils.indexGlobalDimension()
+            try:
+                ESIndexingUtils.indexGlobalDimension()
             #     app.logger.info("Indexing completed")
-            # except Exception as ex:
+            except Exception as ex:
+                logging.error("Indexing Failed")
             #     app.logger.error("Indexing Failed %s", ex)
             # res = {"success":True, "message":"Global Dimension updated successfully"}
             res.update(True, "Global Dimension updated successfully")
@@ -196,3 +201,18 @@ class GlobalDimensionServices:
             # res = {"success":False, "message":"Error occured while updating global dimension"}
             res.update(False, "Error occured while updating global dimension")
         return res
+
+    # def getDimValues(payload):
+    #     res = ApiResponse()
+    #     try:
+    #         datasetId = int(payload.get("datasetId"))
+    #         dimension = payload.get("dimension",'')
+    #         dataset = Dataset.objects.get(id=datasetId)
+    #         df = Data.fetchDatasetDataframe(dataset)
+    #         data = df[dimension].to_list()[:30]
+    #         res.update(True, "Successfully data transfer between CueObserve and Search services", data)
+    #         return res
+    #     except Exception as ex:
+    #         # logging.error("DatasetId OR dimension does not exists %s", ex)
+    #         res.update(False, "No dimension values found", [])
+    #         return res

@@ -24,6 +24,4 @@ fi
 
 (celery -A app beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler) &
 
-# python manage.py shell -c  "from dataset.runTelemetry import create_installation_userId; create_installation_userId()" &
-
 gunicorn app.wsgi --reload --user www-data --bind 0.0.0.0:8000 --workers 3 --timeout 300

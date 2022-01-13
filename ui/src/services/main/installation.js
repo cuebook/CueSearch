@@ -1,21 +1,21 @@
-import apiService from "./api";
-import { message , notification} from "antd"
+// import apiService from "./api";
+// import { message , notification} from "antd"
 
-class Installation {
-    async getInstallationId(){
-        return  apiService.get("dataset/installationId")
-        .then(response => {
-            if(response.success == true){
-                return response
-            } else {
-                return response
-            }
-        })
-        .catch(response => {
-            return null
-        })
-    }
-}
-let installation = new Installation();
-export default installation
+// class Installation {
+//     async getInstallationId(){
+//         return  apiService.get("dataset/installationId")
+//         .then(response => {
+//             if(response.success == true){
+//                 return response
+//             } else {
+//                 return response
+//             }
+//         })
+//         .catch(response => {
+//             return null
+//         })
+//     }
+// }
+// let installation = new Installation();
+// export default installation
 

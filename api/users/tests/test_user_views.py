@@ -49,6 +49,6 @@ def test_auth_middleware(setup_user, client):
     res.status_code == 200
     res = c.get("/accounts/login", follow=True)
     assert res.status_code == 200
-    path = reverse("anomalyDefs")
+    path = reverse("connections")
     res = c.get(path)
     assert res.status_code == 200

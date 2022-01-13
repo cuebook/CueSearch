@@ -39,9 +39,9 @@ export default function Admin() {
     if (!isLoggedIn) {
       getUser();
     }
-    if(!installationId){
-      getInstallationIdForTelemetry()
-    }
+    // if(!installationId){
+    //   getInstallationIdForTelemetry()
+    // }
   }, []);
 
   const getUser = async() =>{
@@ -81,20 +81,20 @@ export default function Admin() {
 
   }
 
-  const getInstallationIdForTelemetry = async() => {
-    const res = await installationServices.getInstallationId()
-    if (res && res.success == true){
-      let id = res.data["installationId"]
-      setInstallationId(id)
-    }
-  }
-  let installId = installationId
-  if(installId){
-    let title = window.location.hash
-    title = title.replace("#/","")
-    let url = window.location.href
-    telemetry(title, url, installId)
-  }
+  // const getInstallationIdForTelemetry = async() => {
+  //   const res = await installationServices.getInstallationId()
+  //   if (res && res.success == true){
+  //     let id = res.data["installationId"]
+  //     setInstallationId(id)
+  //   }
+  // }
+  // let installId = installationId
+  // if(installId){
+  //   let title = window.location.hash
+  //   title = title.replace("#/","")
+  //   let url = window.location.href
+  //   telemetry(title, url, installId)
+  // }
 
   return (
     <>
@@ -115,7 +115,7 @@ export default function Admin() {
               <Route path="/search/global-dimension" exact component={GlobalDimensionTable} />
               <Route path="/search/" exact component={SearchResultPage} />
               <Route path="/search/card" exact component={SearchCardPage} />
-              <Redirect from="/" to="/anomalies" />
+              <Redirect from="/" to="/connections" />
             </Switch>
           </div>
         </div>

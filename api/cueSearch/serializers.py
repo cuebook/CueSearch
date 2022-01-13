@@ -1,7 +1,7 @@
 import json
 from rest_framework import serializers
 from dataset.models import  Dataset
-from cueSearch.models import GlobalDimension, GlobalDimensionValues
+from cueSearch.models import GlobalDimension, SearchCardTemplate
 
 class AllDimensionsSerializer(serializers.ModelSerializer):
     """
@@ -76,3 +76,8 @@ class GlobalDimensionSerializer(serializers.ModelSerializer):
         fields = ['id', 'name','published','values']
 
 
+class SearchCardTemplateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SearchCardTemplate
+        fields = ['id', 'templateName','title','bodyText','supportedVariables']

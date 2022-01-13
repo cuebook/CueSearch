@@ -4,7 +4,8 @@ import { Switch, Table, Button, Input, Drawer, Affix } from 'antd';
 import {EditOutlined } from '@ant-design/icons';
 import style from "./style.module.scss";
 import {useHistory} from "react-router-dom"
-import searchResultService from "services/search/searchResult.js"
+// import searchResultService from "services/search/searchResult.js"
+import searchResultService from "services/main/searchResult.js"
 // import TrackVisibility from "react-on-screen";
 
 import CardSnippet from "components/Search/Card/CardSnippet";
