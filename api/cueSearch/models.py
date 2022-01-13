@@ -7,7 +7,7 @@ from dataset.models import Dataset
 class GlobalDimension(models.Model):
 
     name = models.CharField(unique=True, max_length=500)
-    published = models.BooleanField(default=False)
+    published = models.BooleanField(default=True)
 
     def __repr__(self):
         return self.name
