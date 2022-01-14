@@ -1,5 +1,7 @@
 import json
 from utils.apiResponse import ApiResponse
+from django.template import Template, Context
+from access.data import Data
 from dataset.models import Dataset
 from dataset.serializers import DatasetsSerializer, DatasetSerializer
 
@@ -103,4 +105,23 @@ class Datasets:
         )
 
         res.update(True, "Successfully created dataset")
+        return res
+
+    
+    def getDatasetData(payload: dict):
+        """
+        Utility service to fetch data for a payload
+        :param payload: Dict containing dataset name, and global dimension
+        """
+        res = ApiResponse("Error in fetching data")
+        print("payload", payload)
+        dataset = Dataset.objects.get(id=payload["datasetId"])
+        payload["datasetSql"] = dataset.sql
+        print('DATASETSQL', dataset.sql)
+        customSql = Template(payload["sqlTemplate"]).render(Context(payload))
+        print("customSql", customSql)
+        dataDf = Data.fetchDatasetDataframe(dataset, customSql)
+        print('dataDf', dataDf)
+        dfDict = dataDf.to_json()
+        res.update(True, "Successfully fetched data", dfDict)
         return res
