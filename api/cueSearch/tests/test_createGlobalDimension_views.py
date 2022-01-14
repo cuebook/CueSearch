@@ -1,3 +1,5 @@
+from ast import Raise
+from builtins import breakpoint
 from http import client
 import re
 import pytest
@@ -35,13 +37,30 @@ def test_createGlobalDimension(client,mocker):
     dataset = Dataset.objects.all()[0]
     path = reverse('globalDimensionCreate')
     gd_data = {
-        'name': 'test', 
+        'name': 'test01', 
         'dimensionalValues': [{'datasetId': dataset.id,"dataset":"Returns","dimension":"WarehouseCode"}]
         }
     
     response = client.post(path,gd_data, content_type="application/json")
     assert response.data["success"]
     assert response.status_code == 200
+
+
+
+
+    #name exception testing
+    dataset = Dataset.objects.all()[0]
+    path = reverse('globalDimensionCreate')
+    gd_data = {
+        'name': 'test01', 
+        'dimensionalValues': [{'datasetId': dataset.id,"dataset":"Returns","dimension":"WarehouseCode"}]
+        }
+    
+    response = client.post(path,gd_data, content_type="application/json")
+    #assert Raise(Exception,client.post(path,gd_data, content_type="application/json"))
+    # if exception throw then reponse will be false or else it will be true and test case willbe failed
+    assert response.data["success"] == False
+    
     
 
 
