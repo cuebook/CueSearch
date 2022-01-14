@@ -4,7 +4,6 @@ import {EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import AddGlobalDimension from "components/Search/GlobalDimension/AddGlobalDimension.js"
 import EditGlobalDimension from "components/Search/GlobalDimension/EditGlobalDimension.js"
-// import globalDimensionService from "services/search/globalDimension.js"
 import globalDimensionService from "services/main/globalDimension.js"
 
 import style from "./style.module.scss"

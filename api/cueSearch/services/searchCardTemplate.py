@@ -89,9 +89,7 @@ class SearchCardTemplateServices:
             result.update({"sqlTemplate": searchTemplate.sql})        
 
         dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(searchResults))
-        print("dataResults", dataResults)
         finalResults = []
-        print("searchResults", searchResults)
         for i in range(len(searchResults)):
             finalResults.append(
                 {
@@ -99,7 +97,6 @@ class SearchCardTemplateServices:
                     "text" : Template(searchTemplate.bodyText).render(Context(searchResults[i])),
                     "data": dataResults[i]
                 })
-        print('finalResult', finalResults)
         res.update(True, "successfully fetched",finalResults)
         return res
 

@@ -4,7 +4,6 @@ import { Switch, Table, Button, Input, Drawer, Affix } from 'antd';
 import {EditOutlined } from '@ant-design/icons';
 import style from "./style.module.scss";
 import {useHistory} from "react-router-dom"
-// import searchResultService from "services/search/searchResult.js"
 import searchResultService from "services/main/searchResult.js"
 // import TrackVisibility from "react-on-screen";
 
@@ -12,7 +11,7 @@ import CardSnippet from "components/Search/Card/CardSnippet";
 
 export default function SearchResultPage(props){
   const history = useHistory()
-  const [searchCard, setSearchCard] = useState()
+  const [searchCards, setSearchCards] = useState()
   const [searchPayload, setSearchPayload] = useState()
   useEffect(()=>{
         getSearchCard()
@@ -29,7 +28,7 @@ export default function SearchResultPage(props){
     let searchPayload = JSON.parse(params.get("search"));
     const response = await searchResultService.getSearchCards(searchPayload)
     if(response.success){
-      setSearchCard(response.searchCards)
+      setSearchCards(response.data)
     }
   }
 
@@ -38,27 +37,22 @@ export default function SearchResultPage(props){
   let loading = null
   let cardTypesArray = []
 
-  // Below Code is Temporary 
-if(searchCard){
-  cardsArray = searchCard && searchCard.map(item=>
-    <div key={item.Title}>
-      {item.Title} + {item.Text}
-    </div>
-  )
-}
+  if(searchCards){
+    cardsArray = searchCards && searchCards.map(item=>
+      <div className={style.cardPanelWrapper}> < CardSnippet searchCard={item}/> </div>
+    )
+  }
 
-
-return (
+  return (
         <div>
           <div className="row" >
             <div className={`xl:w-8/12 ${style.searchResultsWrapper}`}>
-              {cardsArray.length > 0 ? null :(
-                <h4>No results found.</h4>
-                )}
+              <h4>
+                {searchCards ? 
+                  cardsArray.length > 0 ? null : "No results found"
+                 : "Loading.."}
+              </h4>
               {cardsArray}
-              <div className={style.cardPanelWrapper}> < CardSnippet /> </div>
-              <div className={style.cardPanelWrapper}> < CardSnippet /> </div>
-              <div className={style.cardPanelWrapper}> < CardSnippet /> </div>
             </div>
           </div>
       </div>
