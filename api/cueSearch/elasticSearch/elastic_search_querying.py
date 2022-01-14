@@ -54,7 +54,7 @@ class ESQueryingUtils:
             searchQuery = searchQuery.filter("match", globalDimensionName=globalDimensionNameQuery)
 
         if query:
-            searchQuery = searchQuery.query("match", globalDimensionValue=query)
+            searchQuery = searchQuery.query("match", globalDimensionDisplayValue=query)
         else:
             searchQuery = searchQuery.query("match_all")
 
@@ -81,6 +81,8 @@ class ESQueryingUtils:
 
         logging.debug("User queries: %s", output)
         return output
+
+
     @staticmethod
     def findGlobalDimensionNames(
         query: str, datasource: str = None, offset: int = 0, limit: int = 5

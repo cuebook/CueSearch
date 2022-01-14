@@ -122,6 +122,6 @@ class Datasets:
         print("customSql", customSql)
         dataDf = Data.fetchDatasetDataframe(dataset, customSql)
         print('dataDf', dataDf)
-        dfDict = dataDf.to_json()
+        dfDict = dataDf.to_dict("records")
         res.update(True, "Successfully fetched data", dfDict)
         return res
