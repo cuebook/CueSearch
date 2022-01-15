@@ -161,6 +161,18 @@ class ESIndexingUtils:
         """
         cardIndexer = threading.Thread(target=ESIndexingUtils.indexGlobalDimensionName)
         cardIndexer.start()
+        cardIndexer1 = threading.Thread(target=ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion)
+        cardIndexer1.start()
+        cardIndexer2 = threading.Thread(target=ESIndexingUtils.indexGlobalDimensionsData)
+        cardIndexer2.start()
+
+
+    # @staticmethod
+    # def indexDimension():
+
+    #     ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion() # Used for search suggestion
+    #     ESIndexingUtils.indexGlobalDimensionName()
+    #     ESIndexingUtils.indexGlobalDimensionsData()
 
     @staticmethod
     def indexGlobalDimensionName(joblogger=None):

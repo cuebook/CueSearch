@@ -54,7 +54,6 @@ class GlobalDimensionSerializer(serializers.ModelSerializer):
     values = serializers.SerializerMethodField()
     def get_values(self, obj):
         paramsList = []
-        print("obj", obj)
         gdValues = obj.globaldimensionvalues_set.all()
         for gdValue in gdValues:
             params = {}
@@ -80,4 +79,4 @@ class SearchCardTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SearchCardTemplate
-        fields = ['id', 'templateName','title','bodyText','supportedVariables']
+        fields = ['id', 'templateName','title','bodyText','supportedVariables','sql']
