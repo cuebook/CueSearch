@@ -13,7 +13,7 @@ from dataset.models import Dataset
 
 
 @pytest.mark.django_db(transaction=True)
-def test_deleteGlobalDimension(client,mocker):
+def test_getGlobalDimension(client,mocker):
     '''
     Test case for delete global dimension
     '''
