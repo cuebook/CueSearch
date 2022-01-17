@@ -57,7 +57,6 @@ def test_createGlobalDimension(client,mocker):
         }
     
     response = client.post(path,gd_data, content_type="application/json")
-    #assert Raise(Exception,client.post(path,gd_data, content_type="application/json"))
     # if exception throw then reponse will be false or else it will be true and test case willbe failed
     assert response.data["success"] == False
     

@@ -9,13 +9,14 @@ from django.test import TestCase,Client
 from rest_framework.test import APITestCase,APIClient
 from mixer.backend.django import mixer
 from dataset.models import Dataset
+from unittest import mock
 
-
+# Working condition
 
 @pytest.mark.django_db(transaction=True)
-def test_deleteGlobalDimension(client,mocker):
+def test_pubGlobalDimension(client,mocker):
     '''
-    Test case for delete global dimension
+    Test case for published global dimension
     '''
     #create demo data for global dimension
     connection = mixer.blend("dataset.connection")
@@ -31,22 +32,38 @@ def test_deleteGlobalDimension(client,mocker):
         "isNonRollup": False
     }
     response = client.post(path, data=data, content_type="application/json")
+    assert response.data['success']
 
     #create dimension for testing
     dataset = Dataset.objects.all()[0]
     path = reverse('globalDimensionCreate')
     gd_data = {
-        'name': 'test', 
+        'name': 'test01', 
         'dimensionalValues': [{'datasetId': dataset.id,"dataset":"Returns","dimension":"WarehouseCode"}]
         }
+    
     response = client.post(path,gd_data, content_type="application/json")
     assert response.data["success"]
+    assert response.status_code == 200
 
-
-    # Get global dimension using the existing Id 
-    path = reverse("globalDimensionId",kwargs={"id": dataset.id})
-    response = client.get(path)
+    # published global dimension
+    path = reverse("pubGlobalDimension")
+    payload = {
+        'id':6,
+        'published':True
+    }
+    response = client.post(path,payload)
     assert response.data["success"] == True
     assert response.status_code == 200
 
+    
 
+    # Checking the error with the wrong id
+    path = reverse("pubGlobalDimension")
+    payload = {
+        'id':1,
+        'published':True
+    }
+    response = client.post(path,payload)
+    assert response.data["success"] == False
+    assert response.status_code == 200 

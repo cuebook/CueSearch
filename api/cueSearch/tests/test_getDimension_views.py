@@ -46,4 +46,5 @@ def test_getDimension(client,mocker):
     path = reverse("dimension")
     response = client.get(path)
     assert response.data["success"]
+    assert response.data["data"][0]['dataset'] == "demo_dataset"
     assert response.status_code == 200
