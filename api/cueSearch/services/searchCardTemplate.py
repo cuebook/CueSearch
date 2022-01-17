@@ -1,10 +1,14 @@
 import asyncio
+
+from django.template.base import constant_string
 import aiohttp
 from utils.apiResponse import ApiResponse
 
 # from flask import render_template_string
 # from search import app, db
-from django.template.loader import render_to_string
+# from django.template.loader import render_to_string
+from django.template import Template, Context
+
 import logging
 # from .models import SearchCardTemplate
 from cueSearch.serializers import SearchCardTemplateSerializer
@@ -13,6 +17,7 @@ from cueSearch.serializers import SearchCardTemplateSerializer
 from cueSearch.models import SearchCardTemplate
 import concurrent.futures
 from cueSearch.elasticSearch import ESQueryingUtils, ESIndexingUtils
+from dataset.services import Datasets
 
 
 class SearchCardTemplateServices:
@@ -35,25 +40,29 @@ class SearchCardTemplateServices:
             res.update(False,[])
         return res
 
-    async def _sendDataRequest(session, dataUrl, payload):
+    async def _sendDataRequest(session, payload):
         """
         Async method to fetch individual search card data
         :param session: ClientSession instance for aiohttp
         :param dataUrl: Url endpoint to fetch data
         :param payload: Dict containing parameters for fetching data
         """
+        dataUrl = "http://localhost:8000/api/dataset/data/"  # will remove it and call function directly for it 
         resp = await session.post(dataUrl, json=payload)
         responseData = await resp.json()
+        # resp = await Datasets.getDatasetData(payload)
+        # print('resp', resp)
+        # responseData = await resp.data  # or resp.data
         return responseData
 
-    async def fetchCardsData(dataUrl, searchResults):
+    async def fetchCardsData(searchResults):
         """
         Async method to fetch data for searched cards
         :param dataUrl: Url endpoint to fetch data
         :param searchResults: List of dicts containing search results
         """
         async with aiohttp.ClientSession() as session:
-            result = await asyncio.gather(*(SearchCardTemplateServices._sendDataRequest(session, dataUrl, obj) for obj in searchResults))
+            result = await asyncio.gather(*(SearchCardTemplateServices._sendDataRequest(session, obj) for obj in searchResults))
             return result
     
     def getSearchCards(searchPayload: dict):
@@ -62,7 +71,7 @@ class SearchCardTemplateServices:
         :param searchPayload: Dict containing the search payload
         """
         # Temporary for testing # for globalDimensionValues only 
-        print("searchPayload", searchPayload)
+        res = ApiResponse()
         # gdValuesObjs = searchPayload.get("globalDimensionValuesPayload", [[]])
         # globalDimensionId = gdValuesObjs[0].get("globalDimensionId", None)
         # gdValues = gdValuesObjs[0].get("globalDimensionValue", [])
@@ -73,23 +82,23 @@ class SearchCardTemplateServices:
             globalDimension = globalDimensionId,
             query = globalDimensionValue
         )
-        
-        searchTemplate = SearchCardTemplate.objects.get(2) # Temporary for testing, will loop over templates, set here id accordingly
+        # print("searchResults", searchResults)
+        searchTemplate = SearchCardTemplate.objects.get(id=1) # Temporary for testing, will loop over templates, set here id accordingly
+        print("searachTemplate", searchTemplate.sql)
         for result in searchResults:
             result.update({"sqlTemplate": searchTemplate.sql})        
 
-        dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(DATASET_URL, searchResults))
+        dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(searchResults))
         finalResults = []
-
         for i in range(len(searchResults)):
             finalResults.append(
                 {
-                    "title": render_to_string(searchTemplate.title, **searchResults[i]),
-                    "text" : render_to_string(searchTemplate.bodyText, **searchResults[i]),
+                    "title": Template(searchTemplate.title).render(Context(searchResults[i])),
+                    "text" : Template(searchTemplate.bodyText).render(Context(searchResults[i])),
                     "data": dataResults[i]
                 })
-        
-        return finalResults
+        res.update(True, "successfully fetched",finalResults)
+        return res
 
 
         

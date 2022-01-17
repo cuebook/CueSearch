@@ -1,0 +1,13 @@
+[
+    {
+      "model": "cueSearch.searchCardTemplate",
+      "pk": 1,
+      "fields": {
+        "templateName": "Test Template 1",
+        "title": "Filter <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{dimension}} = {{value}}</span>",
+        "bodyText": "For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{dimension}} = {{value}}</span> ",
+        "supportedVariables": "granularity, datasetName, dimension, value",
+        "sql":"SELECT * FROM ({{ datasetSql|safe }}) WHERE {{ dimension }}='{{ value }}' limit 50"
+      }
+    }
+]
