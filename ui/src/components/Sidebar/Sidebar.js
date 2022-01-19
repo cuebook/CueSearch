@@ -35,12 +35,6 @@ export default function Sidebar(props) {
       "icon": "fa-plug"
     },
     {
-      "label": "Settings",
-      "path": "/settings",
-      "icon": "fa-cogs"
-    },
-
-    {
       "label": "Global Dimension",
       "path": "/search/global-dimension",
       "icon": "fa-cube"
