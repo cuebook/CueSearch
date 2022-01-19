@@ -9,5 +9,18 @@
         "supportedVariables": "granularity, datasetName, dimension, value",
         "sql":"SELECT * FROM ({{ datasetSql|safe }}) WHERE {{ dimension }}='{{ value }}' limit 50"
       }
+    },
+
+    {
+      "model": "cueSearch.searchCardTemplate",
+      "pk": 2,
+      "fields": {
+        "templateName": "Test Template 1",
+        "title": " <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span>",
+        "bodyText": "For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span> ",
+        "supportedVariables": "granularity, datasetName, dimension, value",
+        "sql":" SELECT * FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} limit 50"
+      }
     }
+
 ]
