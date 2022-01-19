@@ -114,14 +114,10 @@ class Datasets:
         :param payload: Dict containing dataset name, and global dimension
         """
         res = ApiResponse("Error in fetching data")
-        print("payload", payload)
         dataset = Dataset.objects.get(id=payload["datasetId"])
         payload["datasetSql"] = dataset.sql
-        print('DATASETSQL', dataset.sql)
         customSql = Template(payload["sqlTemplate"]).render(Context(payload))
-        print("customSql", customSql)
         dataDf = Data.fetchDatasetDataframe(dataset, customSql)
-        print('dataDf', dataDf)
         dfDict = dataDf.to_dict("records")
         res.update(True, "Successfully fetched data", dfDict)
         return res

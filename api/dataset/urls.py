@@ -5,7 +5,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("data/", views.fetchData, name="fetchData"),
     # Datasets
     path("datasets", views.DatasetsView.as_view(), name="datasets"),
     path("dataset/<int:datasetId>", views.DatasetView.as_view(), name="dataset"),

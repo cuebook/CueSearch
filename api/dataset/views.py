@@ -142,12 +142,3 @@ class SettingsView(APIView):
 #     def get(self, request):
 #         res = getInstallationId()
 #         return Response(res.json())
-
-@api_view(["POST"])
-def fetchData(request: HttpRequest) -> Response:
-    """
-    Method for fetching data
-    :param request: HttpRequest
-    """
-    res = Datasets.getDatasetData(request.data)
-    return Response(res.json())

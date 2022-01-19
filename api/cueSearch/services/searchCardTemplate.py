@@ -1,21 +1,13 @@
 import asyncio
-
-from django.template.base import constant_string
+import logging
+import concurrent.futures
+from asgiref.sync import async_to_sync, sync_to_async
+from django.http import response
 import aiohttp
 from utils.apiResponse import ApiResponse
-
-# from flask import render_template_string
-# from search import app, db
-# from django.template.loader import render_to_string
 from django.template import Template, Context
-
-import logging
-# from .models import SearchCardTemplate
 from cueSearch.serializers import SearchCardTemplateSerializer
-# from elasticSearch.elastic_search_querying import ESQueryingUtils
-# from config import DATASET_URL
 from cueSearch.models import SearchCardTemplate
-import concurrent.futures
 from cueSearch.elasticSearch import ESQueryingUtils, ESIndexingUtils
 from dataset.services import Datasets
 
@@ -30,13 +22,11 @@ class SearchCardTemplateServices:
         """
         res = ApiResponse("Error in fetching card templates")
         try:
-            # app.logger.info("Getting card templates")
             templates = SearchCardTemplate.objects.all()
             data = SearchCardTemplateSerializer(templates,many=True).data
             res.update(True, "Fetched card templates", data)
 
         except Exception as ex:
-            # app.logger.error(f"Failed to get card templates {ex}")
             res.update(False,[])
         return res
 
@@ -47,13 +37,11 @@ class SearchCardTemplateServices:
         :param dataUrl: Url endpoint to fetch data
         :param payload: Dict containing parameters for fetching data
         """
-        dataUrl = "http://localhost:8000/api/dataset/data/"  # will remove it and call function directly for it 
-        resp = await session.post(dataUrl, json=payload)
-        responseData = await resp.json()
-        # resp = await Datasets.getDatasetData(payload)
-        # print('resp', resp)
-        # responseData = await resp.data  # or resp.data
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, Datasets.getDatasetData, payload)
+        responseData = result.json()
         return responseData
+        
 
     async def fetchCardsData(searchResults):
         """
@@ -70,11 +58,7 @@ class SearchCardTemplateServices:
         Service to fetch and create search cards on the fly
         :param searchPayload: Dict containing the search payload
         """
-        # Temporary for testing # for globalDimensionValues only 
         res = ApiResponse()
-        # gdValuesObjs = searchPayload.get("globalDimensionValuesPayload", [[]])
-        # globalDimensionId = gdValuesObjs[0].get("globalDimensionId", None)
-        # gdValues = gdValuesObjs[0].get("globalDimensionValue", [])
         globalDimensionId = searchPayload[0]["id"]
         globalDimensionValue = searchPayload[0]["label"]
 
@@ -82,9 +66,7 @@ class SearchCardTemplateServices:
             globalDimension = globalDimensionId,
             query = globalDimensionValue
         )
-        # print("searchResults", searchResults)
         searchTemplate = SearchCardTemplate.objects.get(id=1) # Temporary for testing, will loop over templates, set here id accordingly
-        print("searachTemplate", searchTemplate.sql)
         for result in searchResults:
             result.update({"sqlTemplate": searchTemplate.sql})        
 
@@ -103,8 +85,7 @@ class SearchCardTemplateServices:
 
         
     def getSearchSuggestions(query):
-        # app.logger.debug("Calling the query ES API and fetching only the top 10 results")
-        # res = ApiResponse("Error in fetching search suggestion ")
+        """Get searchsuggestion for search dropdown"""
         res = ApiResponse()
         data = []
         with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -128,12 +109,8 @@ class SearchCardTemplateServices:
             for future in concurrent.futures.as_completed(futures):
                 try:
                     data.extend(future.result())
-                    # app.logger.info("data %s",data)
                 except Exception as ex:
-                    # app.logger.error("Error in fetching search suggestions :%s", str(ex))
                     logging.error("Error in fetching search suggestions :%s", str(ex))
-        # res.update(True, "fetched search suggestion", data)
         res.update(True, "success", data)
-        # res = {"success":True, "data":data}
         return res
 
