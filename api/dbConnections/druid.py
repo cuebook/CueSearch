@@ -35,7 +35,7 @@ class Druid:
         """
         Fetch dataframe for given sql
         """
-        dataframe = None
+        dataframe = pd.DataFrame()
         try:
             host = params.get("host", "")
             port = params.get("port", 8888)

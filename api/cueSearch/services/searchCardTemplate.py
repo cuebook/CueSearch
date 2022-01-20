@@ -1,5 +1,7 @@
 import asyncio
 import logging
+import json
+from itertools import groupby
 import concurrent.futures
 from asgiref.sync import async_to_sync, sync_to_async
 from django.http import response
@@ -8,8 +10,10 @@ from utils.apiResponse import ApiResponse
 from django.template import Template, Context
 from cueSearch.serializers import SearchCardTemplateSerializer
 from cueSearch.models import SearchCardTemplate
+from dataset.models import Dataset
 from cueSearch.elasticSearch import ESQueryingUtils, ESIndexingUtils
 from dataset.services import Datasets
+from cueSearch.services.utils import addDimensionsInParam, makeFilter
 
 
 class SearchCardTemplateServices:
@@ -59,24 +63,49 @@ class SearchCardTemplateServices:
         :param searchPayload: Dict containing the search payload
         """
         res = ApiResponse()
-        globalDimensionId = searchPayload[0]["id"]
-        globalDimensionValue = searchPayload[0]["label"]
-
-        searchResults = ESQueryingUtils.findGlobalDimensionResults(
-            globalDimension = globalDimensionId,
-            query = globalDimensionValue
-        )
-        searchTemplate = SearchCardTemplate.objects.get(id=1) # Temporary for testing, will loop over templates, set here id accordingly
-        for result in searchResults:
-            result.update({"sqlTemplate": searchTemplate.sql})        
-
-        dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(searchResults))
         finalResults = []
-        for i in range(len(searchResults)):
+        searchResults = []
+        for payload in searchPayload:
+            results = []
+            globalDimensionId = payload["id"]
+            globalDimensionValue = payload["label"]
+
+            results = ESQueryingUtils.findGlobalDimensionResults(
+                globalDimension = globalDimensionId,
+                query = globalDimensionValue
+        )
+            if results:
+                searchResults.extend(results)
+        
+        groupedResults = groupSearchResultsByDataset(searchResults)
+        searchTemplate = SearchCardTemplate.objects.get(id=2) 
+
+        params = []
+        for result in groupedResults:
+            for key, value in result.items():
+                dataset = Dataset.objects.get(id=int(key))
+                paramDict = {}
+                paramDict["datasetId"] = int(key)
+                paramDict["searchResults"] = value
+                paramDict["sqlTemplate"] = searchTemplate.sql 
+                paramDict["dataset"] = dataset.name
+                paramDict["dimensions"] = json.loads(dataset.dimensions)
+                paramDict["metrics"] = json.loads(dataset.metrics)
+                paramDict["timestamp"] = dataset.timestampColumn
+                params.append(paramDict)
+
+        for param in params:
+            filter = makeFilter(param)
+            dimensions = addDimensionsInParam(param)
+            param.update({"filter" : filter})
+            param.update({"filterDimensions": dimensions})
+        
+        dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(params))
+        for i in range(len(params)):
             finalResults.append(
                 {
-                    "title": Template(searchTemplate.title).render(Context(searchResults[i])),
-                    "text" : Template(searchTemplate.bodyText).render(Context(searchResults[i])),
+                    "title": Template(searchTemplate.title).render(Context(params[i])),
+                    "text" : Template(searchTemplate.bodyText).render(Context(params[i])),
                     "data": dataResults[i]
                 })
         res.update(True, "successfully fetched",finalResults)
@@ -114,3 +143,15 @@ class SearchCardTemplateServices:
         res.update(True, "success", data)
         return res
 
+def key_func(k):
+    return k['datasetId']
+
+def groupSearchResultsByDataset(searchResults):
+    results = []
+    searchResults = sorted(searchResults, key=key_func)
+    for key, value in groupby(searchResults, key_func):
+        value = list(value)
+        results.append({key:value})
+    return results
+        
+    
