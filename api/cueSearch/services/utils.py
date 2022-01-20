@@ -3,7 +3,7 @@ from itertools import groupby
 def key_func(k):
     return k['dimension']
 
-def strucutureAndFilter(params: list):
+def structureAndFilter(params: list):
 
     text = ""
     for i in range(len(params)):
@@ -41,5 +41,14 @@ def structureOrFilter(payload):
 def makeFilter(payloads):
     payload = payloads['searchResults']
     paramList = structureOrFilter(payload)
-    filter = strucutureAndFilter(paramList)
+    filter = structureAndFilter(paramList)
     return filter
+
+def addDimensionsInParam(payloads):
+    payload = payloads['searchResults']
+    payload = sorted(payload, key=key_func)
+    listOfDimensions = []
+    for key, values in groupby(payload, key_func):
+        listOfDimensions.append(key)
+    return listOfDimensions
+

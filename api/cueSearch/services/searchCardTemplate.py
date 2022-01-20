@@ -12,7 +12,7 @@ from cueSearch.models import SearchCardTemplate
 from dataset.models import Dataset
 from cueSearch.elasticSearch import ESQueryingUtils, ESIndexingUtils
 from dataset.services import Datasets
-from cueSearch.services.utils import makeFilter
+from cueSearch.services.utils import addDimensionsInParam, makeFilter
 
 
 class SearchCardTemplateServices:
@@ -82,16 +82,20 @@ class SearchCardTemplateServices:
         params = []
         for result in groupedResults:
             for key, value in result.items():
+                dataset = Dataset.objects.get(id=int(key))
                 paramDict = {}
                 paramDict["datasetId"] = int(key)
                 paramDict["searchResults"] = value
                 paramDict["sqlTemplate"] = searchTemplate.sql 
-                paramDict["dataset"] = Dataset.objects.get(id=int(key)).name
+                paramDict["dataset"] = dataset.name
+                paramDict["timestampColumn"] = dataset.timestampColumn
                 params.append(paramDict)
 
         for param in params:
             filter = makeFilter(param)
+            dimensions = addDimensionsInParam(param)
             param.update({"filter" : filter})
+            param.update({"dimensions": dimensions})
         
         dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(params))
         for i in range(len(params)):
@@ -143,7 +147,6 @@ def groupSearchResultsByDataset(searchResults):
     results = []
     searchResults = sorted(searchResults, key=key_func)
     for key, value in groupby(searchResults, key_func):
-        print(key)
         value = list(value)
         results.append({key:value})
     return results
