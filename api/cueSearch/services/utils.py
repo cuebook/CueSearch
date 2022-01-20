@@ -8,7 +8,7 @@ def strucutureAndFilter(params: list):
     text = ""
     for i in range(len(params)):
         if i == 0:
-            text = params[i] 
+            text ="( " + params[i] + " )" 
         else: 
             text = "( " + text + " )" +" AND "+ "( "+ params[i] + " )"
     return text
