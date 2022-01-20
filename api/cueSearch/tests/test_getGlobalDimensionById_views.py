@@ -1,5 +1,6 @@
 from builtins import breakpoint
 from http import client
+from logging import exception
 import re
 import pytest
 from unittest import mock
@@ -9,6 +10,7 @@ from django.test import TestCase,Client
 from rest_framework.test import APITestCase,APIClient
 from mixer.backend.django import mixer
 from dataset.models import Dataset
+
 
 
 
@@ -41,12 +43,19 @@ def test_getGlobalDimensionById(client,mocker):
         }
     response = client.post(path,gd_data, content_type="application/json")
     assert response.data["success"]
-
+    assert response.status_code == 200
 
     # Get global dimension using the existing Id 
     path = reverse("globalDimensionId",kwargs={"id": dataset.id})
     response = client.get(path)
+    #breakpoint()
     assert response.data["success"] == True
     assert response.status_code == 200
 
+    # Checking the error with the wrong id
+    path = reverse("globalDimensionId",kwargs={"id": 2})
+    response = client.get(path) 
+    assert response.data["success"] == False
+    assert response.status_code == 200
+    
 

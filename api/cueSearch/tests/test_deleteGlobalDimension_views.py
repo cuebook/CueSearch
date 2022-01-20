@@ -40,19 +40,14 @@ def test_deleteGlobalDimension(client,mocker):
         'dimensionalValues': [{'datasetId': dataset.id,"dataset":"Returns","dimension":"WarehouseCode"}]
         }
     response = client.post(path,gd_data, content_type="application/json")
+    global_dimension_id = 6
 
     # deleting global dimension
-    #breakpoint()
-    path = reverse("global-dimension-delete",kwargs={"id": dataset.id})
+    path = reverse("global-dimension-delete",kwargs={"id": global_dimension_id})
     response = client.delete(path)
     assert response.data["success"] == True
     assert response.status_code == 200
 
-    # Get id 
-    path = reverse("global-dimension-delete",kwargs={"id": dataset.id})
-    response = client.delete(path)
-    assert response.data["success"] == True
-    assert response.status_code == 200
 
 
 
