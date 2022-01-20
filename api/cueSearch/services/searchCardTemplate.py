@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import json
 from itertools import groupby
 import concurrent.futures
 from asgiref.sync import async_to_sync, sync_to_async
@@ -88,14 +89,16 @@ class SearchCardTemplateServices:
                 paramDict["searchResults"] = value
                 paramDict["sqlTemplate"] = searchTemplate.sql 
                 paramDict["dataset"] = dataset.name
-                paramDict["timestampColumn"] = dataset.timestampColumn
+                paramDict["dimensions"] = json.loads(dataset.dimensions)
+                paramDict["metrics"] = json.loads(dataset.metrics)
+                paramDict["timestamp"] = dataset.timestampColumn
                 params.append(paramDict)
 
         for param in params:
             filter = makeFilter(param)
             dimensions = addDimensionsInParam(param)
             param.update({"filter" : filter})
-            param.update({"dimensions": dimensions})
+            param.update({"filterDimensions": dimensions})
         
         dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(params))
         for i in range(len(params)):
