@@ -3,23 +3,36 @@
       "model": "cueSearch.searchCardTemplate",
       "pk": 1,
       "fields": {
-        "templateName": "Split on Filter Dimension",
-        "title": "Comparison between <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span>",
+        "templateName": "Table of all data",
+        "title": "Table <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span>",
         "bodyText": "For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span> ",
         "supportedVariables": "granularity, datasetName, dimension, value",
-        "sql":" SELECT ({{ timestampColumn }}), {{ filterDimensions.0 }}, SUM({{ metrics.0 }}) as {{metrics.0}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1, 2 limit 500"
+        "sql":" SELECT * FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} limit 500",
+        "renderType": "table"
       }
     },
     {
       "model": "cueSearch.searchCardTemplate",
       "pk": 2,
       "fields": {
+        "templateName": "Split on Filter Dimension",
+        "title": "Comparison between <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span>",
+        "bodyText": "For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span> ",
+        "supportedVariables": "granularity, datasetName, dimension, value",
+        "sql":" SELECT ({{ timestampColumn }}), {{ filterDimensions.0 }}, SUM({{ metrics.0 }}) as {{metrics.0}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1, 2 limit 500",
+        "renderType": "line"
+      }
+    },
+    {
+      "model": "cueSearch.searchCardTemplate",
+      "pk": 3,
+      "fields": {
         "templateName": "Metric Chart",
         "title": " <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span>",
         "bodyText": "For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span> ",
         "supportedVariables": "granularity, datasetName, dimension, value",
-        "sql":" SELECT ({{ timestampColumn }}), SUM({{ metrics.0 }}) as {{metrics.0}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1 limit 500"
+        "sql":" SELECT ({{ timestampColumn }}), SUM({{ metrics.0 }}) as {{metrics.0}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1 limit 500",
+        "renderType": "line"
       }
     }
-
 ]

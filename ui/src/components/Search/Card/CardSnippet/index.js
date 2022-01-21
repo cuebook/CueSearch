@@ -23,9 +23,12 @@ export default function CardPanel(props) {
 		<div>
 		  <div className={style.searchSnippet}>
           <div className={style.chartSnippet}>
-
-            {/* <TableCard data={data} isSnippet={true} />  */}
-            <Chart data={data} isSnippet={true} /> 
+            {
+              params.renderType == "table" ? 
+              <TableCard data={data} isSnippet={true} /> 
+              :
+              <Chart data={data} isSnippet={true} /> 
+            }
           </div>
           <div className={style.contentSnippet}>
             <a

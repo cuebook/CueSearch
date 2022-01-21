@@ -93,6 +93,7 @@ class SearchCardTemplateServices:
                     paramDict["datasetId"] = int(key)
                     paramDict["searchResults"] = value
                     paramDict["sqlTemplate"] = searchTemplate.sql
+                    paramDict["renderType"] = searchTemplate.renderType
                     paramDict["templateTitle"] = searchTemplate.title
                     paramDict["templateText"] = searchTemplate.bodyText
                     paramDict["dataset"] = dataset.name
