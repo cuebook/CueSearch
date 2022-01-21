@@ -15,9 +15,9 @@ from dataset.models import Dataset
 
 
 @pytest.mark.django_db(transaction=True)
-def test_getGlobalDimensionById(client,mocker):
+def test_getSearchCard(client,mocker):
     '''
-    Test case for get global dimension by Id
+    Test case for delete global dimension
     '''
     #create demo data for global dimension
     connection = mixer.blend("dataset.connection")
@@ -42,25 +42,17 @@ def test_getGlobalDimensionById(client,mocker):
         'dimensionalValues': [{'datasetId': dataset.id,"dataset":"Returns","dimension":"WarehouseCode"}]
         }
     response = client.post(path,gd_data, content_type="application/json")
+    assert response.data["success"] == True
+    assert response.status_code == 200
+    #get global dimension
+    path = reverse("globalDimension")
+    response = client.get(path)
+    assert response.data["data"][0]['id'] == dataset.id
     assert response.data["success"]
     assert response.status_code == 200
 
-    #Getting global dimension id
-    path =  reverse('globalDimension')
-    response = client.get(path)
-    globalDim_id = response.json().get("data",[])
-    globalDim_id = globalDim_id[0]['id']
+    gd_id = response.data["data"][0]['id']
 
-
-    # Get global dimension using the existing Id 
-    path = reverse("globalDimensionId",kwargs={"id": globalDim_id})
-    response = client.get(path)
-    #breakpoint()
-    assert response.data["success"] == True
-    assert response.status_code == 200
-
-    # Checking the error with the wrong id
-    path = reverse("globalDimensionId",kwargs={"id": 2})
-    response = client.get(path) 
-    assert response.data["success"] == False
-    assert response.status_code == 200
+    # Get Search Card
+    path = reverse('getSearchCards')
+    

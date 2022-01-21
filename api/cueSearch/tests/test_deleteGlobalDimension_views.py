@@ -40,14 +40,15 @@ def test_deleteGlobalDimension(client,mocker):
         'dimensionalValues': [{'datasetId': dataset.id,"dataset":"Returns","dimension":"WarehouseCode"}]
         }
     response = client.post(path,gd_data, content_type="application/json")
-    global_dimension_id = 6
+    
+    #Getting global dimension id
+    path =  reverse('globalDimension')
+    response = client.get(path)
+    globalDim_id = response.json().get("data",[])
+    globalDim_id = globalDim_id[0]['id']
 
     # deleting global dimension
-    path = reverse("global-dimension-delete",kwargs={"id": global_dimension_id})
+    path = reverse("global-dimension-delete",kwargs={"id": globalDim_id})
     response = client.delete(path)
     assert response.data["success"] == True
     assert response.status_code == 200
-
-
-
-

@@ -15,7 +15,7 @@ from dataset.models import Dataset
 @pytest.mark.django_db(transaction=True)
 def test_getGlobalDimension(client,mocker):
     '''
-    Test case for delete global dimension
+    Test case for get global dimension
     '''
     #create demo data for global dimension
     connection = mixer.blend("dataset.connection")
@@ -41,11 +41,16 @@ def test_getGlobalDimension(client,mocker):
         }
     response = client.post(path,gd_data, content_type="application/json")
 
+    #Getting global dimension id
+    path =  reverse('globalDimension')
+    response = client.get(path)
+    globalDim_id = response.json().get("data",[])
+    globalDim_id = globalDim_id[0]['id']
+
 
     #get global dimension
     path = reverse("globalDimension")
     response = client.get(path)
-    assert response.data["data"][0]['id'] == dataset.id
+    assert response.data["data"][0]['id'] == globalDim_id
     assert response.data["success"] 
     assert response.status_code == 200
-
