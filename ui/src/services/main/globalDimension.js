@@ -15,7 +15,6 @@ class GlobalDimensionService {
 
     async AddGlobalDimension(payload){
         const response = await apiService.post("cueSearch/global-dimension/create/", payload)
-        console.log("response services", response)
         if(response.success){
             return response
         }
@@ -67,7 +66,6 @@ class GlobalDimensionService {
     }
     async deleteGlobalDimension(id){
         const response = await apiService.delete("cueSearch/global-dimension/delete/"+id)
-        console.log("delete resposne", response)
         if(response.success){
             return response
         }

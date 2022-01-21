@@ -4,7 +4,7 @@ import { GlobalContext } from "layouts/GlobalContext"
 
 // import style from "./style.module.scss";
 
-import CardPanel from "components/Search/Card/CardPanel";
+import CardPanel from "./CardPanel";
 
 export default function CardPage(props) {
 

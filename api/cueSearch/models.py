@@ -7,7 +7,7 @@ from dataset.models import Dataset
 class GlobalDimension(models.Model):
 
     name = models.CharField(unique=True, max_length=500)
-    published = models.BooleanField(default=True)
+    published = models.BooleanField(default=False)
 
     def __repr__(self):
         return self.name
@@ -24,10 +24,14 @@ class GlobalDimensionValues(models.Model):
 
 
 class SearchCardTemplate(models.Model):
+    RENDER_TYPE_TABLE = "table"
+    RENDER_TYPE_LINE = "line"
+
     templateName = models.TextField(null=True, blank=True)
     title = models.TextField(null=True, blank=True)
     bodyText = models.TextField(null=True, blank=True)
     sql = models.TextField(null=True, blank=True)
+    renderType = models.CharField(default=RENDER_TYPE_TABLE, max_length=200)
     supportedVariables = models.TextField(null=True, blank=True)
 
     def __repr__(self):
