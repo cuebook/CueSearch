@@ -9,15 +9,17 @@ import Chart from "components/Search/Card/Chart";
 import { GlobalContext } from "layouts/GlobalContext"
 
 
-export default function CardPanel(props) {
+export default function CardSnippet(props) {
 
   const { searchCardData, updateSearchCardData } = useContext(GlobalContext)
 
-	const { data: { data }, title, text, params } = props.searchCard
-
 	const handleCardClick = () => {
-		updateSearchCardData({data: data, title: title, text: text, params: params})
+		updateSearchCardData(props.cardData)
 	} 
+
+  const { title, text, params } = props.cardData;
+  const data = props.cardData.data.data
+  const tailoredCardData = { data: data, chartMetaData: props.cardData.chartMetaData, renderType: params.renderType }
 
 	return (
 		<div>
@@ -27,7 +29,7 @@ export default function CardPanel(props) {
               params.renderType == "table" ? 
               <TableCard data={data} isSnippet={true} /> 
               :
-              <Chart data={data} isSnippet={true} /> 
+              <Chart cardData={ tailoredCardData } isMiniChart={true} /> 
             }
           </div>
           <div className={style.contentSnippet}>

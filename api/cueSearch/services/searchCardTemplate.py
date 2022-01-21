@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import json
+from typing import List, Dict
 from itertools import groupby
 import concurrent.futures
 from asgiref.sync import async_to_sync, sync_to_async
@@ -15,12 +16,12 @@ from cueSearch.elasticSearch import ESQueryingUtils, ESIndexingUtils
 from dataset.services import Datasets
 from cueSearch.services.utils import addDimensionsInParam, makeFilter
 
-
 class SearchCardTemplateServices:
     """
     Service for various Card template operations
     """
 
+    @staticmethod
     def getCardTemplates():
         """
         Service to fetch all card templates
@@ -35,6 +36,7 @@ class SearchCardTemplateServices:
             res.update(False, [])
         return res
 
+    @staticmethod
     async def _sendDataRequest(session, payload):
         """
         Async method to fetch individual search card data
@@ -47,6 +49,7 @@ class SearchCardTemplateServices:
         responseData = result.json()
         return responseData
 
+    @staticmethod
     async def fetchCardsData(searchResults):
         """
         Async method to fetch data for searched cards
@@ -62,6 +65,7 @@ class SearchCardTemplateServices:
             )
             return result
 
+    @staticmethod
     def getSearchCards(searchPayload: dict):
         """
         Service to fetch and create search cards on the fly
@@ -93,9 +97,9 @@ class SearchCardTemplateServices:
                     paramDict["datasetId"] = int(key)
                     paramDict["searchResults"] = value
                     paramDict["sqlTemplate"] = searchTemplate.sql
-                    paramDict["renderType"] = searchTemplate.renderType
                     paramDict["templateTitle"] = searchTemplate.title
                     paramDict["templateText"] = searchTemplate.bodyText
+                    paramDict["renderType"] = searchTemplate.renderType
                     paramDict["dataset"] = dataset.name
                     paramDict["dimensions"] = json.loads(dataset.dimensions)
                     paramDict["metrics"] = json.loads(dataset.metrics)
@@ -124,9 +128,56 @@ class SearchCardTemplateServices:
                     "params": params[i],
                 }
             )
+
+        finalResults = [ SearchCardTemplateServices.addChartMetaData(x) for x in finalResults ]
         res.update(True, "successfully fetched", finalResults)
         return res
 
+    @staticmethod
+    def addChartMetaData(result: Dict) -> Dict:
+        """
+        Adds metadata needed for chart to result
+        """
+        timestampColumn = None
+        metric = None
+        dimension = None
+        mask = "M/D/H"
+        order = "0"
+        chartMetaData = {}
+
+        params = result['params']
+        if params['renderType'] == "line" and result['data'] and result['data']['data']:
+            dataColumns = result['data']['data'][0].keys()
+            if params['timestampColumn'] in dataColumns:
+                timestampColumn = params["timestampColumn"]
+            if params['granularity'] == "day":
+                mask = "M/D"
+            metric = list(set(params["metrics"]) & set(dataColumns))[0]
+
+            chartMetaData = {
+                "xColumn": timestampColumn,
+                "yColumn": metric,
+                "scale": {
+                    timestampColumn: {
+                        'type': 'time',
+                        'mask': mask
+                    },
+                },
+                "order": "O"
+            }
+
+            try:
+                dimension = list(set(params["dimensions"]) & set(dataColumns))[0]
+                chartMetaData['color'] = dimension
+                chartMetaData["scale"][dimension] = { 'alias': dimension}
+            except Exception as ex:
+                pass
+
+        result['chartMetaData'] = chartMetaData
+        return result
+
+
+    @staticmethod
     def getSearchSuggestions(query):
         """Get searchsuggestion for search dropdown"""
         res = ApiResponse()

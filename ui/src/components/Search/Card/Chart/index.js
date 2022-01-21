@@ -38,7 +38,7 @@ class ChartCard extends React.Component {
     const { cardData } = this.props;
     const showPercentageButton = cardData && cardData.rowsTotal;
     let data = [];
-    let metaData = {};
+    let chartMetaData = {};
     let geomElements = null;
     let xAxisLabel = null;
 
@@ -47,18 +47,18 @@ class ChartCard extends React.Component {
       : this.props.renderType;
 
     if (cardData) {
-      if (cardData.data && cardData.metaData) {
+      if (cardData.data && cardData.chartMetaData) {
         data = JSON.parse(JSON.stringify(cardData.data));
 
-        metaData = cardData.metaData;
+        chartMetaData = cardData.chartMetaData;
         let numDict = { B: 1000000000, M: 1000000, K: 1000, O: 1 };
         let order = "O";
         order = order !== "O" ? order : "";
-        if (metaData.order && metaData.order !== "O") {
-          let denom = numDict[metaData.order];
-          metaData.scale[metaData.yColumn] = {
-            ...metaData.scale[metaData.yColumn],
-            formatter: val => (val / denom).toLocaleString() + metaData.order
+        if (chartMetaData.order && chartMetaData.order !== "O") {
+          let denom = numDict[chartMetaData.order];
+          chartMetaData.scale[chartMetaData.yColumn] = {
+            ...chartMetaData.scale[chartMetaData.yColumn],
+            formatter: val => (val / denom).toLocaleString() + chartMetaData.order
           };
         }
 
@@ -66,14 +66,14 @@ class ChartCard extends React.Component {
             <Geom
               key="chartDefault"
               type={renderTypeMap[renderType]}
-              position={metaData.xColumn + "*" + metaData.yColumn}
-              color={metaData.color ? metaData.color : ""}
+              position={chartMetaData.xColumn + "*" + chartMetaData.yColumn}
+              color={chartMetaData.color ? chartMetaData.color : ""}
             />,
             <Geom
               key="chartPoint"
               type={"point"}
               size={7}
-              position={metaData.xColumn + "*" + metaData.yColumn}
+              position={chartMetaData.xColumn + "*" + chartMetaData.yColumn}
               opacity={0}
               active={[
                 true,
@@ -98,7 +98,7 @@ class ChartCard extends React.Component {
     this.chart = data.length ? (
       <Chart
         data={data}
-        scale={metaData.scale}
+        scale={chartMetaData.scale}
         forceFit={true}
         height={this.props.height ? this.props.height : 400}
         width={this.props.width}
@@ -106,18 +106,18 @@ class ChartCard extends React.Component {
       >
         {this.props.isMiniChart ? (
           <Axis
-            name={cardData.metaData.yColumn}
+            name={cardData.chartMetaData.yColumn}
             position="left"
             label={{ textStyle: { fill: "#888", fontSize: "10" } }}
           />
         ) : (
-          <Axis name={cardData.metaData.yColumn} />
+          <Axis name={cardData.chartMetaData.yColumn} />
         )}
         {this.props.isMiniChart ? (
-          <Axis name={cardData.metaData.xColumn} visible={false} />
+          <Axis name={cardData.chartMetaData.xColumn} visible={false} />
         ) : (
           <Axis
-            name={cardData.metaData.xColumn}
+            name={cardData.chartMetaData.xColumn}
             // label={xAxisLabel}
             title={{ textStyle: { fill: "#888" } }}
           />

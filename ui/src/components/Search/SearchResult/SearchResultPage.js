@@ -38,8 +38,8 @@ export default function SearchResultPage(props){
   let cardTypesArray = []
 
   if(searchCards){
-    cardsArray = searchCards && searchCards.map(item=>
-      <div className={style.cardPanelWrapper}> < CardSnippet searchCard={item}/> </div>
+    cardsArray = searchCards && searchCards.map((item, index)=>
+      <div className={style.cardPanelWrapper}> < CardSnippet cardData={item} key={index} /> </div>
     )
   }
 
