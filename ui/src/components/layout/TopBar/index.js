@@ -11,8 +11,8 @@ import { withRouter } from "react-router-dom";
 
 
 export default function TopBar (props) {
-const history = useHistory()
- const searchSubmit = searchPayload => {
+  const history = useHistory()
+  const searchSubmit = searchPayload => {
     const searchQuery = encodeURIComponent(JSON.stringify(searchPayload));
     history.push("/search?search=" + searchQuery);
   };

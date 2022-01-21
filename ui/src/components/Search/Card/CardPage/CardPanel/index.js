@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { message, Select, Table } from "antd";
+import {useHistory} from "react-router-dom"
+import { message, Select, Button } from "antd";
 import _ from "lodash";
 
 import TableCard from "components/Search/Card/Table";
@@ -8,9 +9,13 @@ import Chart from "components/Search/Card/Chart";
 import style from "./style.module.scss";
 
 export default function CardPanel(props) {
+	const history = useHistory()
 
 	if (_.isEmpty(props.cardData)){
-		return <p>Please Go Back - ICON</p>
+		return <div>
+					<Button className="mr-2" type="primary" onClick={history.goBack}> Back </Button>
+					<Button className="mr-2" type="primary" onClick={()=>{history.push("/")}}> Home </Button>
+				</div>
 	}
 
 	const { title, text, params } = props.cardData;

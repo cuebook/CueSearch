@@ -5,6 +5,7 @@ import {EditOutlined } from '@ant-design/icons';
 import style from "./style.module.scss";
 import {useHistory} from "react-router-dom"
 import searchResultService from "services/main/searchResult.js"
+import ErrorBoundary from "components/Utils/ErrorBoundary"
 // import TrackVisibility from "react-on-screen";
 
 import CardSnippet from "components/Search/Card/CardSnippet";
@@ -39,7 +40,9 @@ export default function SearchResultPage(props){
 
   if(searchCards){
     cardsArray = searchCards && searchCards.map((item, index)=>
-      <div className={style.cardPanelWrapper}> < CardSnippet cardData={item} key={index} /> </div>
+      <ErrorBoundary>
+        <div className={style.cardPanelWrapper}> < CardSnippet cardData={item} key={index} /> </div>
+      </ErrorBoundary>
     )
   }
 

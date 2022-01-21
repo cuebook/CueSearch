@@ -115,7 +115,7 @@ export default function Admin() {
               <Route path="/search/global-dimension" exact component={GlobalDimensionTable} />
               <Route path="/search/" exact component={SearchResultPage} />
               <Route path="/search/card" exact component={SearchCardPage} />
-              <Redirect from="/" to="/connections" />
+              <Redirect from="/" to="/search/global-dimension" />
             </Switch>
           </div>
         </div>

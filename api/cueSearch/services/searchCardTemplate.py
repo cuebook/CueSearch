@@ -14,7 +14,9 @@ from cueSearch.models import SearchCardTemplate
 from dataset.models import Dataset
 from cueSearch.elasticSearch import ESQueryingUtils, ESIndexingUtils
 from dataset.services import Datasets
-from cueSearch.services.utils import addDimensionsInParam, makeFilter
+from cueSearch.services.utils import addDimensionsInParam, makeFilter, getOrderFromDataframe
+
+logger = logging.getLogger(__name__)
 
 class SearchCardTemplateServices:
     """
@@ -109,50 +111,73 @@ class SearchCardTemplateServices:
         groupedResults = groupSearchResultsByDataset(searchResults)
         searchTemplates = SearchCardTemplate.objects.all()
 
-        params = []
+        results = []
         for searchTemplate in searchTemplates:
             for result in groupedResults:
-                for key, value in result.items():
-                    dataset = Dataset.objects.get(id=int(key))
+                for datasetId, datasetSearchResult in result.items():
+                    dataset = Dataset.objects.get(id=int(datasetId))
                     paramDict = {}
-                    paramDict["datasetId"] = int(key)
-                    paramDict["searchResults"] = value
-                    paramDict["sqlTemplate"] = searchTemplate.sql
+                    paramDict["datasetId"] = int(datasetId)
+
+                    paramDict["searchResults"] = datasetSearchResult
+                    paramDict['filter'] = makeFilter(datasetSearchResult)
+                    paramDict['filterDimensions'] = addDimensionsInParam(datasetSearchResult)
+
+                    paramDict["templateSql"] = searchTemplate.sql
                     paramDict["templateTitle"] = searchTemplate.title
                     paramDict["templateText"] = searchTemplate.bodyText
                     paramDict["renderType"] = searchTemplate.renderType
+
                     paramDict["dataset"] = dataset.name
                     paramDict["dimensions"] = json.loads(dataset.dimensions)
                     paramDict["metrics"] = json.loads(dataset.metrics)
                     paramDict["timestampColumn"] = dataset.timestampColumn
                     paramDict["datasetSql"] = dataset.sql
                     paramDict["granularity"] = dataset.granularity
-                    params.append(paramDict)
 
-        for param in params:
-            filter = makeFilter(param)
-            dimensions = addDimensionsInParam(param)
-            param.update({"filter": filter})
-            param.update({"filterDimensions": dimensions})
+                    renderedTemplates = SearchCardTemplateServices.renderTemplates(paramDict)
+                    for renderedTemplate in renderedTemplates:
+                        x = { "params": paramDict, **renderedTemplate }
+                        results.append(x)
 
-        dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(params))
-        for i in range(len(params)):
-            finalResults.append(
-                {
-                    "title": Template(params[i]["templateTitle"]).render(
-                        Context(params[i])
-                    ),
-                    "text": Template(params[i]["templateText"]).render(
-                        Context(params[i])
-                    ),
-                    "data": dataResults[i],
-                    "params": params[i],
-                }
-            )
 
-        finalResults = [ SearchCardTemplateServices.addChartMetaData(x) for x in finalResults ]
+        dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(results))
+        for i in range(len(results)):
+            results[i]['data'] = dataResults[i]
+
+        finalResults = [ SearchCardTemplateServices.addChartMetaData(x) for x in results ]
         res.update(True, "successfully fetched", finalResults)
         return res
+
+    @staticmethod
+    def renderTemplates(param: dict):
+        """
+        Renders template with passed variables
+        :param param: dict with values needed for rendering
+        returns: [{ title: str, text: str, sql: str }]
+        """
+        response = []
+        delimiter = "+-;"
+        try:
+            titles = Template(param["templateTitle"]).render(Context(param)).split(delimiter)
+            texts = Template(param["templateText"]).render(Context(param)).split(delimiter)
+            sqls = Template(param["templateSql"]).render(Context(param)).split(delimiter)
+
+            if len(titles) != len(texts) or len(titles) != len(sqls):
+                raise ValueError("Incosistent use of delimiter (%s) in title, text, sql of template" % delimiter)
+
+            for i in range(len(sqls)):
+                if str.isspace(sqls[i]): continue
+                response.append(
+                    { 'title': titles[i], 'text': texts[i], 'sql': sqls[i]}
+                )
+
+        except Exception as ex:
+            logger.error("Error in rendering templates: %s", str(ex))
+            logger.error(param)
+
+        return response
+
 
     @staticmethod
     def addChartMetaData(result: Dict) -> Dict:

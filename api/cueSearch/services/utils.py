@@ -1,4 +1,5 @@
 from itertools import groupby
+from pandas import DataFrame
 
 def key_func(k):
     return k['dimension']
@@ -38,17 +39,30 @@ def structureOrFilter(payload):
         l.append(text)
     return l 
 
-def makeFilter(payloads):
-    payload = payloads['searchResults']
+def makeFilter(payload):
     paramList = structureOrFilter(payload)
     filter = structureAndFilter(paramList)
     return filter
 
-def addDimensionsInParam(payloads):
-    payload = payloads['searchResults']
+def addDimensionsInParam(payload):
     payload = sorted(payload, key=key_func)
     listOfDimensions = []
     for key, values in groupby(payload, key_func):
         listOfDimensions.append(key)
     return listOfDimensions
 
+
+def getOrderFromDataframe(dataframe: DataFrame, column: str):
+    try:
+        minValue = dataframe[column].min(skipna=True)
+    except:
+        minValue = 0
+    if isinstance(minValue, (int, float)):
+        order = (
+            "B"
+            if minValue > 1000000000
+            else ("M" if minValue > 1000000 else ("K" if minValue > 1000 else "O"))
+        )
+    else:
+        order = "O"
+    return order
