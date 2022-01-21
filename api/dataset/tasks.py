@@ -8,6 +8,7 @@ def indexingJob():
     try:
         logging.info("Indexing starts")
         ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion() # Used for search suggestion
+        ESIndexingUtils.indexAutoGlobalDimensionsDataForSearchSuggestion() #Used for index auto global dimension
         ESIndexingUtils.indexGlobalDimensionName()
         ESIndexingUtils.indexGlobalDimensionsData()
         logging.info("Indexing completed !")

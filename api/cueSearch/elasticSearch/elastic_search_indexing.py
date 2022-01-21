@@ -20,11 +20,12 @@ class ESIndexingUtils:
     Class to handle Elastic Search related indexing
     and search utilities
     """
-    GLOBAL_DIMENSIONS_NAMES_INDEX_NAME = "cueobserve_global_dimensions_names_for_search_index"
-    GLOBAL_DIMENSIONS_INDEX_NAME = "global_dimensions_name_index_cueobserve"
-    GLOBAL_DIMENSIONS_INDEX_DATA = "cueobserve_global_dimensions_data_index"
-    GLOBAL_DIMENSIONS_INDEX_SEARCH_SUGGESTION_DATA = "cueobserve_global_dimensions_search_suggestion_data_index"
-    DATASET_MEASURES_INDEX_NAME = "dataset_measures_index_cueobserve"
+    GLOBAL_DIMENSIONS_NAMES_INDEX_NAME = "cuesearch_global_dimensions_names_for_search_index"
+    GLOBAL_DIMENSIONS_INDEX_NAME = "global_dimensions_name_index_cuesearch"
+    GLOBAL_DIMENSIONS_INDEX_DATA = "cuesearch_global_dimensions_data_index"
+    AUTO_GLOBAL_DIMENSIONS_INDEX_DATA = "cuesearch_auto_global_dimensions_search_suggestion_data_index"
+    GLOBAL_DIMENSIONS_INDEX_SEARCH_SUGGESTION_DATA = "cuesearch_global_dimensions_search_suggestion_data_index"
+    DATASET_MEASURES_INDEX_NAME = "dataset_measures_index_cuesearch"
 
     @staticmethod
     def _getESClient() -> Elasticsearch:
@@ -319,7 +320,7 @@ class ESIndexingUtils:
         logging.debug("Starting fetch for global dimension: %s", globalDimensionName)
         globalDimensionId = globalDimensionGroup["id"]
         dimensionObjs = globalDimensionGroup["values"]  # dimensional values
-        logging.info("Merging dimensions Value percentile with mulitple vlaues in list of dimensionValues")
+        logging.info("Merging dimensions Value percentile with mulitple values in list of dimensionValues")
         for dmObj in dimensionObjs:
             displayValue = ''
             dimension = dmObj["dimension"]
@@ -564,3 +565,142 @@ class ESIndexingUtils:
         else:
             logging.error("Error in fetching global dimensions.")
             raise RuntimeError("Error in fetching global dimensions")
+
+
+
+
+    @staticmethod
+    def indexAutoGlobalDimensionsDataForSearchSuggestion(joblogger=None):
+        """
+        Method to index global dimensions data
+        """
+        from cueSearch.services import globalDimension, GlobalDimensionServices
+
+        logging.info("Fetching the global dimensions and the dimension values for auto global dimension")
+        response = GlobalDimensionServices.autoGlobalDimensionForIndexing()
+        logging.info("response of globaldimension value %s", response)
+        if response["success"]:
+            datsetDimensions = response.get("data", [])
+            logging.debug("Global dimensions: %s", datsetDimensions)
+
+            indexDefinition = {
+                "settings": {
+                    "analysis": {
+                        "analyzer": {"my_analyzer": {"tokenizer": "my_tokenizer", "filter": ["lowercase"]}},
+                        "default_search": {"type": "my_analyzer"},
+                        "tokenizer": {
+                            "my_tokenizer": {
+                                "type": "edge_ngram",
+                                "min_gram": 1,
+                                "max_gram": 10,
+                                "token_chars": ["letter", "digit"],
+                            }
+                        },
+                    }
+                },
+                "mappings": {
+                    "properties": {
+                        "globalDimensionId": {"type": "text"},
+                        "globalDimensionDisplayValue": {"type": "text"},
+                        "globalDimensionValue": {
+                            "type": "text",
+                            "search_analyzer": "my_analyzer",
+                            "analyzer": "my_analyzer",
+                            "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
+                        },
+                        "globalDimensionName": {
+                            "type": "text",
+                            "search_analyzer": "my_analyzer",
+                            "analyzer": "my_analyzer",
+                            "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
+                        },
+
+                        "dimension": {
+                            "type": "text",
+                            "search_analyzer": "my_analyzer",
+                            "analyzer": "my_analyzer",
+                            "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
+                        },
+                        "dataset": {"type": "text"},
+                        "datasetId":{"type": "integer"},
+                    }
+                },
+            }
+
+            indexName = ESIndexingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA
+
+            aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
+            print("indexName", indexName)
+            print("alias index", aliasIndex)
+            # app.logger.info("IndexName %s", indexName)
+            # app.logger.info("aliasIndex %s", aliasIndex)
+            # for globalDimensionGroup in datsetDimensions:
+            logging.info("datsetDimensions %s", datsetDimensions)
+            # datsetDimensions is an array
+            try:
+                documentsToIndex = ESIndexingUtils.fetchAutoGlobalDimensionsValueForIndexing(
+                    datsetDimensions
+                )
+
+                ESIndexingUtils.ingestIndex(documentsToIndex, aliasIndex)
+            except (Exception) as error:
+                logging.error(str(error))
+                if joblogger:
+                    joblogger.udpateSummary(
+                        {
+                            datsetDimensions[0]["globalDimension"]["name"]
+                            + " stackTrace": traceback.format_exc()
+                        }
+                    )
+                    joblogger.udpateSummary(
+                        {datsetDimensions[0]["globalDimension"]["name"] + " message": str(error)}
+                    )
+                pass
+
+            ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
+
+        else:
+            logging.error("Error in fetching global dimensions.")
+            raise RuntimeError("Error in fetching global dimensions")
+
+    @staticmethod
+    def fetchAutoGlobalDimensionsValueForIndexing(datasetDimensions : list) :
+        """
+        Method to fetch the global dimensions and the dimension values.
+        :return List of Documents to be indexed
+        """
+        indexingDocuments = []
+        dimension = ''
+        globalDimensionName = ""
+        globalDimensionId = ""
+        dimensionObjs = datasetDimensions
+        logging.info("Merging dimensions Value percentile with mulitple values in list of dimensionValues")
+        for dmObj in dimensionObjs:
+            displayValue = ''
+            dimension = dmObj["dimension"]
+            dataset = dmObj["dataset"]
+            datasetId = dmObj["datasetId"]
+            res = Utils.getDimensionalValuesForDimension(datasetId, dimension)
+            dimensionValues = res.get("data", [])
+            if dimensionValues:
+                for values in dimensionValues:
+                    displayValue = values
+                    globalDimensionId = str(dimension) + "_" + str(datasetId)
+                    globalDimensionName =  str(dataset) + "_" +str(dimension)
+                    elasticsearchUniqueId = str(globalDimensionId) + "_" + str(displayValue) + "_" + str(dataset)
+
+                    document = {
+                        "_id": elasticsearchUniqueId,
+                        "globalDimensionValue": str(displayValue).lower(),
+                        "globalDimensionDisplayValue": str(displayValue),
+                        "globalDimensionName": str(globalDimensionName),
+                        "globalDimensionId": globalDimensionId,
+                        "dimension": dimension,
+                        "dataset": dataset,
+                        "datasetId": datasetId,
+                    }
+                    indexingDocuments.append(document)
+                    logging.debug("Document to index: %s", document)
+
+        return indexingDocuments
+  

@@ -64,6 +64,36 @@ class SearchCardTemplateServices:
                 )
             )
             return result
+            
+    @staticmethod
+    def ElasticSearchQueryResultsForOnSearchQuery(searchPayload: dict):
+        searchResults = []
+        for payload in searchPayload:
+            data = []
+            query = payload["label"]
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                futures = [
+                    executor.submit(
+                        ESQueryingUtils.findGlobalDimensionResults,
+                        query=query
+                    ),executor.submit(
+                        ESQueryingUtils.findAutoGlobalDimensionResults,
+                        query=query
+                    ),
+                ]
+
+                for future in concurrent.futures.as_completed(futures):
+                    try:
+                        data.extend(future.result())
+                    except Exception as ex:
+                        logging.error("Error in fetching search suggestions :%s", str(ex))
+
+            if data:
+                searchResults.extend(data)
+        print(searchResults)
+        return searchResults
+
+
 
     @staticmethod
     def getSearchCards(searchPayload: dict):
@@ -74,17 +104,7 @@ class SearchCardTemplateServices:
         res = ApiResponse()
         finalResults = []
         searchResults = []
-        for payload in searchPayload:
-            results = []
-            globalDimensionId = payload["id"]
-            globalDimensionValue = payload["label"]
-
-            results = ESQueryingUtils.findGlobalDimensionResults(
-                globalDimension=globalDimensionId, query=globalDimensionValue
-            )
-            if results:
-                searchResults.extend(results)
-
+        searchResults = SearchCardTemplateServices.ElasticSearchQueryResultsForOnSearchQuery(searchPayload)
         groupedResults = groupSearchResultsByDataset(searchResults)
         searchTemplates = SearchCardTemplate.objects.all()
 
@@ -190,6 +210,12 @@ class SearchCardTemplateServices:
                     datasource=None,
                     offset=0,
                     limit=6,
+                ),executor.submit(
+                    ESQueryingUtils.findAutoGlobalDimensionResultsForSearchSuggestion,
+                    query=query,
+                    datasource=None,
+                    offset=0,
+                    limit=5,
                 ),
                 executor.submit(
                     ESQueryingUtils.findGlobalDimensionNames,
