@@ -27,6 +27,11 @@ class GlobalDimensionServices:
                     dimension=obj["dimension"],
                     globalDimension=globalDimension,
                 )
+            try:
+                ESIndexingUtils.runAllIndexDimension()
+            except Exception as ex:
+                logging.error("Exception occured while indexing global dimension")
+
             res.update(True, "GlobalDimension created successfully")
         except Exception as ex:
             res.update(False, "Global Dimension name already exists")
@@ -39,6 +44,11 @@ class GlobalDimensionServices:
             globalDimension = GlobalDimension.objects.filter(
                 id=globalDimensionId
             ).delete()
+            try:
+                ESIndexingUtils.runAllIndexDimension()
+            except Exception as ex:
+                logging.error("Exception occured while indexing global dimension")
+                
             res.update(True, "successfully deleted")
         except Exception as ex:
             res.update(False, "Error occured while deleting global dimension ")
@@ -88,7 +98,7 @@ class GlobalDimensionServices:
                 globalDimensionObj.published = published
                 globalDimensionObj.save()
                 try:
-                    ESIndexingUtils.indexGlobalDimension()
+                    ESIndexingUtils.runAllIndexDimension()
                 except Exception as ex:
                     logging.error("Exception occured while indexing global dimension")
 
@@ -130,7 +140,7 @@ class GlobalDimensionServices:
                     dataset=dataset, dimension=obj["dimension"], globalDimension=gd
                 )
             try:
-                ESIndexingUtils.indexGlobalDimension()
+                ESIndexingUtils.runAllIndexDimension()
             except Exception as ex:
                 logging.error("Indexing Failed")
             res.update(True, "Global Dimension updated successfully")

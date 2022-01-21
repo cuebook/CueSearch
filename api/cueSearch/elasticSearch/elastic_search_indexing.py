@@ -155,7 +155,7 @@ class ESIndexingUtils:
 
         return indexingDocuments
     @staticmethod
-    def indexGlobalDimension():
+    def runAllIndexDimension():
         """
         Method to spawn a thread to index global dimension into elasticsearch existing indices
         The child thread assumes an index existing with a predefined unaltered indexDefinition
@@ -166,6 +166,8 @@ class ESIndexingUtils:
         cardIndexer1.start()
         cardIndexer2 = threading.Thread(target=ESIndexingUtils.indexGlobalDimensionsData)
         cardIndexer2.start()
+        cardIndexer3 = threading.Thread(target=ESIndexingUtils.indexAutoGlobalDimensionsDataForSearchSuggestion)
+        cardIndexer3.start()
 
     @staticmethod
     def indexGlobalDimensionName(joblogger=None):
