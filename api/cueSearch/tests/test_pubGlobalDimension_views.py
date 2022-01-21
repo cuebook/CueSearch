@@ -46,10 +46,16 @@ def test_pubGlobalDimension(client,mocker):
     assert response.data["success"]
     assert response.status_code == 200
 
+    #Getting global dimension id
+    path =  reverse('globalDimension')
+    response = client.get(path)
+    globalDim_id = response.json().get("data",[])
+    globalDim_id = globalDim_id[0]['id']
+
     # published global dimension
     path = reverse("pubGlobalDimension")
     payload = {
-        'id':6,
+        'id':globalDim_id,
         'published':True
     }
     response = client.post(path,payload)

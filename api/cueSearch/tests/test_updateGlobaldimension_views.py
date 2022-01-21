@@ -50,13 +50,17 @@ def test_updateGlobalDimension(client,mocker):
     assert response.data["success"]
     assert response.status_code == 200
 
-    gd_id = response.data["data"][0]['id']
+    #Getting global dimension id
+    path =  reverse('globalDimension')
+    response = client.get(path)
+    globalDim_id = response.json().get("data",[])
+    globalDim_id = globalDim_id[0]['id']
 
 
 
 
     #Updating the exsisting global dimension by Id
-    path = reverse("updateGlobalDimension", kwargs={'id':gd_id})
+    path = reverse("updateGlobalDimension", kwargs={'id':globalDim_id})
     payload = {
         'name':'test',
         'dimensionalValues': [],
@@ -66,7 +70,3 @@ def test_updateGlobalDimension(client,mocker):
     response = client.post(path,payload)
     assert response.data["success"] == True
     assert response.status_code == 200
-
-
-
-
