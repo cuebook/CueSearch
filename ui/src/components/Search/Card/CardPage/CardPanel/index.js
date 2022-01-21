@@ -13,10 +13,9 @@ export default function CardPanel(props) {
 		return <p>Please Go Back - ICON</p>
 	}
 
-	const { title, text } = props.cardData;
-	const tailoredCardData = { data: props.cardData.data.data, chartMetaData: props.cardData.chartMetaData, renderType: props.cardData.params.renderType }
-
-	console.log(tailoredCardData)
+	const { title, text, params } = props.cardData;
+	const data = props.cardData.data.data
+	const tailoredCardData = { data: data, chartMetaData: props.cardData.chartMetaData, renderType: params.renderType }
 
 	return (
 		<div>
@@ -24,8 +23,14 @@ export default function CardPanel(props) {
 			<div className={`w-9/12 ${style.chartPanel}`}>
 			  <div className={style.anomalyTitle} dangerouslySetInnerHTML={{ __html: title }} />
 			  <div className={style.anomalyText} dangerouslySetInnerHTML={{ __html: text }} />
-			  {/* <div className={style.chartDiv}> <TableCard data={data} /> </div> */}
-			  <div className={style.chartDiv}> <Chart cardData={ tailoredCardData } renderType="line" /> </div>
+			  <div className={style.chartDiv}>
+				{
+					params.renderType == "table" ? 
+					<TableCard data={data} /> 
+					:
+					<Chart cardData={ tailoredCardData } /> 
+				}
+			  </div>
 			</div>
 			</div>			
 		</div>
