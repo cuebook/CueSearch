@@ -91,6 +91,7 @@ class SearchCardTemplateServices:
             if data:
                 searchResults.extend(data)
         print(searchResults)
+        searchResults = list({v['id']:v for v in searchResults}.values())
         return searchResults
 
 
