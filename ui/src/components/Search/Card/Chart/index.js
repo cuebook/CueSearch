@@ -44,7 +44,7 @@ class ChartCard extends React.Component {
 
     let renderType = this.state.renderType
       ? this.state.renderType
-      : this.props.renderType;
+      : this.props.cardData.renderType;
 
     if (cardData) {
       if (cardData.data && cardData.chartMetaData) {
