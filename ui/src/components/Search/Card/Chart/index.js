@@ -75,15 +75,6 @@ class ChartCard extends React.Component {
               size={7}
               position={chartMetaData.xColumn + "*" + chartMetaData.yColumn}
               opacity={0}
-              active={[
-                true,
-                {
-                  highlight: true,
-                  style: {
-                    cursor: "crosshair"
-                  }
-                }
-              ]}
             />
           ];
         }
@@ -100,8 +91,8 @@ class ChartCard extends React.Component {
         data={data}
         scale={chartMetaData.scale}
         forceFit={true}
-        height={this.props.height ? this.props.height : 400}
-        width={this.props.width}
+        height={this.props.isMiniChart ? 120 : 400}
+        width={this.props.isMiniChart ? 480 : undefined}
         padding="auto"
       >
         {this.props.isMiniChart ? (
