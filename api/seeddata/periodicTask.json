@@ -4,7 +4,7 @@
       "model": "django_celery_beat.periodictask",
       "pk": 1,
       "fields": {
-        "name": "",
+        "name": "Index data for cueSearch",
         "task": "dataset.tasks.indexingJob",
         "interval": null,
         "crontab": 1,

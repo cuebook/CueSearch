@@ -138,3 +138,31 @@ class GlobalDimensionServices:
             res.update(False, "Error occured while updating global dimension")
         return res
 
+
+    def autoGlobalDimensionForIndexing():
+        """ Method to filter dimension from all ready created global dimension"""
+        try:
+            dimensions = GlobalDimensionServices.getDimension()
+            dimensionObjs = dimensions.json().get("data",[])
+            globalDim = GlobalDimensionServices.getGlobalDimensions()
+            globalDimensionObjs = globalDim.json().get("data",[])
+            gdValuesList = []
+            listToIndex = []
+
+            for gd in globalDimensionObjs:
+                gdValuesList.extend(gd["values"])
+            for dimensionObj in dimensionObjs:
+                flag = False
+                for globalDimensionObj in gdValuesList:
+                    if (dimensionObj["datasetId"] == globalDimensionObj["datasetId"]) and (dimensionObj["dimension"] == globalDimensionObj["dimension"]):
+                        flag = True
+                
+                if not flag:
+                    listToIndex.append(dimensionObj)
+            print(len(listToIndex))
+            res = {"success":True, "data":listToIndex}
+
+        except Exception as ex:
+            logging.error("Error occued while fetch auto global dimension for indexing %s", str(ex))
+            res = {"success":False, "data":[]}
+        return res

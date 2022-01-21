@@ -78,6 +78,7 @@ def getSearchSuggestionsView(request: HttpRequest) -> Response:
 def elasticSearchIndexingView(request: HttpRequest)-> Response:
     res = ApiResponse("Indexing is not completed !")
     ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion() # Used for search suggestion
+    ESIndexingUtils.indexAutoGlobalDimensionsDataForSearchSuggestion() #Used for index auto global dimension
     ESIndexingUtils.indexGlobalDimensionName()
     ESIndexingUtils.indexGlobalDimensionsData()
     res.update(True, "Indexing completed !", [])
