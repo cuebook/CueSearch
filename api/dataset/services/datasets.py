@@ -107,16 +107,14 @@ class Datasets:
         res.update(True, "Successfully created dataset")
         return res
 
-    
     def getDatasetData(payload: dict):
         """
         Utility service to fetch data for a payload
         :param payload: Dict containing dataset name, and global dimension
         """
         res = ApiResponse("Error in fetching data")
-        dataset = Dataset.objects.get(id=payload["datasetId"])
-        payload["datasetSql"] = dataset.sql
         customSql = Template(payload["sqlTemplate"]).render(Context(payload))
+        dataset = Dataset.objects.get(id=payload["datasetId"])
         dataDf = Data.fetchDatasetDataframe(dataset, customSql)
         dfDict = dataDf.to_dict("records")
         res.update(True, "Successfully fetched data", dfDict)

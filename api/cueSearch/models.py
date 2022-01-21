@@ -24,10 +24,14 @@ class GlobalDimensionValues(models.Model):
 
 
 class SearchCardTemplate(models.Model):
+    RENDER_TYPE_TABLE = "table"
+    RENDER_TYPE_LINE = "line"
+
     templateName = models.TextField(null=True, blank=True)
     title = models.TextField(null=True, blank=True)
     bodyText = models.TextField(null=True, blank=True)
     sql = models.TextField(null=True, blank=True)
+    renderType = models.CharField(default=RENDER_TYPE_TABLE, max_length=200)
     supportedVariables = models.TextField(null=True, blank=True)
 
     def __repr__(self):

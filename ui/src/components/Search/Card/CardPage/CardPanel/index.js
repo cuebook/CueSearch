@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { message, Select, Table } from "antd";
-
 import _ from "lodash";
 
-import style from "./style.module.scss";
-
 import TableCard from "components/Search/Card/Table";
+import Chart from "components/Search/Card/Chart";
+
+import style from "./style.module.scss";
 
 export default function CardPanel(props) {
 
@@ -13,9 +13,10 @@ export default function CardPanel(props) {
 		return <p>Please Go Back - ICON</p>
 	}
 
-	const data = props.cardData.data
-	const title = props.cardData.title
-	const text = props.cardData.text
+	const { title, text } = props.cardData;
+	const tailoredCardData = { data: props.cardData.data.data, chartMetaData: props.cardData.chartMetaData, renderType: props.cardData.params.renderType }
+
+	console.log(tailoredCardData)
 
 	return (
 		<div>
@@ -23,7 +24,8 @@ export default function CardPanel(props) {
 			<div className={`w-9/12 ${style.chartPanel}`}>
 			  <div className={style.anomalyTitle} dangerouslySetInnerHTML={{ __html: title }} />
 			  <div className={style.anomalyText} dangerouslySetInnerHTML={{ __html: text }} />
-			  <div className={style.chartDiv}> <TableCard data={data} /> </div>
+			  {/* <div className={style.chartDiv}> <TableCard data={data} /> </div> */}
+			  <div className={style.chartDiv}> <Chart cardData={ tailoredCardData } renderType="line" /> </div>
 			</div>
 			</div>			
 		</div>

@@ -4,26 +4,33 @@ import { message, Select, Table } from "antd";
 import style from "./style.module.scss";
 
 import TableCard from "components/Search/Card/Table";
+import Chart from "components/Search/Card/Chart";
 
 import { GlobalContext } from "layouts/GlobalContext"
 
 
-export default function CardPanel(props) {
+export default function CardSnippet(props) {
 
   const { searchCardData, updateSearchCardData } = useContext(GlobalContext)
 
-	const { data: { data }, title, text } = props.searchCard
-
 	const handleCardClick = () => {
-		updateSearchCardData({data: data, title: title, text: text})
+		updateSearchCardData(props.cardData)
 	} 
+
+  const { title, text, params } = props.cardData;
+  const data = props.cardData.data.data
+  const tailoredCardData = { data: data, chartMetaData: props.cardData.chartMetaData, renderType: params.renderType }
 
 	return (
 		<div>
 		  <div className={style.searchSnippet}>
           <div className={style.chartSnippet}>
-
-            <TableCard data={data} isSnippet={true} /> 
+            {
+              params.renderType == "table" ? 
+              <TableCard data={data} isSnippet={true} /> 
+              :
+              <Chart cardData={ tailoredCardData } isMiniChart={true} /> 
+            }
           </div>
           <div className={style.contentSnippet}>
             <a
