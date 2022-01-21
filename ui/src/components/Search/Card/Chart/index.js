@@ -135,14 +135,7 @@ class ChartCard extends React.Component {
     return (
       <div>
         <div className={style.chartDiv}>
-          {this.props.loading ? (
-            <div className={` ${style.loadingDiv} pt-5 mt-2`}>
-              {" "}
-              <Spin />{" "}
-            </div>
-          ) : (
-            this.chart
-          )}
+          {this.chart}
         </div>
 
       </div>

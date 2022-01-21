@@ -7,7 +7,7 @@
         "title": "Table <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span>",
         "bodyText": "For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span> ",
         "supportedVariables": "granularity, datasetName, dimension, value",
-        "sql":" SELECT * FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} limit 500",
+        "sql": "SELECT * FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} limit 500",
         "renderType": "table"
       }
     },
@@ -16,10 +16,10 @@
       "pk": 2,
       "fields": {
         "templateName": "Split on Filter Dimension",
-        "title": "Comparison between <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span>",
-        "bodyText": "For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span> ",
+        "title": " {% for filterDim in filterDimensions %} Comparison between <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span> +-; {% endfor %} ",
+        "bodyText": " {% for filterDim in filterDimensions %} For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span>  +-; {% endfor %} ",
         "supportedVariables": "granularity, datasetName, dimension, value",
-        "sql":" SELECT ({{ timestampColumn }}), {{ filterDimensions.0 }}, SUM({{ metrics.0 }}) as {{metrics.0}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1, 2 limit 500",
+        "sql": " {% for filterDim in filterDimensions %} SELECT ({{ timestampColumn }}), {{ filterDim }}, SUM({{ metrics.0 }}) as {{metrics.0}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1, 2 limit 500 +-; {% endfor %} ",
         "renderType": "line"
       }
     },
@@ -28,10 +28,10 @@
       "pk": 3,
       "fields": {
         "templateName": "Metric Chart",
-        "title": " <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span>",
-        "bodyText": "For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span> ",
+        "title": " {% for metric in metrics %}  <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span> +-; {% endfor %}",
+        "bodyText": " {% for metric in metrics %} For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span>  +-; {% endfor %}",
         "supportedVariables": "granularity, datasetName, dimension, value",
-        "sql":" SELECT ({{ timestampColumn }}), SUM({{ metrics.0 }}) as {{metrics.0}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1 limit 500",
+        "sql": " {% for metric in metrics %} SELECT ({{ timestampColumn }}), SUM({{ metric }}) as {{ metric }} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1 limit 500 +-; {% endfor %}",
         "renderType": "line"
       }
     }
