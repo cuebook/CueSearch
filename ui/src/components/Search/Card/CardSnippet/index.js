@@ -4,6 +4,7 @@ import { message, Select, Table } from "antd";
 import style from "./style.module.scss";
 
 import TableCard from "components/Search/Card/Table";
+import Chart from "components/Search/Card/Chart";
 
 import { GlobalContext } from "layouts/GlobalContext"
 
@@ -12,10 +13,10 @@ export default function CardPanel(props) {
 
   const { searchCardData, updateSearchCardData } = useContext(GlobalContext)
 
-	const { data: { data }, title, text } = props.searchCard
+	const { data: { data }, title, text, params } = props.searchCard
 
 	const handleCardClick = () => {
-		updateSearchCardData({data: data, title: title, text: text})
+		updateSearchCardData({data: data, title: title, text: text, params: params})
 	} 
 
 	return (
@@ -23,7 +24,8 @@ export default function CardPanel(props) {
 		  <div className={style.searchSnippet}>
           <div className={style.chartSnippet}>
 
-            <TableCard data={data} isSnippet={true} /> 
+            {/* <TableCard data={data} isSnippet={true} />  */}
+            <Chart data={data} isSnippet={true} /> 
           </div>
           <div className={style.contentSnippet}>
             <a

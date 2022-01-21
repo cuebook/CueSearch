@@ -1,5 +1,5 @@
 {
-  "name": "CueObserve",
+  "name": "CueSearch",
   "version": "0.0.1",
   "homepage": "./",
   "dependencies": {
@@ -9,7 +9,7 @@
     "ace-builds": "^1.4.12",
     "analytics": "^0.7.21",
     "antd": "^4.15.0",
-    "bizcharts": "^4.1.10",
+    "bizcharts": "^3.5.9",
     "gulp": "4.0.2",
     "gulp-append-prepend": "^1.0.9",
     "lodash": "^4.17.21",

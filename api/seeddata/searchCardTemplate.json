@@ -3,23 +3,22 @@
       "model": "cueSearch.searchCardTemplate",
       "pk": 1,
       "fields": {
-        "templateName": "Test Template 1",
-        "title": "Filter <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{dimension}} = {{value}}</span>",
-        "bodyText": "For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{dimension}} = {{value}}</span> ",
+        "templateName": "Split on Filter Dimension",
+        "title": "Comparison between <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span>",
+        "bodyText": "For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span> ",
         "supportedVariables": "granularity, datasetName, dimension, value",
-        "sql":"SELECT * FROM ({{ datasetSql|safe }}) WHERE {{ dimension }}='{{ value }}' limit 50"
+        "sql":" SELECT ({{ timestampColumn }}), {{ filterDimensions.0 }}, SUM({{ metrics.0 }}) as {{metrics.0}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1, 2 limit 500"
       }
     },
-
     {
       "model": "cueSearch.searchCardTemplate",
       "pk": 2,
       "fields": {
-        "templateName": "Test Template 1",
+        "templateName": "Metric Chart",
         "title": " <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">Dataset = {{dataset}} , Filter = {{filter}}</span>",
         "bodyText": "For <span style=\"background:#eeeeee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span> ",
         "supportedVariables": "granularity, datasetName, dimension, value",
-        "sql":" SELECT * FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} limit 50"
+        "sql":" SELECT ({{ timestampColumn }}), SUM({{ metrics.0 }}) as {{metrics.0}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1 limit 500"
       }
     }
 
