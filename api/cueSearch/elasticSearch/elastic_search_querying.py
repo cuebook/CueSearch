@@ -84,7 +84,7 @@ class ESQueryingUtils:
         return output
     @staticmethod
     def findAutoDimensionResults(
-        query: str, datasource = None, globalDimension: str = None, offset: int = 0, limit: int = 1
+        query: str, datasource = None, globalDimension: str = None, offset: int = 0, limit: int = 5
     ) :
         """
         Method to run search queries on GlobalDimensions
@@ -96,9 +96,9 @@ class ESQueryingUtils:
         :return List[ESQueryResponse]
         """
         globalDimensionNameQuery = None
-        # if len(query.split(":")) == 2:
-        #     globalDimensionNameQuery = query.split(":")[0]
-        #     query = query.split(":")[1]
+        if len(query.split(":")) == 2:
+            globalDimensionNameQuery = query.split(":")[0]
+            query = query.split(":")[1]
 
         logging.info("Querying global dimensions for: %s", query)
 

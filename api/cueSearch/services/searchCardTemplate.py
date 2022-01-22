@@ -88,7 +88,7 @@ class SearchCardTemplateServices:
                         executor.submit(
                             ESQueryingUtils.findAutoDimensionResults,
                             globalDimension=payload["globalDimensionId"],
-                            query = None
+                            query = query
                         ),
                     ]
                 for future in concurrent.futures.as_completed(futures):
