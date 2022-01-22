@@ -72,18 +72,25 @@ class SearchCardTemplateServices:
         searchResults = []
         for payload in searchPayload:
             data = []
+            print("payload", payload)
             query = payload["label"]
             with concurrent.futures.ThreadPoolExecutor() as executor:
-                futures = [
-                    executor.submit(
-                        ESQueryingUtils.findGlobalDimensionResults,
-                        query=query
-                    ),executor.submit(
-                        ESQueryingUtils.findAutoGlobalDimensionResults,
-                        query=query
-                    ),
-                ]
-
+                futures = []
+                if(payload["searchType"]=="GLOBALDIMENSION"):
+                    futures = [
+                        executor.submit(
+                            ESQueryingUtils.findGlobalDimensionResults,
+                            query=query
+                        ),
+                    ]
+                elif payload["searchType"] == "DATASETDIMENSION":
+                    futures = [
+                        executor.submit(
+                            ESQueryingUtils.findAutoDimensionResults,
+                            globalDimension=payload["globalDimensionId"],
+                            query = None
+                        ),
+                    ]
                 for future in concurrent.futures.as_completed(futures):
                     try:
                         data.extend(future.result())
@@ -92,8 +99,8 @@ class SearchCardTemplateServices:
 
             if data:
                 searchResults.extend(data)
-        print(searchResults)
         # searchResults = list({v['id']:v for v in searchResults}.values())
+        print("searchResults", searchResults)
         return searchResults
 
 
@@ -237,7 +244,7 @@ class SearchCardTemplateServices:
                     offset=0,
                     limit=6,
                 ),executor.submit(
-                    ESQueryingUtils.findAutoGlobalDimensionResultsForSearchSuggestion,
+                    ESQueryingUtils.findAutoDimensionResultsForSearchSuggestion,
                     query=query,
                     datasource=None,
                     offset=0,

@@ -83,8 +83,8 @@ class ESQueryingUtils:
         logging.debug("User queries: %s", output)
         return output
     @staticmethod
-    def findAutoGlobalDimensionResults(
-        query: str, datasource = None, globalDimension: int = None, offset: int = 0, limit: int = 5
+    def findAutoDimensionResults(
+        query: str, datasource = None, globalDimension: str = None, offset: int = 0, limit: int = 1
     ) :
         """
         Method to run search queries on GlobalDimensions
@@ -96,9 +96,9 @@ class ESQueryingUtils:
         :return List[ESQueryResponse]
         """
         globalDimensionNameQuery = None
-        if len(query.split(":")) == 2:
-            globalDimensionNameQuery = query.split(":")[0]
-            query = query.split(":")[1]
+        # if len(query.split(":")) == 2:
+        #     globalDimensionNameQuery = query.split(":")[0]
+        #     query = query.split(":")[1]
 
         logging.info("Querying global dimensions for: %s", query)
 
@@ -118,7 +118,7 @@ class ESQueryingUtils:
             searchQuery = searchQuery.query("match_all")
 
         if datasource:
-            searchQuery = searchQuery.filter("match", cubes=datasource)
+            searchQuery = searchQuery.filter("match", dataset=datasource)
         searchQuery = searchQuery[offset : offset + limit]
 
         logging.info("Calling Elasticsearch with the query")
@@ -134,7 +134,7 @@ class ESQueryingUtils:
                 "id": hit.globalDimensionId,
                 "dataset": hit.dataset,
                 "datasetId": hit.datasetId,
-                "type": "GLOBALDIMENSION",
+                "type": "DATASETDIMENSION",
             }
             output.append(obj)
 
@@ -277,7 +277,7 @@ class ESQueryingUtils:
         return output
     
     @staticmethod
-    def findAutoGlobalDimensionResultsForSearchSuggestion( 
+    def findAutoDimensionResultsForSearchSuggestion( 
         query: str, datasource = None, globalDimension: int = None, offset: int = 0, limit: int = 5
     ) :
         """
@@ -324,7 +324,9 @@ class ESQueryingUtils:
                 "value": hit.globalDimensionDisplayValue,
                 "user_entity_identifier": hit.globalDimensionName,
                 "id": hit.globalDimensionId,
-                "type": "GLOBALDIMENSION",
+                "datasetId":hit.datasetId,
+                "globalDimensionId":hit.globalDimensionId,
+                "type": "DATASETDIMENSION",
             }
             output.append(obj)
 

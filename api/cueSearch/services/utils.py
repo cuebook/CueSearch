@@ -5,7 +5,7 @@ def key_func(k):
     return k['dimension']
 
 def structureAndFilter(params: list):
-
+    """ This method is responsible for adding AND filter between dimensionValue belongs to different dimension"""
     text = ""
     for i in range(len(params)):
         if i == 0:
@@ -15,6 +15,7 @@ def structureAndFilter(params: list):
     return text
                 
 def structureOrFilter(payload):
+    """ This method is responsible for adding OR filter between dimensionValue belongs to same dimension"""
     payload = sorted(payload, key=key_func)
 
     prevKey = None
@@ -40,11 +41,13 @@ def structureOrFilter(payload):
     return l 
 
 def makeFilter(payload):
+    """ This method is responsible for making datset specific filter"""
     paramList = structureOrFilter(payload)
     filter = structureAndFilter(paramList)
     return filter
 
 def addDimensionsInParam(payload):
+    """ This method is responsible for grouping all dimension that has used in dataset filter"""
     payload = sorted(payload, key=key_func)
     listOfDimensions = []
     for key, values in groupby(payload, key_func):
