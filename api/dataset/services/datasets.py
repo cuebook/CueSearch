@@ -1,10 +1,11 @@
 import json
+import logging
 from utils.apiResponse import ApiResponse
 from django.template import Template, Context
 from access.data import Data
 from dataset.models import Dataset
 from dataset.serializers import DatasetsSerializer, DatasetSerializer
-
+from cueSearch.elasticSearch import ESIndexingUtils
 
 class Datasets:
     """
@@ -61,6 +62,10 @@ class Datasets:
         dataset.granularity = granularity
         dataset.isNonRollup = isNonRollup
         dataset.save()
+        try:
+            ESIndexingUtils.runAllIndexDimension()
+        except Exception as ex:
+            logging.error("Exception occured while indexing global dimension")
 
         res.update(True, "Successfully updated dataset")
         return res
@@ -74,6 +79,10 @@ class Datasets:
         res = ApiResponse("Error in deleting dataset")
         dataset = Dataset.objects.get(id=datasetId)
         dataset.delete()
+        try:
+            ESIndexingUtils.runAllIndexDimension()
+        except Exception as ex:
+            logging.error("Exception occured while indexing global dimension")
 
         res.update(True, "Successfully deleted dataset")
         return res
@@ -103,6 +112,10 @@ class Datasets:
             granularity=granularity,
             isNonRollup=isNonRollup,
         )
+        try:
+            ESIndexingUtils.runAllIndexDimension()
+        except Exception as ex:
+            logging.error("Exception occured while indexing global dimension")
 
         res.update(True, "Successfully created dataset")
         return res
