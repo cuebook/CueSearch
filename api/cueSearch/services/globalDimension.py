@@ -149,7 +149,7 @@ class GlobalDimensionServices:
         return res
 
 
-    def autoGlobalDimensionForIndexing():
+    def nonGlobalDimensionForIndexing():
         """ Method to filter dimension from all ready created global dimension"""
         try:
             dimensions = GlobalDimensionServices.getDimension()

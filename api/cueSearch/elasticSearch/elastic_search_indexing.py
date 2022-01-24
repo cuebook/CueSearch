@@ -137,7 +137,7 @@ class ESIndexingUtils:
         globalDimensionId = globalDimensionGroup["id"]
         dimensionValues = globalDimensionGroup["values"]  # dimensional values
 
-        logging.info("Merging dimensions Value percentile with mulitple vlaues in list of dimensionValues")
+        logging.info("Merging dimensions Value percentile with mulitple values in list of dimensionValues")
         for values in dimensionValues:
 
             displayValue = values["dimension"]
@@ -166,7 +166,7 @@ class ESIndexingUtils:
         cardIndexer1.start()
         cardIndexer2 = threading.Thread(target=ESIndexingUtils.indexGlobalDimensionsData)
         cardIndexer2.start()
-        cardIndexer3 = threading.Thread(target=ESIndexingUtils.indexAutoGlobalDimensionsDataForSearchSuggestion)
+        cardIndexer3 = threading.Thread(target=ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion)
         cardIndexer3.start()
 
     @staticmethod
@@ -225,16 +225,7 @@ class ESIndexingUtils:
                     ESIndexingUtils.ingestIndex(documentsToIndex, aliasIndex)
                 except (Exception) as error:
                     logging.error(str(error))
-                    if joblogger:
-                        joblogger.udpateSummary(
-                            {
-                                globalDimensionGroup[0]["globalDimension"]["name"]
-                                + " stackTrace": traceback.format_exc()
-                            }
-                        )
-                        joblogger.udpateSummary(
-                            {globalDimensionGroup[0]["globalDimension"]["name"] + " message": str(error)}
-                        )
+                    
                     pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
@@ -425,16 +416,7 @@ class ESIndexingUtils:
                     ESIndexingUtils.ingestIndex(documentsToIndex, aliasIndex)
                 except (Exception) as error:
                     logging.error(str(error))
-                    if joblogger:
-                        joblogger.udpateSummary(
-                            {
-                                globalDimensionGroup[0]["globalDimension"]["name"]
-                                + " stackTrace": traceback.format_exc()
-                            }
-                        )
-                        joblogger.udpateSummary(
-                            {globalDimensionGroup[0]["globalDimension"]["name"] + " message": str(error)}
-                        )
+                    
                     pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
@@ -456,7 +438,7 @@ class ESIndexingUtils:
         logging.debug("Starting fetch for global dimension: %s", globalDimensionName)
         globalDimensionId = globalDimensionGroup["id"]
         dimensionObjs = globalDimensionGroup["values"]  # dimensional values
-        logging.info("Merging dimensions Value percentile with mulitple vlaues in list of dimensionValues")
+        logging.info("Merging dimensions Value percentile with mulitple values in list of dimensionValues")
         for dmObj in dimensionObjs:
             displayValue = ''
             dimension = dmObj["dimension"]
@@ -550,16 +532,7 @@ class ESIndexingUtils:
                     ESIndexingUtils.ingestIndex(documentsToIndex, aliasIndex)
                 except (Exception) as error:
                     logging.error(str(error))
-                    if joblogger:
-                        joblogger.udpateSummary(
-                            {
-                                globalDimensionGroup[0]["globalDimension"]["name"]
-                                + " stackTrace": traceback.format_exc()
-                            }
-                        )
-                        joblogger.udpateSummary(
-                            {globalDimensionGroup[0]["globalDimension"]["name"] + " message": str(error)}
-                        )
+                    
                     pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
@@ -572,14 +545,14 @@ class ESIndexingUtils:
 
 
     @staticmethod
-    def indexAutoGlobalDimensionsDataForSearchSuggestion(joblogger=None):
+    def indexNonGlobalDimensionsDataForSearchSuggestion(joblogger=None):
         """
         Method to index global dimensions data
         """
         from cueSearch.services import globalDimension, GlobalDimensionServices
 
         logging.info("Fetching the global dimensions and the dimension values for auto global dimension")
-        response = GlobalDimensionServices.autoGlobalDimensionForIndexing()
+        response = GlobalDimensionServices.nonGlobalDimensionForIndexing()
         logging.info("response of globaldimension value %s", response)
         if response["success"]:
             datsetDimensions = response.get("data", [])
@@ -640,23 +613,14 @@ class ESIndexingUtils:
             logging.info("datsetDimensions %s", datsetDimensions)
             # datsetDimensions is an array
             try:
-                documentsToIndex = ESIndexingUtils.fetchAutoGlobalDimensionsValueForIndexing(
+                documentsToIndex = ESIndexingUtils.fetchNonGlobalDimensionsValueForIndexing(
                     datsetDimensions
                 )
 
                 ESIndexingUtils.ingestIndex(documentsToIndex, aliasIndex)
             except (Exception) as error:
                 logging.error(str(error))
-                if joblogger:
-                    joblogger.udpateSummary(
-                        {
-                            datsetDimensions[0]["globalDimension"]["name"]
-                            + " stackTrace": traceback.format_exc()
-                        }
-                    )
-                    joblogger.udpateSummary(
-                        {datsetDimensions[0]["globalDimension"]["name"] + " message": str(error)}
-                    )
+                
                 pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
@@ -666,7 +630,7 @@ class ESIndexingUtils:
             raise RuntimeError("Error in fetching global dimensions")
 
     @staticmethod
-    def fetchAutoGlobalDimensionsValueForIndexing(datasetDimensions : list) :
+    def fetchNonGlobalDimensionsValueForIndexing(datasetDimensions : list) :
         """
         Method to fetch the global dimensions and the dimension values.
         :return List of Documents to be indexed
@@ -687,7 +651,7 @@ class ESIndexingUtils:
             if dimensionValues:
                 for values in dimensionValues:
                     displayValue = values
-                    globalDimensionId = str(dimension) + "_" + str(datasetId)
+                    globalDimensionId = str(dimension) + "_" +str(displayValue)+ "_"+ str(datasetId)
                     globalDimensionName =  str(dataset) + "_" +str(dimension)
                     elasticsearchUniqueId = str(globalDimensionId) + "_" + str(displayValue) + "_" + str(dataset)
 

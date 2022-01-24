@@ -74,16 +74,22 @@ class SearchCardTemplateServices:
             data = []
             query = payload["label"]
             with concurrent.futures.ThreadPoolExecutor() as executor:
-                futures = [
-                    executor.submit(
-                        ESQueryingUtils.findGlobalDimensionResults,
-                        query=query
-                    ),executor.submit(
-                        ESQueryingUtils.findAutoGlobalDimensionResults,
-                        query=query
-                    ),
-                ]
-
+                futures = []
+                if(payload["searchType"]=="GLOBALDIMENSION"):
+                    futures = [
+                        executor.submit(
+                            ESQueryingUtils.findGlobalDimensionResults,
+                            query=query
+                        ),
+                    ]
+                elif payload["searchType"] == "DATASETDIMENSION":
+                    futures = [
+                        executor.submit(
+                            ESQueryingUtils.findNonGlobalDimensionResults,
+                            globalDimension=payload["globalDimensionId"],
+                            query = query
+                        ),
+                    ]
                 for future in concurrent.futures.as_completed(futures):
                     try:
                         data.extend(future.result())
@@ -92,7 +98,6 @@ class SearchCardTemplateServices:
 
             if data:
                 searchResults.extend(data)
-        print(searchResults)
         # searchResults = list({v['id']:v for v in searchResults}.values())
         return searchResults
 
@@ -237,7 +242,7 @@ class SearchCardTemplateServices:
                     offset=0,
                     limit=6,
                 ),executor.submit(
-                    ESQueryingUtils.findAutoGlobalDimensionResultsForSearchSuggestion,
+                    ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion,
                     query=query,
                     datasource=None,
                     offset=0,
