@@ -3,16 +3,24 @@ import os
 from typing import List
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search, Q
+
 # from config import ELASTICSEARCH_URL
 
 ELASTICSEARCH_URL = os.environ.get("ELASTICSEARCH_URL", "http://localhost:9200/")
 
+
 class ESQueryingUtils:
 
-    GLOBAL_DIMENSIONS_INDEX_SEARCH_SUGGESTION_DATA = "cuesearch_global_dimensions_search_suggestion_data_index"
-    GLOBAL_DIMENSIONS_NAMES_INDEX_NAME = "cuesearch_global_dimensions_names_for_search_index"
+    GLOBAL_DIMENSIONS_INDEX_SEARCH_SUGGESTION_DATA = (
+        "cuesearch_global_dimensions_search_suggestion_data_index"
+    )
+    GLOBAL_DIMENSIONS_NAMES_INDEX_NAME = (
+        "cuesearch_global_dimensions_names_for_search_index"
+    )
     GLOBAL_DIMENSIONS_INDEX_DATA = "cuesearch_global_dimensions_data_index"
-    AUTO_GLOBAL_DIMENSIONS_INDEX_DATA = "cuesearch_auto_global_dimensions_search_suggestion_data_index"
+    AUTO_GLOBAL_DIMENSIONS_INDEX_DATA = (
+        "cuesearch_auto_global_dimensions_search_suggestion_data_index"
+    )
     DATASET_MEASURES_INDEX_NAME = "dataset_measures_index_cuesearch"
 
     @staticmethod
@@ -26,8 +34,12 @@ class ESQueryingUtils:
 
     @staticmethod
     def findGlobalDimensionResults(
-        query: str, datasource = None, globalDimension: int = None, offset: int = 0, limit: int = 5
-    ) :
+        query: str,
+        datasource=None,
+        globalDimension: int = None,
+        offset: int = 0,
+        limit: int = 5,
+    ):
         """
         Method to run search queries on GlobalDimensions
         :param query: User search query
@@ -47,12 +59,16 @@ class ESQueryingUtils:
         query = "" if query is None else query.lower()
         client = ESQueryingUtils._getESClient()
 
-        searchQuery = Search(index=ESQueryingUtils.GLOBAL_DIMENSIONS_INDEX_DATA).using(client)
+        searchQuery = Search(index=ESQueryingUtils.GLOBAL_DIMENSIONS_INDEX_DATA).using(
+            client
+        )
 
         if globalDimension:
             searchQuery = searchQuery.filter("match", globalDimensionId=globalDimension)
         elif globalDimensionNameQuery:
-            searchQuery = searchQuery.filter("match", globalDimensionName=globalDimensionNameQuery)
+            searchQuery = searchQuery.filter(
+                "match", globalDimensionName=globalDimensionNameQuery
+            )
 
         if query:
             searchQuery = searchQuery.query("match", globalDimensionDisplayValue=query)
@@ -82,10 +98,15 @@ class ESQueryingUtils:
 
         logging.debug("User queries: %s", output)
         return output
+
     @staticmethod
     def findNonGlobalDimensionResults(
-        query: str, datasource = None, globalDimension: str = None, offset: int = 0, limit: int = 5
-    ) :
+        query: str,
+        datasource=None,
+        globalDimension: str = None,
+        offset: int = 0,
+        limit: int = 5,
+    ):
         """
         Method to run search queries on GlobalDimensions
         :param query: User search query
@@ -105,12 +126,16 @@ class ESQueryingUtils:
         query = "" if query is None else query.lower()
         client = ESQueryingUtils._getESClient()
 
-        searchQuery = Search(index=ESQueryingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA).using(client)
+        searchQuery = Search(
+            index=ESQueryingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA
+        ).using(client)
 
         if globalDimension:
             searchQuery = searchQuery.filter("match", globalDimensionId=globalDimension)
         elif globalDimensionNameQuery:
-            searchQuery = searchQuery.filter("match", globalDimensionName=globalDimensionNameQuery)
+            searchQuery = searchQuery.filter(
+                "match", globalDimensionName=globalDimensionNameQuery
+            )
 
         if query:
             searchQuery = searchQuery.query("match", globalDimensionDisplayValue=query)
@@ -141,11 +166,10 @@ class ESQueryingUtils:
         logging.debug("User queries: %s", output)
         return output
 
-
     @staticmethod
     def findGlobalDimensionNames(
         query: str, datasource: str = None, offset: int = 0, limit: int = 5
-    ) :
+    ):
         """
         Method to index the global dimension names for search.
         For e.g. G_City, G_Product, etc.
@@ -186,7 +210,6 @@ class ESQueryingUtils:
         logging.debug("Global dimensions: %s", output)
         return output
 
-    
     @staticmethod
     def findQueries(query: str):
         """
@@ -219,12 +242,17 @@ class ESQueryingUtils:
 
         logging.debug("Queries: %s", output)
         return output
-####################### Used for searchSuggestion query ########################
+
+    ####################### Used for searchSuggestion query ########################
 
     @staticmethod
     def findGlobalDimensionResultsForSearchSuggestion(
-        query: str, datasource = None, globalDimension: int = None, offset: int = 0, limit: int = 5
-    ) :
+        query: str,
+        datasource=None,
+        globalDimension: int = None,
+        offset: int = 0,
+        limit: int = 5,
+    ):
         """
         Method to run search queries on GlobalDimensions
         :param query: User search query
@@ -244,12 +272,16 @@ class ESQueryingUtils:
         query = "" if query is None else query.lower()
         client = ESQueryingUtils._getESClient()
 
-        searchQuery = Search(index=ESQueryingUtils.GLOBAL_DIMENSIONS_INDEX_SEARCH_SUGGESTION_DATA).using(client)
+        searchQuery = Search(
+            index=ESQueryingUtils.GLOBAL_DIMENSIONS_INDEX_SEARCH_SUGGESTION_DATA
+        ).using(client)
 
         if globalDimension:
             searchQuery = searchQuery.filter("match", globalDimensionId=globalDimension)
         elif globalDimensionNameQuery:
-            searchQuery = searchQuery.filter("match", globalDimensionName=globalDimensionNameQuery)
+            searchQuery = searchQuery.filter(
+                "match", globalDimensionName=globalDimensionNameQuery
+            )
 
         if query:
             searchQuery = searchQuery.query("match", globalDimensionValue=query)
@@ -275,20 +307,24 @@ class ESQueryingUtils:
 
         logging.debug("User queries: %s", output)
         return output
-    
+
     @staticmethod
-    def findNonGlobalDimensionResultsForSearchSuggestion( 
-        query: str, datasource = None, globalDimension: int = None, offset: int = 0, limit: int = 5
-    ) :
+    def findNonGlobalDimensionResultsForSearchSuggestion(
+        query: str,
+        datasource=None,
+        globalDimension: int = None,
+        offset: int = 0,
+        limit: int = 5,
+    ):
         """
-            Method to run search queries on AutoGlobalDimensions
-            :param query: User search query
-            :param dataset: name of cube, will match values associated
-                    to global dimension associated with this cube
-            :param offset: Offset for the query
-            :param limit: Number of results required
-            :return List[ESQueryResponse]
-            """
+        Method to run search queries on NonGlobalDimensions
+        :param query: User search query
+        :param dataset: name of cube, will match values associated
+                to global dimension associated with this cube
+        :param offset: Offset for the query
+        :param limit: Number of results required
+        :return List[ESQueryResponse]
+        """
         globalDimensionNameQuery = None
         if len(query.split(":")) == 2:
             globalDimensionNameQuery = query.split(":")[0]
@@ -299,12 +335,16 @@ class ESQueryingUtils:
         query = "" if query is None else query.lower()
         client = ESQueryingUtils._getESClient()
 
-        searchQuery = Search(index=ESQueryingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA).using(client)
+        searchQuery = Search(
+            index=ESQueryingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA
+        ).using(client)
 
         if globalDimension:
             searchQuery = searchQuery.filter("match", globalDimensionId=globalDimension)
         elif globalDimensionNameQuery:
-            searchQuery = searchQuery.filter("match", globalDimensionName=globalDimensionNameQuery)
+            searchQuery = searchQuery.filter(
+                "match", globalDimensionName=globalDimensionNameQuery
+            )
 
         if query:
             searchQuery = searchQuery.query("match", globalDimensionValue=query)
@@ -324,12 +364,11 @@ class ESQueryingUtils:
                 "value": hit.globalDimensionDisplayValue,
                 "user_entity_identifier": hit.globalDimensionName,
                 "id": hit.globalDimensionId,
-                "datasetId":hit.datasetId,
-                "globalDimensionId":hit.globalDimensionId,
+                "datasetId": hit.datasetId,
+                "globalDimensionId": hit.globalDimensionId,
                 "type": "DATASETDIMENSION",
             }
             output.append(obj)
 
         logging.debug("User queries: %s", output)
         return output
-    
