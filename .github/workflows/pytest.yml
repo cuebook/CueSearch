@@ -61,9 +61,6 @@ jobs:
         cd api
         # source .env.dev
 
-        echo testing elasticsearch service
-        curl localhost:9200
-
         export CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_TEST_REPORTER_ID }}
 
         echo "Downloading test_reporter"
