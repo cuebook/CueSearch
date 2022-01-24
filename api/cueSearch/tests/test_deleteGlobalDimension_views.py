@@ -18,6 +18,13 @@ def test_deleteGlobalDimension(client,mocker):
     Test case for delete global dimension
     '''
     #create demo data for global dimension
+    mockResponse = mocker.patch(
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+        new=mock.MagicMock(
+            autospec=True, return_value=True
+        ),
+    )
+    mockResponse.start()
     connection = mixer.blend("dataset.connection")
     path = reverse("createDataset")
     data = {
@@ -31,15 +38,18 @@ def test_deleteGlobalDimension(client,mocker):
         "isNonRollup": False
     }
     response = client.post(path, data=data, content_type="application/json")
+    mockResponse.stop()
 
     #create dimension for testing
     dataset = Dataset.objects.all()[0]
     path = reverse('globalDimensionCreate')
+    mockResponse.start()
     gd_data = {
         'name': 'test', 
         'dimensionalValues': [{'datasetId': dataset.id,"dataset":"Returns","dimension":"WarehouseCode"}]
         }
     response = client.post(path,gd_data, content_type="application/json")
+    mockResponse.stop()
     
     #Getting global dimension id
     path =  reverse('globalDimension')
@@ -48,7 +58,11 @@ def test_deleteGlobalDimension(client,mocker):
     globalDim_id = globalDim_id[0]['id']
 
     # deleting global dimension
+    mockResponse.start()
     path = reverse("global-dimension-delete",kwargs={"id": globalDim_id})
     response = client.delete(path)
+    mockResponse.stop()
     assert response.data["success"] == True
     assert response.status_code == 200
+    
+    
