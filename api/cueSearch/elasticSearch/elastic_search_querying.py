@@ -83,7 +83,7 @@ class ESQueryingUtils:
         logging.debug("User queries: %s", output)
         return output
     @staticmethod
-    def findAutoDimensionResults(
+    def findNonGlobalDimensionResults(
         query: str, datasource = None, globalDimension: str = None, offset: int = 0, limit: int = 5
     ) :
         """
@@ -277,7 +277,7 @@ class ESQueryingUtils:
         return output
     
     @staticmethod
-    def findAutoDimensionResultsForSearchSuggestion( 
+    def findNonGlobalDimensionResultsForSearchSuggestion( 
         query: str, datasource = None, globalDimension: int = None, offset: int = 0, limit: int = 5
     ) :
         """

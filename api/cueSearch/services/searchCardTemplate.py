@@ -72,7 +72,6 @@ class SearchCardTemplateServices:
         searchResults = []
         for payload in searchPayload:
             data = []
-            print("payload", payload)
             query = payload["label"]
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 futures = []
@@ -86,7 +85,7 @@ class SearchCardTemplateServices:
                 elif payload["searchType"] == "DATASETDIMENSION":
                     futures = [
                         executor.submit(
-                            ESQueryingUtils.findAutoDimensionResults,
+                            ESQueryingUtils.findNonGlobalDimensionResults,
                             globalDimension=payload["globalDimensionId"],
                             query = query
                         ),
@@ -100,7 +99,6 @@ class SearchCardTemplateServices:
             if data:
                 searchResults.extend(data)
         # searchResults = list({v['id']:v for v in searchResults}.values())
-        print("searchResults", searchResults)
         return searchResults
 
 
@@ -244,7 +242,7 @@ class SearchCardTemplateServices:
                     offset=0,
                     limit=6,
                 ),executor.submit(
-                    ESQueryingUtils.findAutoDimensionResultsForSearchSuggestion,
+                    ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion,
                     query=query,
                     datasource=None,
                     offset=0,

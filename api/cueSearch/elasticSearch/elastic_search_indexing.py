@@ -166,7 +166,7 @@ class ESIndexingUtils:
         cardIndexer1.start()
         cardIndexer2 = threading.Thread(target=ESIndexingUtils.indexGlobalDimensionsData)
         cardIndexer2.start()
-        cardIndexer3 = threading.Thread(target=ESIndexingUtils.indexAutoDimensionsDataForSearchSuggestion)
+        cardIndexer3 = threading.Thread(target=ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion)
         cardIndexer3.start()
 
     @staticmethod
@@ -572,14 +572,14 @@ class ESIndexingUtils:
 
 
     @staticmethod
-    def indexAutoDimensionsDataForSearchSuggestion(joblogger=None):
+    def indexNonGlobalDimensionsDataForSearchSuggestion(joblogger=None):
         """
         Method to index global dimensions data
         """
         from cueSearch.services import globalDimension, GlobalDimensionServices
 
         logging.info("Fetching the global dimensions and the dimension values for auto global dimension")
-        response = GlobalDimensionServices.autoGlobalDimensionForIndexing()
+        response = GlobalDimensionServices.nonGlobalDimensionForIndexing()
         logging.info("response of globaldimension value %s", response)
         if response["success"]:
             datsetDimensions = response.get("data", [])
@@ -640,7 +640,7 @@ class ESIndexingUtils:
             logging.info("datsetDimensions %s", datsetDimensions)
             # datsetDimensions is an array
             try:
-                documentsToIndex = ESIndexingUtils.fetchAutoDimensionsValueForIndexing(
+                documentsToIndex = ESIndexingUtils.fetchNonGlobalDimensionsValueForIndexing(
                     datsetDimensions
                 )
 
@@ -666,7 +666,7 @@ class ESIndexingUtils:
             raise RuntimeError("Error in fetching global dimensions")
 
     @staticmethod
-    def fetchAutoDimensionsValueForIndexing(datasetDimensions : list) :
+    def fetchNonGlobalDimensionsValueForIndexing(datasetDimensions : list) :
         """
         Method to fetch the global dimensions and the dimension values.
         :return List of Documents to be indexed
