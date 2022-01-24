@@ -65,7 +65,7 @@ class Datasets:
         try:
             ESIndexingUtils.runAllIndexDimension()
         except Exception as ex:
-            logging.error("Exception occured while indexing global dimension")
+            logging.error("Exception occured while indexing dataset dimension")
 
         res.update(True, "Successfully updated dataset")
         return res
@@ -82,7 +82,7 @@ class Datasets:
         try:
             ESIndexingUtils.runAllIndexDimension()
         except Exception as ex:
-            logging.error("Exception occured while indexing global dimension")
+            logging.error("Exception occured while indexing dataset dimension")
 
         res.update(True, "Successfully deleted dataset")
         return res
@@ -115,7 +115,7 @@ class Datasets:
         try:
             ESIndexingUtils.runAllIndexDimension()
         except Exception as ex:
-            logging.error("Exception occured while indexing global dimension")
+            logging.error("Exception occured while indexing dataset dimension")
 
         res.update(True, "Successfully created dataset")
         return res
@@ -123,7 +123,7 @@ class Datasets:
     def getDatasetData(payload: dict):
         """
         Utility service to fetch data for a payload
-        :param payload: Dict containing dataset name, and global dimension
+        :param payload: Dict containing dataset name, and dataset dimension
         """
         res = ApiResponse("Error in fetching data")
         customSql = Template(payload["sqlTemplate"]).render(Context(payload))
