@@ -225,16 +225,7 @@ class ESIndexingUtils:
                     ESIndexingUtils.ingestIndex(documentsToIndex, aliasIndex)
                 except (Exception) as error:
                     logging.error(str(error))
-                    if joblogger:
-                        joblogger.udpateSummary(
-                            {
-                                globalDimensionGroup[0]["globalDimension"]["name"]
-                                + " stackTrace": traceback.format_exc()
-                            }
-                        )
-                        joblogger.udpateSummary(
-                            {globalDimensionGroup[0]["globalDimension"]["name"] + " message": str(error)}
-                        )
+                    
                     pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
@@ -425,16 +416,7 @@ class ESIndexingUtils:
                     ESIndexingUtils.ingestIndex(documentsToIndex, aliasIndex)
                 except (Exception) as error:
                     logging.error(str(error))
-                    if joblogger:
-                        joblogger.udpateSummary(
-                            {
-                                globalDimensionGroup[0]["globalDimension"]["name"]
-                                + " stackTrace": traceback.format_exc()
-                            }
-                        )
-                        joblogger.udpateSummary(
-                            {globalDimensionGroup[0]["globalDimension"]["name"] + " message": str(error)}
-                        )
+                    
                     pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
@@ -550,16 +532,7 @@ class ESIndexingUtils:
                     ESIndexingUtils.ingestIndex(documentsToIndex, aliasIndex)
                 except (Exception) as error:
                     logging.error(str(error))
-                    if joblogger:
-                        joblogger.udpateSummary(
-                            {
-                                globalDimensionGroup[0]["globalDimension"]["name"]
-                                + " stackTrace": traceback.format_exc()
-                            }
-                        )
-                        joblogger.udpateSummary(
-                            {globalDimensionGroup[0]["globalDimension"]["name"] + " message": str(error)}
-                        )
+                    
                     pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
@@ -647,16 +620,7 @@ class ESIndexingUtils:
                 ESIndexingUtils.ingestIndex(documentsToIndex, aliasIndex)
             except (Exception) as error:
                 logging.error(str(error))
-                if joblogger:
-                    joblogger.udpateSummary(
-                        {
-                            datsetDimensions[0]["globalDimension"]["name"]
-                            + " stackTrace": traceback.format_exc()
-                        }
-                    )
-                    joblogger.udpateSummary(
-                        {datsetDimensions[0]["globalDimension"]["name"] + " message": str(error)}
-                    )
+                
                 pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
