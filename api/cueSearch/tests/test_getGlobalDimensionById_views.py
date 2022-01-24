@@ -20,6 +20,13 @@ def test_getGlobalDimensionById(client,mocker):
     Test case for get global dimension by Id
     '''
     #create demo data for global dimension
+    mockResponse = mocker.patch(
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+        new=mock.MagicMock(
+            autospec=True, return_value=True
+        ),
+    )
+    mockResponse.start()
     connection = mixer.blend("dataset.connection")
     path = reverse("createDataset")
     data = {
@@ -33,15 +40,18 @@ def test_getGlobalDimensionById(client,mocker):
         "isNonRollup": False
     }
     response = client.post(path, data=data, content_type="application/json")
+    mockResponse.stop()
 
     #create dimension for testing
     dataset = Dataset.objects.all()[0]
     path = reverse('globalDimensionCreate')
+    mockResponse.start()
     gd_data = {
         'name': 'test', 
         'dimensionalValues': [{'datasetId': dataset.id,"dataset":"Returns","dimension":"WarehouseCode"}]
         }
     response = client.post(path,gd_data, content_type="application/json")
+    mockResponse.stop()
     assert response.data["success"]
     assert response.status_code == 200
 

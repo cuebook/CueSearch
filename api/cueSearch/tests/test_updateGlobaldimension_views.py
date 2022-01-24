@@ -19,6 +19,13 @@ def test_updateGlobalDimension(client,mocker):
     Test case for update global dimension
     '''
     #create demo data for global dimension
+    mockResponse = mocker.patch(
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+        new=mock.MagicMock(
+            autospec=True, return_value=True
+        ),
+    )
+    mockResponse.start()
     connection = mixer.blend("dataset.connection")
     path = reverse("createDataset")
     data = {
@@ -32,15 +39,18 @@ def test_updateGlobalDimension(client,mocker):
         "isNonRollup": False
     }
     response = client.post(path, data=data, content_type="application/json")
+    mockResponse.stop()
 
     #create dimension for testing
     dataset = Dataset.objects.all()[0]
+    mockResponse.start()
     path = reverse('globalDimensionCreate')
     gd_data = {
         'name': 'test', 
         'dimensionalValues': [{'datasetId': dataset.id,"dataset":"Returns","dimension":"WarehouseCode"}]
         }
     response = client.post(path,gd_data, content_type="application/json")
+    mockResponse.stop()
     assert response.data["success"] == True
     assert response.status_code == 200
     #get global dimension
@@ -61,6 +71,7 @@ def test_updateGlobalDimension(client,mocker):
 
     #Updating the exsisting global dimension by Id
     path = reverse("updateGlobalDimension", kwargs={'id':globalDim_id})
+    mockResponse.start()
     payload = {
         'name':'test',
         'dimensionalValues': [],
@@ -68,5 +79,6 @@ def test_updateGlobalDimension(client,mocker):
     }
     
     response = client.post(path,payload)
+    mockResponse.stop()
     assert response.data["success"] == True
     assert response.status_code == 200
