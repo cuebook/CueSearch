@@ -9,7 +9,7 @@ import ApiService from "services/api";
 import _ from "lodash";
 import { Tag, Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import SearchResultService from "services/main/searchResult.js"
+import SearchResultService from "services/main/searchResult.js";
 
 // import AutosizeInput from "react-input-autosize";
 // import { search } from "utilities/general";
@@ -24,10 +24,10 @@ const SearchTypeConstants = {
   TAG: "TAG",
   SEGMENT: "SEGMENT",
   PREVIOUSSEARCHPAYLOAD: "PREVIOUSSEARCHPAYLOAD",
-  DRILLOBJECTFILTER: "DRILLOBJECTFILTER"
+  DRILLOBJECTFILTER: "DRILLOBJECTFILTER",
 };
 
-const formatOptionLabel = data => {
+const formatOptionLabel = (data) => {
   const type = data.type ? data.type.trim() : null;
   let metadata;
   if (_.isNil(type) || type.length === 0) metadata = <div />;
@@ -43,7 +43,7 @@ const formatOptionLabel = data => {
     <div className={`${styles.selectoptions} cueapp-search-options`}>
       {data.label}
       <span className={styles.selectoptionsRight}>{metadata}</span>
-      </div>
+    </div>
   );
 };
 
@@ -75,14 +75,14 @@ class Search extends React.Component {
       selectedEntries: [],
       searchPayload: {},
       menuIsOpen: false,
-      searchSuggestions: []
+      searchSuggestions: [],
     };
     this.searchInputRef = React.createRef();
     this.searchButtonRef = React.createRef();
     this.selectedEntries = props.initialValue ? props.initialValue : [];
   }
 
-  getSearchSuggestions = async(searchQuery) => {
+  getSearchSuggestions = async (searchQuery) => {
     // let apiService = new ApiService();
 
     return await SearchResultService.getSearchSuggestions(searchQuery)
@@ -92,9 +92,9 @@ class Search extends React.Component {
       //   // isCueDrill: this.props.isCueDrill,
       //   // cubeId: this.props.cubeId
       // })
-      .then(res => {
+      .then((res) => {
         if (res.success && res.data) {
-          let options = res.data.map(e => {
+          let options = res.data.map((e) => {
             return {
               ...e,
               value: e.value + "_" + e.user_entity_identifier,
@@ -108,11 +108,11 @@ class Search extends React.Component {
             {
               label: "See all results",
               value: searchQuery,
-              type: ""
-            }
+              type: "",
+            },
           ];
           let opts = [...options];
-          
+
           this.setState({ searchSuggestions: opts });
           return opts;
         }
@@ -134,11 +134,11 @@ class Search extends React.Component {
         e.searchType === SearchTypeConstants.TAG
       ) {
         const selectedMeasures = selectedEntries
-          .filter(e1 => e1.searchType === SearchTypeConstants.MEASURE)
-          .map(e1 => {
+          .filter((e1) => e1.searchType === SearchTypeConstants.MEASURE)
+          .map((e1) => {
             return {
               measureName: e1.value,
-              cubeNames: e1.id
+              cubeNames: e1.id,
             };
           });
 
@@ -146,7 +146,7 @@ class Search extends React.Component {
           notification.warning({
             message: "Multiple measures selected",
             description: "Multiple measures not supported in search",
-            onClick: () => {}
+            onClick: () => {},
           });
         }
       } else {
@@ -182,7 +182,7 @@ class Search extends React.Component {
     return this.searchInputRef.select.state.menuIsOpen;
   }
 
-  onUserInteracted = e => {
+  onUserInteracted = (e) => {
     if (e.key == "Backspace") {
       if (this.state.query == "") {
         if (
@@ -272,7 +272,7 @@ class Search extends React.Component {
     // }
   };
 
-  getBoundFilterName = boundFilter => {
+  getBoundFilterName = (boundFilter) => {
     let name = boundFilter["operation"];
     if (boundFilter.value1) {
       name += " " + String(boundFilter["value1"]);
@@ -285,8 +285,8 @@ class Search extends React.Component {
 
   debouncedFetch = _.debounce((searchTerm, callback) => {
     this.getSearchSuggestions(searchTerm)
-      .then(result => callback(null, { options: result }))
-      .catch(error => callback(error, null));
+      .then((result) => callback(null, { options: result }))
+      .catch((error) => callback(error, null));
   }, 300);
 
   onBlur = () => {
@@ -298,7 +298,7 @@ class Search extends React.Component {
   };
 
   render() {
-    const DropdownIndicator = props => {
+    const DropdownIndicator = (props) => {
       return null;
     };
     return (
@@ -314,7 +314,7 @@ class Search extends React.Component {
           components={{
             DropdownIndicator,
             MultiValueContainer,
-            IndicatorSeparator: () => null
+            IndicatorSeparator: () => null,
           }}
           onKeyDown={this.onUserInteracted}
           formatOptionLabel={formatOptionLabel}
@@ -336,9 +336,8 @@ class Search extends React.Component {
           value={this.selectedEntries}
           backspaceRemovesValue={false}
           inputValue={this.state.query}
-          
-          menuPortalTarget={document.body} 
-          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          menuPortalTarget={document.body}
+          styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
           noOptionsMessage={() => {
             return <></>;
           }}

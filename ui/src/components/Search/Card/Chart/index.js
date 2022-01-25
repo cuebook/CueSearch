@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import style from "./style.module.scss";
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory } from "react-router-dom";
 import {
   Chart,
   Geom,
@@ -9,7 +9,7 @@ import {
   Tooltip,
   track,
   G2,
-  Guide
+  Guide,
 } from "bizcharts";
 const { Html } = Guide;
 
@@ -19,7 +19,7 @@ G2.track(false);
 const renderTypeMap = {
   line: "line",
   bar: "intervalStack",
-  area: "areaStack"
+  area: "areaStack",
 };
 
 class ChartCard extends React.Component {
@@ -28,7 +28,7 @@ class ChartCard extends React.Component {
     this.state = {
       chartData: null,
       showPercentageChart: false,
-      renderType: null
+      renderType: null,
     };
     this.chartRef = React.createRef();
     this.chart = null;
@@ -58,27 +58,27 @@ class ChartCard extends React.Component {
           let denom = numDict[chartMetaData.order];
           chartMetaData.scale[chartMetaData.yColumn] = {
             ...chartMetaData.scale[chartMetaData.yColumn],
-            formatter: val => (val / denom).toLocaleString() + chartMetaData.order
+            formatter: (val) =>
+              (val / denom).toLocaleString() + chartMetaData.order,
           };
         }
 
-          geomElements = [
-            <Geom
-              key="chartDefault"
-              type={renderTypeMap[renderType]}
-              position={chartMetaData.xColumn + "*" + chartMetaData.yColumn}
-              color={chartMetaData.color ? chartMetaData.color : ""}
-            />,
-            <Geom
-              key="chartPoint"
-              type={"point"}
-              size={7}
-              position={chartMetaData.xColumn + "*" + chartMetaData.yColumn}
-              opacity={0}
-            />
-          ];
-        }
-
+        geomElements = [
+          <Geom
+            key="chartDefault"
+            type={renderTypeMap[renderType]}
+            position={chartMetaData.xColumn + "*" + chartMetaData.yColumn}
+            color={chartMetaData.color ? chartMetaData.color : ""}
+          />,
+          <Geom
+            key="chartPoint"
+            type={"point"}
+            size={7}
+            position={chartMetaData.xColumn + "*" + chartMetaData.yColumn}
+            opacity={0}
+          />,
+        ];
+      }
     }
 
     // Hiding X Axis Label for bar chart if more than 15 data points
@@ -115,7 +115,7 @@ class ChartCard extends React.Component {
         )}
         <Tooltip
           crosshairs={{
-            type: "y"
+            type: "y",
           }}
           hideTime={1000}
         />
@@ -134,10 +134,7 @@ class ChartCard extends React.Component {
 
     return (
       <div>
-        <div className={style.chartDiv}>
-          {this.chart}
-        </div>
-
+        <div className={style.chartDiv}>{this.chart}</div>
       </div>
     );
   }
