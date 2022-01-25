@@ -735,30 +735,35 @@ class ESIndexingUtils:
             dimensionValues = res.get("data", [])
             if dimensionValues:
                 for values in dimensionValues:
-                    displayValue = values
-                    globalDimensionId = (
-                        str(dimension) + "_" + str(displayValue) + "_" + str(datasetId)
-                    )
-                    globalDimensionName = str(dataset) + "_" + str(dimension)
-                    elasticsearchUniqueId = (
-                        str(globalDimensionId)
-                        + "_"
-                        + str(displayValue)
-                        + "_"
-                        + str(dataset)
-                    )
+                    if values and values != "None":
+                        displayValue = values
+                        globalDimensionId = (
+                            str(dimension)
+                            + "_"
+                            + str(displayValue)
+                            + "_"
+                            + str(datasetId)
+                        )
+                        globalDimensionName = str(dataset) + "_" + str(dimension)
+                        elasticsearchUniqueId = (
+                            str(globalDimensionId)
+                            + "_"
+                            + str(displayValue)
+                            + "_"
+                            + str(dataset)
+                        )
 
-                    document = {
-                        "_id": elasticsearchUniqueId,
-                        "globalDimensionValue": str(displayValue).lower(),
-                        "globalDimensionDisplayValue": str(displayValue),
-                        "globalDimensionName": str(globalDimensionName),
-                        "globalDimensionId": globalDimensionId,
-                        "dimension": dimension,
-                        "dataset": dataset,
-                        "datasetId": datasetId,
-                    }
-                    indexingDocuments.append(document)
-                    logging.debug("Document to index: %s", document)
+                        document = {
+                            "_id": elasticsearchUniqueId,
+                            "globalDimensionValue": str(displayValue).lower(),
+                            "globalDimensionDisplayValue": str(displayValue),
+                            "globalDimensionName": str(globalDimensionName),
+                            "globalDimensionId": globalDimensionId,
+                            "dimension": dimension,
+                            "dataset": dataset,
+                            "datasetId": datasetId,
+                        }
+                        indexingDocuments.append(document)
+                        logging.debug("Document to index: %s", document)
 
         return indexingDocuments
