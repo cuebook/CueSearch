@@ -1,9 +1,7 @@
 name: auto-format
-on: pull_request
+on: push
 jobs:
   format-python:
-    # Check if the PR is not from a fork
-    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,8 +17,6 @@ jobs:
           default_author: github_actions
 
   format-js:
-    # Check if the PR is not from a fork
-    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
