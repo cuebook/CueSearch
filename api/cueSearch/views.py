@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import logging
-=======
->>>>>>> main
 from utils.apiResponse import ApiResponse
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView

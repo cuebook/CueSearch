@@ -34,7 +34,7 @@ class Utils:
         try:
             dataset = Dataset.objects.get(id=datasetId)
             df = Data.fetchDatasetDataframe(dataset)
-            data = df[dimension].to_list()[:30]
+            data = df[dimension].to_list()
             res = {"success": True, "data": data}
         except Exception as ex:
             res = {
