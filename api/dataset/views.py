@@ -138,7 +138,7 @@ class SettingsView(APIView):
 
 
 # class InstallationView(APIView):
-#     #Provides views on Installation 
+#     #Provides views on Installation
 #     def get(self, request):
 #         res = getInstallationId()
 #         return Response(res.json())

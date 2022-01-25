@@ -10,19 +10,17 @@ from utils.apiResponse import ApiResponse
 @pytest.mark.django_db(transaction=True)
 def test_setting(client, mocker):
     # Create setting test
-    path = reverse('settings')
+    path = reverse("settings")
     res = ApiResponse("Successfully tested setting")
     mockResponse = mocker.patch(
         "dataset.services.settings.Settings.updateSettings",
-        new=mock.MagicMock(
-            autospec=True, return_value=res
-        ),
+        new=mock.MagicMock(autospec=True, return_value=res),
     )
     mockResponse.start()
     data = {
         "Bot User OAuth Access Token": "xoxb-someoriginaltoken",
         "Slack Channel ID for App Monitoring": "CKDHFKLD",
-        "Slack Channel ID for Anomaly Alerts": "ADCLKJDZ"
+        "Slack Channel ID for Anomaly Alerts": "ADCLKJDZ",
     }
     response = client.post(path, data=data, content_type="application/json")
     assert response.status_code == 200

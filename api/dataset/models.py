@@ -76,12 +76,11 @@ class Setting(models.Model):
     value = models.TextField(null=True, blank=True)
 
 
-
-
 class InstallationTable(models.Model):
     """
-    Model class to create a unique userId for telemetry 
+    Model class to create a unique userId for telemetry
     """
+
     installationId = models.CharField(max_length=200)
     createdAt = models.DateTimeField(auto_now_add=True)
-    databaseType = models.CharField(null=True, blank=True,max_length=500)
+    databaseType = models.CharField(null=True, blank=True, max_length=500)

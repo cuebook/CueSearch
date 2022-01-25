@@ -25,21 +25,25 @@ class ClickHouse:
             password = params.get("password", "")
             database = params.get("database", "default")
             timeout = params.get("timeout", "")
-            params.update({
-                "host": host,
-                "port": port,
-                "user": username,
-                "password": password,
-                "database": database,
-            })
+            params.update(
+                {
+                    "host": host,
+                    "port": port,
+                    "user": username,
+                    "password": password,
+                    "database": database,
+                }
+            )
             if timeout != "":
-                params.update({
-                    "send_receive_timeout": timeout,
-                    "connect_timeout": timeout,
-                    "sync_requests_timeout": timeout,
-                })
+                params.update(
+                    {
+                        "send_receive_timeout": timeout,
+                        "connect_timeout": timeout,
+                        "sync_requests_timeout": timeout,
+                    }
+                )
 
-            client = ch.Client(settings={'use_numpy': True}, **params)
+            client = ch.Client(settings={"use_numpy": True}, **params)
         dataframe = client.query_dataframe("select 1")
 
         return client

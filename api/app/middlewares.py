@@ -5,6 +5,7 @@ from django.contrib.auth import logout
 from django.utils.deprecation import MiddlewareMixin
 from django.contrib.auth.decorators import login_required
 
+
 class DisableCsrfCheck(MiddlewareMixin):
     """
     Middleware class to disable CSRF check for views
@@ -30,7 +31,9 @@ class LoginRequiredMiddleware:
     def __call__(self, request):
         return self.get_response(request)
 
-    def process_view(self, request, view_func, view_args, view_kwargs):  # pylint: disable=C0103
+    def process_view(
+        self, request, view_func, view_args, view_kwargs
+    ):  # pylint: disable=C0103
         """
         Process view method to check login_exempt decorator and enforce authentication on all views
         """
@@ -40,14 +43,19 @@ class LoginRequiredMiddleware:
                 return
         except:
             pass
-        authenticationRequired= True if settings.AUTHENTICATION_REQUIRED == "True" else False
+        authenticationRequired = (
+            True if settings.AUTHENTICATION_REQUIRED == "True" else False
+        )
 
         if not authenticationRequired:
-            return 
+            return
         if getattr(view_func, "login_exempt", False):
             return
 
-        if not request.user.is_authenticated and request.path.split("/")[2] == "datadownload":
+        if (
+            not request.user.is_authenticated
+            and request.path.split("/")[2] == "datadownload"
+        ):
             return redirect(settings.LOGIN_REDIRECT_URL)
 
         if request.user.is_authenticated:
@@ -55,9 +63,7 @@ class LoginRequiredMiddleware:
                 logout(request)
             return
 
-        return HttpResponse('Unauthorized', status=401)
-
-
+        return HttpResponse("Unauthorized", status=401)
 
 
 def login_exempt(view):  # pylint: disable=C0103

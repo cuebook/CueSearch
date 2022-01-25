@@ -9,11 +9,10 @@ from mixer.backend.django import mixer
 @pytest.mark.django_db(transaction=True)
 def test_datasets(client, mocker):
     # Get dataset when no entry
-    path = reverse('datasets')
+    path = reverse("datasets")
     response = client.get(path)
     assert response.status_code == 200
-    assert not response.data['data']
-
+    assert not response.data["data"]
 
     # Create dataset
     connection = mixer.blend("dataset.connection")
@@ -27,32 +26,43 @@ def test_datasets(client, mocker):
         "dimensions": ["Category", "Region"],
         "timestamp": "CreatedAt",
         "granularity": "day",
-        "isNonRollup": False
+        "isNonRollup": False,
     }
     response = client.post(path, data=data, content_type="application/json")
 
     assert response.status_code == 200
-    assert response.data['success'] 
+    assert response.data["success"]
 
     # Get datasets
-    path = reverse('datasets')
+    path = reverse("datasets")
     response = client.get(path)
     assert response.status_code == 200
-    assert response.data['data']
-    assert set(response.data['data'][0].keys()) == set(['connection', 'granularity', 'name', 'id','connectionName'])
+    assert response.data["data"]
+    assert set(response.data["data"][0].keys()) == set(
+        ["connection", "granularity", "name", "id", "connectionName"]
+    )
 
-    dataset = response.data['data'][0]
-
+    dataset = response.data["data"][0]
 
     # Get dataset
-    path = reverse("dataset", kwargs={"datasetId": dataset['id']})
+    path = reverse("dataset", kwargs={"datasetId": dataset["id"]})
     response = client.get(path)
 
     assert response.status_code == 200
-    assert response.data['data']
-    assert response.data['data']['name'] == "something"
-    assert set(response.data['data'].keys()) == set(['id', 'name', 'sql', 'connection', 'dimensions', 'metrics', 'granularity', 'timestampColumn'])
-
+    assert response.data["data"]
+    assert response.data["data"]["name"] == "something"
+    assert set(response.data["data"].keys()) == set(
+        [
+            "id",
+            "name",
+            "sql",
+            "connection",
+            "dimensions",
+            "metrics",
+            "granularity",
+            "timestampColumn",
+        ]
+    )
 
     # Update dataset
     data = {
@@ -63,33 +73,30 @@ def test_datasets(client, mocker):
         "dimensions": ["Category", "Region"],
         "timestamp": "CreatedAt",
         "granularity": "day",
-        "isNonRollup": False
+        "isNonRollup": False,
     }
-    path = reverse("dataset", kwargs={"datasetId": dataset['id']})
+    path = reverse("dataset", kwargs={"datasetId": dataset["id"]})
     response = client.post(path, data=data, content_type="application/json")
     assert response.status_code == 200
-    assert response.data['success']
+    assert response.data["success"]
 
     # Get dataset
-    path = reverse("dataset", kwargs={"datasetId": dataset['id']})
+    path = reverse("dataset", kwargs={"datasetId": dataset["id"]})
     response = client.get(path)
 
     assert response.status_code == 200
-    assert response.data['data']
-    assert response.data['data']['name'] == "anything"
-
+    assert response.data["data"]
+    assert response.data["data"]["name"] == "anything"
 
     # Delete dataset
-    path = reverse("dataset", kwargs={"datasetId": dataset['id']})
+    path = reverse("dataset", kwargs={"datasetId": dataset["id"]})
     response = client.delete(path)
 
     assert response.status_code == 200
-    assert response.data['success']
-
+    assert response.data["success"]
 
     # Get datasets
-    path = reverse('datasets')
+    path = reverse("datasets")
     response = client.get(path)
     assert response.status_code == 200
-    assert not response.data['data']
-
+    assert not response.data["data"]

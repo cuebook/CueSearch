@@ -8,85 +8,171 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Connection',
+            name="Connection",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
-                ('description', models.TextField()),
-                ('isActive', models.BooleanField(default=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                ("description", models.TextField()),
+                ("isActive", models.BooleanField(default=True)),
             ],
         ),
         migrations.CreateModel(
-            name='ConnectionParam',
+            name="ConnectionParam",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
-                ('label', models.CharField(blank=True, max_length=200, null=True)),
-                ('isEncrypted', models.BooleanField(default=False)),
-                ('properties', models.JSONField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                ("label", models.CharField(blank=True, max_length=200, null=True)),
+                ("isEncrypted", models.BooleanField(default=False)),
+                ("properties", models.JSONField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='ConnectionType',
+            name="ConnectionType",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(db_index=True, max_length=200, unique=True)),
-                ('label', models.CharField(blank=True, max_length=200, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(db_index=True, max_length=200, unique=True)),
+                ("label", models.CharField(blank=True, max_length=200, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='InstallationTable',
+            name="InstallationTable",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('installationId', models.CharField(max_length=200)),
-                ('createdAt', models.DateTimeField(auto_now_add=True)),
-                ('databaseType', models.CharField(blank=True, max_length=500, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("installationId", models.CharField(max_length=200)),
+                ("createdAt", models.DateTimeField(auto_now_add=True)),
+                (
+                    "databaseType",
+                    models.CharField(blank=True, max_length=500, null=True),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Setting',
+            name="Setting",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.TextField(blank=True, null=True)),
-                ('value', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.TextField(blank=True, null=True)),
+                ("value", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Dataset',
+            name="Dataset",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=500)),
-                ('sql', models.TextField(blank=True, null=True)),
-                ('granularity', models.CharField(max_length=50)),
-                ('timestampColumn', models.CharField(max_length=500)),
-                ('metrics', models.TextField(blank=True, null=True)),
-                ('dimensions', models.TextField(blank=True, null=True)),
-                ('isNonRollup', models.BooleanField(default=False)),
-                ('connection', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dataset.connection')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=500)),
+                ("sql", models.TextField(blank=True, null=True)),
+                ("granularity", models.CharField(max_length=50)),
+                ("timestampColumn", models.CharField(max_length=500)),
+                ("metrics", models.TextField(blank=True, null=True)),
+                ("dimensions", models.TextField(blank=True, null=True)),
+                ("isNonRollup", models.BooleanField(default=False)),
+                (
+                    "connection",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dataset.connection",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ConnectionParamValue',
+            name="ConnectionParamValue",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('value', models.TextField()),
-                ('connection', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cpvc', to='dataset.connection')),
-                ('connectionParam', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cpvcp', to='dataset.connectionparam')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("value", models.TextField()),
+                (
+                    "connection",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="cpvc",
+                        to="dataset.connection",
+                    ),
+                ),
+                (
+                    "connectionParam",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="cpvcp",
+                        to="dataset.connectionparam",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='connectionparam',
-            name='connectionType',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='connectionTypeParam', to='dataset.connectiontype'),
+            model_name="connectionparam",
+            name="connectionType",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="connectionTypeParam",
+                to="dataset.connectiontype",
+            ),
         ),
         migrations.AddField(
-            model_name='connection',
-            name='connectionType',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='connectionTypeConnection', to='dataset.connectiontype'),
+            model_name="connection",
+            name="connectionType",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="connectionTypeConnection",
+                to="dataset.connectiontype",
+            ),
         ),
     ]
