@@ -1,12 +1,14 @@
 import json
 from rest_framework import serializers
-from dataset.models import  Dataset
+from dataset.models import Dataset
 from cueSearch.models import GlobalDimension, SearchCardTemplate
+
 
 class AllDimensionsSerializer(serializers.ModelSerializer):
     """
     Serializes data to get all dimensions
     """
+
     connectionName = serializers.SerializerMethodField()
     dimensions = serializers.SerializerMethodField()
 
@@ -22,13 +24,14 @@ class AllDimensionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dataset
-        fields = ['id', 'name','connectionName' ,'dimensions', 'granularity']
+        fields = ["id", "name", "connectionName", "dimensions", "granularity"]
 
 
 class AllMeticsSerializer(serializers.ModelSerializer):
     """
     Serializes data to get all metrics
     """
+
     connectionName = serializers.SerializerMethodField()
     metrics = serializers.SerializerMethodField()
 
@@ -44,14 +47,16 @@ class AllMeticsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dataset
-        fields = ['id', 'name','connectionName','metrics', 'granularity']
+        fields = ["id", "name", "connectionName", "metrics", "granularity"]
 
 
 class GlobalDimensionSerializer(serializers.ModelSerializer):
     """
     Serializers for get Global dimensions
     """
+
     values = serializers.SerializerMethodField()
+
     def get_values(self, obj):
         paramsList = []
         gdValues = obj.globaldimensionvalues_set.all()
@@ -68,15 +73,19 @@ class GlobalDimensionSerializer(serializers.ModelSerializer):
             paramsList.append(params)
         return paramsList
 
-
-
     class Meta:
         model = GlobalDimension
-        fields = ['id', 'name','published','values']
+        fields = ["id", "name", "published", "values"]
 
 
 class SearchCardTemplateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = SearchCardTemplate
-        fields = ['id', 'templateName','title','bodyText','supportedVariables','sql']
+        fields = [
+            "id",
+            "templateName",
+            "title",
+            "bodyText",
+            "supportedVariables",
+            "sql",
+        ]

@@ -1,12 +1,12 @@
 import React from "react";
-import GlobalDimensionTable from "components/Search/GlobalDimension/index.js"
+import GlobalDimensionTable from "components/Search/GlobalDimension/index.js";
 
 export default function GlobalDimensionView() {
   return (
     <>
       <div className="flex flex-wrap mh-full">
         <div className="w-full mb-12 px-4">
-		      <GlobalDimensionTable />
+          <GlobalDimensionTable />
         </div>
       </div>
     </>

@@ -11,7 +11,7 @@ class MySQL:
     """
 
     def checkConnection(params):
-        """ Function to connect mysql db """
+        """Function to connect mysql db"""
         from MySQLdb import connect
 
         res = True
@@ -26,12 +26,12 @@ class MySQL:
             )
 
         except Exception as ex:
-            logger.error("Can't connect to db with this credentials %s",str(ex))
+            logger.error("Can't connect to db with this credentials %s", str(ex))
             res = False
         return res
 
     def fetchDataframe(params: str, sql: str, limit: bool = False):
-        """ Function to fetch data from mysql db """
+        """Function to fetch data from mysql db"""
         from MySQLdb import connect
 
         dataframe = None

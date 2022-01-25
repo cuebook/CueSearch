@@ -1,21 +1,24 @@
 from itertools import groupby
 from pandas import DataFrame
 
+
 def key_func(k):
-    return k['dimension']
+    return k["dimension"]
+
 
 def structureAndFilter(params: list):
-    """ This method is responsible for adding AND filter between dimensionValue belongs to different dimension"""
+    """This method is responsible for adding AND filter between dimensionValue belongs to different dimension"""
     text = ""
     for i in range(len(params)):
         if i == 0:
-            text ="( " + params[i] + " )" 
-        else: 
-            text = "( " + text + " )" +" AND "+ "( "+ params[i] + " )"
+            text = "( " + params[i] + " )"
+        else:
+            text = "( " + text + " )" + " AND " + "( " + params[i] + " )"
     return text
-                
+
+
 def structureOrFilter(payload):
-    """ This method is responsible for adding OR filter between dimensionValue belongs to same dimension"""
+    """This method is responsible for adding OR filter between dimensionValue belongs to same dimension"""
     payload = sorted(payload, key=key_func)
 
     prevKey = None
@@ -27,27 +30,29 @@ def structureOrFilter(payload):
             # print(value)
             if not prevKey:
                 prevKey = key
-                text = key + " = "+"'"+ value['value']+"'"
+                text = key + " = " + "'" + value["value"] + "'"
             elif prevKey and prevKey == key:
-                text = text + " OR "  + key + " = "+ "'"+ value['value']+"'"
+                text = text + " OR " + key + " = " + "'" + value["value"] + "'"
                 prevKey = key
             elif prevKey and prevKey != key:
                 l.append(text)
                 text = ""
-                text = text + key + " = " + "'"+ value['value']+"'"
+                text = text + key + " = " + "'" + value["value"] + "'"
                 prevKey = key
     if text:
         l.append(text)
-    return l 
+    return l
+
 
 def makeFilter(payload):
-    """ This method is responsible for making datset specific filter"""
+    """This method is responsible for making datset specific filter"""
     paramList = structureOrFilter(payload)
     filter = structureAndFilter(paramList)
     return filter
 
+
 def addDimensionsInParam(payload):
-    """ This method is responsible for grouping all dimension that has used in dataset filter"""
+    """This method is responsible for grouping all dimension that has used in dataset filter"""
     payload = sorted(payload, key=key_func)
     listOfDimensions = []
     for key, values in groupby(payload, key_func):

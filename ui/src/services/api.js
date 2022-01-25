@@ -1,17 +1,17 @@
-import {getCookie} from "./general.js"
+import { getCookie } from "./general.js";
 
 class ApiService {
-  constructor(baseUrl){
-    this.base_url = baseUrl
+  constructor(baseUrl) {
+    this.base_url = baseUrl;
   }
-  
+
   async get(endpoint) {
     let token = this.getCsrfToken();
     let response = await fetch(this.base_url + endpoint, {
       credentials: "include",
       method: "GET",
-      mode:"cors",
-      headers: { "content-type": "application/json","X-CSRFToken": token }
+      mode: "cors",
+      headers: { "content-type": "application/json", "X-CSRFToken": token },
     });
     let resBody = await response.json();
     return resBody;
@@ -24,7 +24,7 @@ class ApiService {
       method: "POST",
       mode: "cors",
       body: JSON.stringify(data),
-      headers: { "content-type": "application/json", "X-CSRFToken": token }
+      headers: { "content-type": "application/json", "X-CSRFToken": token },
     });
     let resBody = await response.json();
     return resBody;
@@ -37,7 +37,7 @@ class ApiService {
       method: "PUT",
       mode: "cors",
       body: JSON.stringify(data),
-      headers: { "content-type": "application/json", "X-CSRFToken": token }
+      headers: { "content-type": "application/json", "X-CSRFToken": token },
     });
     let resBody = await response.json();
     return resBody;
@@ -50,13 +50,13 @@ class ApiService {
       method: "DELETE",
       mode: "cors",
       body: data,
-      headers: { "content-type": "application/json", "X-CSRFToken": token }
+      headers: { "content-type": "application/json", "X-CSRFToken": token },
     });
     let resBody = await response.json();
     return resBody;
   }
 
- async upload(endpoint, data, fileName) {
+  async upload(endpoint, data, fileName) {
     let token = this.getCsrfToken();
     const formData = new FormData();
     formData.append(fileName, data);
@@ -65,7 +65,7 @@ class ApiService {
       method: "POST",
       mode: "cors",
       body: formData,
-      headers: { "X-CSRFToken": token, "X-Requested-With": "XMLHttpRequest" }
+      headers: { "X-CSRFToken": token, "X-Requested-With": "XMLHttpRequest" },
     });
     let resBody = await response.json();
     return resBody;
@@ -77,4 +77,4 @@ class ApiService {
   };
 }
 
-export default ApiService
+export default ApiService;

@@ -2,6 +2,7 @@ class ApiResponse:
     """
     Default api response object class to be used by services
     """
+
     def __init__(self, message=None):
         """
         Response constructor with defaults

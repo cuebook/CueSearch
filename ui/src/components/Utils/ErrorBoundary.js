@@ -4,13 +4,13 @@ class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hasError: false
+      hasError: false,
     };
   }
   static getDerivedStateFromError(error) {
     console.error("ERROR IN LOADING COMPONENT: ERROR: ", error);
     return {
-      hasError: true
+      hasError: true,
     };
   }
   render() {

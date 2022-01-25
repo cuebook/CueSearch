@@ -8,6 +8,7 @@ from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 
+
 class LowercaseEmailField(models.EmailField):
     """
     Override EmailField to convert emails to lowercase before saving.
@@ -23,6 +24,7 @@ class LowercaseEmailField(models.EmailField):
             return value.lower()
         return value
 
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = LowercaseEmailField(_("email address"), unique=True)
     name = models.CharField(max_length=200, null=False, default="User")
@@ -33,5 +35,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
     objects = CustomUserManager()
+
     def __str__(self):
         return self.email

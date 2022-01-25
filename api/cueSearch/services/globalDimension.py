@@ -48,7 +48,7 @@ class GlobalDimensionServices:
                 ESIndexingUtils.runAllIndexDimension()
             except Exception as ex:
                 logging.error("Exception occured while indexing global dimension")
-                
+
             res.update(True, "successfully deleted")
         except Exception as ex:
             res.update(False, "Error occured while deleting global dimension ")
@@ -148,14 +148,13 @@ class GlobalDimensionServices:
             res.update(False, "Error occured while updating global dimension")
         return res
 
-
     def nonGlobalDimensionForIndexing():
-        """ Method to filter dimension from all ready created global dimension"""
+        """Method to filter dimension from all ready created global dimension"""
         try:
             dimensions = GlobalDimensionServices.getDimension()
-            dimensionObjs = dimensions.json().get("data",[])
+            dimensionObjs = dimensions.json().get("data", [])
             globalDim = GlobalDimensionServices.getGlobalDimensions()
-            globalDimensionObjs = globalDim.json().get("data",[])
+            globalDimensionObjs = globalDim.json().get("data", [])
             gdValuesList = []
             listToIndex = []
 
@@ -164,15 +163,22 @@ class GlobalDimensionServices:
             for dimensionObj in dimensionObjs:
                 flag = False
                 for globalDimensionObj in gdValuesList:
-                    if (dimensionObj["datasetId"] == globalDimensionObj["datasetId"]) and (dimensionObj["dimension"] == globalDimensionObj["dimension"]):
+                    if (
+                        dimensionObj["datasetId"] == globalDimensionObj["datasetId"]
+                    ) and (
+                        dimensionObj["dimension"] == globalDimensionObj["dimension"]
+                    ):
                         flag = True
-                
+
                 if not flag:
                     listToIndex.append(dimensionObj)
             print(len(listToIndex))
-            res = {"success":True, "data":listToIndex}
+            res = {"success": True, "data": listToIndex}
 
         except Exception as ex:
-            logging.error("Error occued while fetch auto global dimension for indexing %s", str(ex))
-            res = {"success":False, "data":[]}
+            logging.error(
+                "Error occued while fetch auto global dimension for indexing %s",
+                str(ex),
+            )
+            res = {"success": False, "data": []}
         return res
