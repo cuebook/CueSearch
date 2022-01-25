@@ -1,4 +1,3 @@
-
 from utils.apiResponse import ApiResponse
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -14,24 +13,26 @@ class DimensionView(APIView):
         res = GlobalDimensionServices.getDimension()
         return Response(res.json())
 
-class  GlobalDimensionView(APIView):
+
+class GlobalDimensionView(APIView):
     def get(self, request):
         res = GlobalDimensionServices.getGlobalDimensions()
         return Response(res.json())
+
     def post(self, request):
         payloads = request.data
         res = GlobalDimensionServices.createGlobalDimension(payloads)
         return Response(res.json())
+
     def delete(self, request, id):
         res = GlobalDimensionServices.deleteGlobalDimension(id)
         return Response(res.json())
 
 
-
 @api_view(["POST"])
 def pubGlobalDimension(request: HttpRequest) -> Response:
     """
-    Method for run Publish global dimension 
+    Method for run Publish global dimension
     :param request: HttpRequest
     """
     payload = request.data
@@ -40,7 +41,7 @@ def pubGlobalDimension(request: HttpRequest) -> Response:
 
 
 @api_view(["GET"])
-def globalDimensionById(request: HttpRequest,id) -> Response:
+def globalDimensionById(request: HttpRequest, id) -> Response:
     res = GlobalDimensionServices.getGlobalDimensionById(id)
     return Response(res.json())
 
@@ -65,7 +66,6 @@ def getSearchCards(request: HttpRequest) -> Response:
     return Response(res.json())
 
 
-
 @api_view(["POST"])
 def getSearchSuggestionsView(request: HttpRequest) -> Response:
     searchQuery = request.data
@@ -73,14 +73,12 @@ def getSearchSuggestionsView(request: HttpRequest) -> Response:
     return Response(res.json())
 
 
-
 @api_view(["GET"])
-def elasticSearchIndexingView(request: HttpRequest)-> Response:
+def elasticSearchIndexingView(request: HttpRequest) -> Response:
     res = ApiResponse("Indexing is not completed !")
-    ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion() # Used for search suggestion
-    ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion() #Used for index auto global dimension
+    ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion()  # Used for search suggestion
+    ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion()  # Used for index auto global dimension
     ESIndexingUtils.indexGlobalDimensionName()
     ESIndexingUtils.indexGlobalDimensionsData()
     res.update(True, "Indexing completed !", [])
     return Response(res.json())
-

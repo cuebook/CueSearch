@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cueSearch', '0002_searchcardtemplate'),
+        ("cueSearch", "0002_searchcardtemplate"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='searchcardtemplate',
-            name='renderType',
-            field=models.CharField(default='table', max_length=200),
+            model_name="searchcardtemplate",
+            name="renderType",
+            field=models.CharField(default="table", max_length=200),
         ),
     ]

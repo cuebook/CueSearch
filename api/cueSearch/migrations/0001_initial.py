@@ -9,25 +9,53 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('dataset', '0001_initial'),
+        ("dataset", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='GlobalDimension',
+            name="GlobalDimension",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=500, unique=True)),
-                ('published', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=500, unique=True)),
+                ("published", models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
-            name='GlobalDimensionValues',
+            name="GlobalDimensionValues",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('dimension', models.CharField(max_length=500)),
-                ('dataset', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dataset.dataset')),
-                ('globalDimension', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cueSearch.globaldimension')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("dimension", models.CharField(max_length=500)),
+                (
+                    "dataset",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dataset.dataset",
+                    ),
+                ),
+                (
+                    "globalDimension",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="cueSearch.globaldimension",
+                    ),
+                ),
             ],
         ),
     ]
