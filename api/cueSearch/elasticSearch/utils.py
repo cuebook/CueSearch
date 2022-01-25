@@ -1,4 +1,4 @@
-from cueSearch.models import  GlobalDimension
+from cueSearch.models import GlobalDimension
 from cueSearch.serializers import GlobalDimensionSerializer
 from dataset.models import Dataset
 from access.data import Data
@@ -6,10 +6,10 @@ from access.data import Data
 
 class Utils:
     def getGlobalDimensionForIndex():
-        """ Service to get global dimension values for indexing, only published global dimensions are being indexed """  
+        """Service to get global dimension values for indexing, only published global dimensions are being indexed"""
         globalDimension = GlobalDimension.objects.filter(published=True)
-        data = GlobalDimensionSerializer(globalDimension,many=True).data
-        res = {"success":True, "data":data}
+        data = GlobalDimensionSerializer(globalDimension, many=True).data
+        res = {"success": True, "data": data}
         return res
 
     # def getMetricsFromCueObserve():
@@ -35,8 +35,11 @@ class Utils:
             dataset = Dataset.objects.get(id=datasetId)
             df = Data.fetchDatasetDataframe(dataset)
             data = df[dimension].to_list()[:30]
-            res = {"success":True, "data":data}
+            res = {"success": True, "data": data}
         except Exception as ex:
-            res = {"success":False, "data":[], "message":"Error occured while getting dimensional values from cueObserve"}
+            res = {
+                "success": False,
+                "data": [],
+                "message": "Error occured while getting dimensional values from cueObserve",
+            }
         return res
-        

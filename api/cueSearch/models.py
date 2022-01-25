@@ -20,7 +20,7 @@ class GlobalDimensionValues(models.Model):
     globalDimension = models.ForeignKey(GlobalDimension, on_delete=models.CASCADE)
 
     def __str__(self):
-        return  self.dimension
+        return self.dimension
 
 
 class SearchCardTemplate(models.Model):

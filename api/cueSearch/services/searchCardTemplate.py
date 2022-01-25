@@ -14,9 +14,14 @@ from cueSearch.models import SearchCardTemplate
 from dataset.models import Dataset
 from cueSearch.elasticSearch import ESQueryingUtils, ESIndexingUtils
 from dataset.services import Datasets
-from cueSearch.services.utils import addDimensionsInParam, makeFilter, getOrderFromDataframe
+from cueSearch.services.utils import (
+    addDimensionsInParam,
+    makeFilter,
+    getOrderFromDataframe,
+)
 
 logger = logging.getLogger(__name__)
+
 
 class SearchCardTemplateServices:
     """
@@ -66,7 +71,7 @@ class SearchCardTemplateServices:
                 )
             )
             return result
-            
+
     @staticmethod
     def ElasticSearchQueryResultsForOnSearchQuery(searchPayload: dict):
         searchResults = []
@@ -75,11 +80,10 @@ class SearchCardTemplateServices:
             query = payload["label"]
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 futures = []
-                if(payload["searchType"]=="GLOBALDIMENSION"):
+                if payload["searchType"] == "GLOBALDIMENSION":
                     futures = [
                         executor.submit(
-                            ESQueryingUtils.findGlobalDimensionResults,
-                            query=query
+                            ESQueryingUtils.findGlobalDimensionResults, query=query
                         ),
                     ]
                 elif payload["searchType"] == "DATASETDIMENSION":
@@ -87,21 +91,21 @@ class SearchCardTemplateServices:
                         executor.submit(
                             ESQueryingUtils.findNonGlobalDimensionResults,
                             globalDimension=payload["globalDimensionId"],
-                            query = query
+                            query=query,
                         ),
                     ]
                 for future in concurrent.futures.as_completed(futures):
                     try:
                         data.extend(future.result())
                     except Exception as ex:
-                        logging.error("Error in fetching search suggestions :%s", str(ex))
+                        logging.error(
+                            "Error in fetching search suggestions :%s", str(ex)
+                        )
 
             if data:
                 searchResults.extend(data)
         # searchResults = list({v['id']:v for v in searchResults}.values())
         return searchResults
-
-
 
     @staticmethod
     def getSearchCards(searchPayload: dict):
@@ -112,7 +116,11 @@ class SearchCardTemplateServices:
         res = ApiResponse()
         finalResults = []
         searchResults = []
-        searchResults = SearchCardTemplateServices.ElasticSearchQueryResultsForOnSearchQuery(searchPayload)
+        searchResults = (
+            SearchCardTemplateServices.ElasticSearchQueryResultsForOnSearchQuery(
+                searchPayload
+            )
+        )
         groupedResults = groupSearchResultsByDataset(searchResults)
         searchTemplates = SearchCardTemplate.objects.all()
 
@@ -125,8 +133,10 @@ class SearchCardTemplateServices:
                     paramDict["datasetId"] = int(datasetId)
 
                     paramDict["searchResults"] = datasetSearchResult
-                    paramDict['filter'] = makeFilter(datasetSearchResult)
-                    paramDict['filterDimensions'] = addDimensionsInParam(datasetSearchResult)
+                    paramDict["filter"] = makeFilter(datasetSearchResult)
+                    paramDict["filterDimensions"] = addDimensionsInParam(
+                        datasetSearchResult
+                    )
 
                     paramDict["templateSql"] = searchTemplate.sql
                     paramDict["templateTitle"] = searchTemplate.title
@@ -140,17 +150,18 @@ class SearchCardTemplateServices:
                     paramDict["datasetSql"] = dataset.sql
                     paramDict["granularity"] = dataset.granularity
 
-                    renderedTemplates = SearchCardTemplateServices.renderTemplates(paramDict)
+                    renderedTemplates = SearchCardTemplateServices.renderTemplates(
+                        paramDict
+                    )
                     for renderedTemplate in renderedTemplates:
-                        x = { "params": paramDict, **renderedTemplate }
+                        x = {"params": paramDict, **renderedTemplate}
                         results.append(x)
-
 
         dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(results))
         for i in range(len(results)):
-            results[i]['data'] = dataResults[i]
+            results[i]["data"] = dataResults[i]
 
-        finalResults = [ SearchCardTemplateServices.addChartMetaData(x) for x in results ]
+        finalResults = [SearchCardTemplateServices.addChartMetaData(x) for x in results]
         res.update(True, "successfully fetched", finalResults)
         return res
 
@@ -164,25 +175,32 @@ class SearchCardTemplateServices:
         response = []
         delimiter = "+-;"
         try:
-            titles = Template(param["templateTitle"]).render(Context(param)).split(delimiter)
-            texts = Template(param["templateText"]).render(Context(param)).split(delimiter)
-            sqls = Template(param["templateSql"]).render(Context(param)).split(delimiter)
+            titles = (
+                Template(param["templateTitle"]).render(Context(param)).split(delimiter)
+            )
+            texts = (
+                Template(param["templateText"]).render(Context(param)).split(delimiter)
+            )
+            sqls = (
+                Template(param["templateSql"]).render(Context(param)).split(delimiter)
+            )
 
             if len(titles) != len(texts) or len(titles) != len(sqls):
-                raise ValueError("Incosistent use of delimiter (%s) in title, text, sql of template" % delimiter)
+                raise ValueError(
+                    "Incosistent use of delimiter (%s) in title, text, sql of template"
+                    % delimiter
+                )
 
             for i in range(len(sqls)):
-                if str.isspace(sqls[i]): continue
-                response.append(
-                    { 'title': titles[i], 'text': texts[i], 'sql': sqls[i]}
-                )
+                if str.isspace(sqls[i]):
+                    continue
+                response.append({"title": titles[i], "text": texts[i], "sql": sqls[i]})
 
         except Exception as ex:
             logger.error("Error in rendering templates: %s", str(ex))
             logger.error(param)
 
         return response
-
 
     @staticmethod
     def addChartMetaData(result: Dict) -> Dict:
@@ -196,12 +214,12 @@ class SearchCardTemplateServices:
         order = "0"
         chartMetaData = {}
 
-        params = result['params']
-        if params['renderType'] == "line" and result['data'] and result['data']['data']:
-            dataColumns = result['data']['data'][0].keys()
-            if params['timestampColumn'] in dataColumns:
+        params = result["params"]
+        if params["renderType"] == "line" and result["data"] and result["data"]["data"]:
+            dataColumns = result["data"]["data"][0].keys()
+            if params["timestampColumn"] in dataColumns:
                 timestampColumn = params["timestampColumn"]
-            if params['granularity'] == "day":
+            if params["granularity"] == "day":
                 mask = "M/D"
             metric = list(set(params["metrics"]) & set(dataColumns))[0]
 
@@ -209,24 +227,20 @@ class SearchCardTemplateServices:
                 "xColumn": timestampColumn,
                 "yColumn": metric,
                 "scale": {
-                    timestampColumn: {
-                        'type': 'time',
-                        'mask': mask
-                    },
+                    timestampColumn: {"type": "time", "mask": mask},
                 },
-                "order": "O"
+                "order": "O",
             }
 
             try:
                 dimension = list(set(params["dimensions"]) & set(dataColumns))[0]
-                chartMetaData['color'] = dimension
-                chartMetaData["scale"][dimension] = { 'alias': dimension}
+                chartMetaData["color"] = dimension
+                chartMetaData["scale"][dimension] = {"alias": dimension}
             except Exception as ex:
                 pass
 
-        result['chartMetaData'] = chartMetaData
+        result["chartMetaData"] = chartMetaData
         return result
-
 
     @staticmethod
     def getSearchSuggestions(query):
@@ -241,7 +255,8 @@ class SearchCardTemplateServices:
                     datasource=None,
                     offset=0,
                     limit=6,
-                ),executor.submit(
+                ),
+                executor.submit(
                     ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion,
                     query=query,
                     datasource=None,

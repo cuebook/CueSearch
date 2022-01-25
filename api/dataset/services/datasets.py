@@ -112,8 +112,8 @@ class Datasets:
         :param payload: Dict containing dataset name, and global dimension
         """
         res = ApiResponse("Error in fetching data")
-        dataset = Dataset.objects.get(id=payload['params']["datasetId"])
-        dataDf = Data.fetchDatasetDataframe(dataset, payload['sql'])
+        dataset = Dataset.objects.get(id=payload["params"]["datasetId"])
+        dataDf = Data.fetchDatasetDataframe(dataset, payload["sql"])
         dfDict = dataDf.to_dict("records")
         res.update(True, "Successfully fetched data", dfDict)
         return res
