@@ -1,3 +1,4 @@
+import logging
 from utils.apiResponse import ApiResponse
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -76,9 +77,13 @@ def getSearchSuggestionsView(request: HttpRequest) -> Response:
 @api_view(["GET"])
 def elasticSearchIndexingView(request: HttpRequest) -> Response:
     res = ApiResponse("Indexing is not completed !")
+    logging.info(
+        "********************** Indexing Starts via API Call !**********************"
+    )
     ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion()  # Used for search suggestion
     ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion()  # Used for index auto global dimension
     ESIndexingUtils.indexGlobalDimensionName()
     ESIndexingUtils.indexGlobalDimensionsData()
+    logging.info("************** Indexing Completed !****************")
     res.update(True, "Indexing completed !", [])
     return Response(res.json())

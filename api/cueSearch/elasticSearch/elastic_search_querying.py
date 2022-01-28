@@ -29,7 +29,7 @@ class ESQueryingUtils:
         Method to get the ES Client
         """
         esHost = ELASTICSEARCH_URL
-        esClient = Elasticsearch(hosts=[esHost])
+        esClient = Elasticsearch(hosts=[esHost], timeout=30)
         return esClient
 
     @staticmethod
@@ -317,7 +317,7 @@ class ESQueryingUtils:
         limit: int = 5,
     ):
         """
-        Method to run search queries on AutoGlobalDimensions
+        Method to run search queries on NonGlobalDimensions
         :param query: User search query
         :param dataset: name of cube, will match values associated
                 to global dimension associated with this cube
