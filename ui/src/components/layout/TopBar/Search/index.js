@@ -32,7 +32,8 @@ const formatOptionLabel = (data) => {
   const type = data.type ? data.type.trim() : null;
   let metadata;
   if (_.isNil(type) || type.length === 0) metadata = <div />;
-  else if (data.searchType === SearchTypeConstants.ANOMALIES) metadata = <div />;
+  else if (data.searchType === SearchTypeConstants.ANOMALIES)
+    metadata = <div />;
   else if (data.searchType === SearchTypeConstants.GLOBALDIMENSION)
     metadata = <Tag color="green">{type}</Tag>;
   else if (data.searchType === SearchTypeConstants.MEASURE)
@@ -119,7 +120,6 @@ class Search extends React.Component {
         }
       });
   };
-
 
   onChangeFilter = (selectedEntries, action) => {
     this.selectedEntries = selectedEntries;

@@ -17,25 +17,36 @@ export default function SearchResultPage(props) {
     getSearchCard();
   });
 
-  const isPayloadSame = (a, b) =>{
-    if (_.isEmpty(a) && _.isEmpty(b)){
-      return true
-    } else if(_.isEmpty(a) || _.isEmpty(b)){
-      return false
-    } else if (a.map(x=>x.value).sort().join() == b.map(x=>x.value).sort().join())
+  const isPayloadSame = (a, b) => {
+    if (_.isEmpty(a) && _.isEmpty(b)) {
+      return true;
+    } else if (_.isEmpty(a) || _.isEmpty(b)) {
+      return false;
+    } else if (
+      a
+        .map((x) => x.value)
+        .sort()
+        .join() ==
+      b
+        .map((x) => x.value)
+        .sort()
+        .join()
+    )
       return true;
     return false;
-  }
+  };
 
   const getSearchCard = async () => {
     let params = new URLSearchParams(history.location.search);
     let searchPayloadNew = JSON.parse(params.get("search"));
-    if(!isPayloadSame(searchPayload, searchPayloadNew)){
-      setSearchCards()
-      const response = await searchResultService.getSearchCards(searchPayloadNew);
+    if (!isPayloadSame(searchPayload, searchPayloadNew)) {
+      setSearchCards();
+      const response = await searchResultService.getSearchCards(
+        searchPayloadNew
+      );
       if (response.success) {
         setSearchCards(response.data);
-        setSearchPayload(searchPayloadNew)
+        setSearchPayload(searchPayloadNew);
       }
     }
   };
