@@ -126,7 +126,10 @@ class ChartCard extends React.Component {
         {this.props.hasMarker ? this.props.markerElement : null}
       </Chart>
     ) : (
-      <div className={`${style.loadingDiv} pt-5 mt-2`} style={{height: this.props.isMiniChart ? 120: 400}}>
+      <div
+        className={`${style.loadingDiv} pt-5 mt-2`}
+        style={{ height: this.props.isMiniChart ? 120 : 400 }}
+      >
         <div>
           <i className="fa fa-exclamation-triangle"></i>
           <p>No Data</p>
