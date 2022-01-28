@@ -43,7 +43,7 @@ class ESIndexingUtils:
         Method to get the ES Client
         """
         esHost = ELASTICSEARCH_URL
-        esClient = Elasticsearch(hosts=[esHost])
+        esClient = Elasticsearch(hosts=[esHost], timeout=30)
         return esClient
 
     @staticmethod
@@ -360,8 +360,9 @@ class ESIndexingUtils:
             datasetId = dmObj["datasetId"]
             res = Utils.getDimensionalValuesForDimension(datasetId, dimension)
             dimensionValues = res.get("data", [])
-            if dimensionValues:
-                for values in dimensionValues:
+            for values in dimensionValues:
+                if values:
+                    logging.info("Dimensional value is %s", values)
                     displayValue = values
                     elasticsearchUniqueId = (
                         str(globalDimensionId)
@@ -397,7 +398,7 @@ class ESIndexingUtils:
         response = Utils.getGlobalDimensionForIndex()
         if response["success"]:
             globalDimensions = response.get("data", [])
-            logging.debug("Global dimensions: %s", globalDimensions)
+            logging.debug("Global dimensions Fetched ")
 
             indexDefinition = {
                 "settings": {
@@ -490,13 +491,12 @@ class ESIndexingUtils:
         :return List of Documents to be indexed
         """
         indexingDocuments = []
-        logging.info("global dimension group in fetch %s", globalDimensionGroup)
         globalDimensionName = globalDimensionGroup["name"]
         logging.debug("Starting fetch for global dimension: %s", globalDimensionName)
         globalDimensionId = globalDimensionGroup["id"]
         dimensionObjs = globalDimensionGroup["values"]  # dimensional values
         logging.info(
-            "Merging dimensions Value percentile with mulitple values in list of dimensionValues"
+            "Merging dimensions Value with mulitple values in list of dimensionValues"
         )
         for dmObj in dimensionObjs:
             displayValue = ""
@@ -507,8 +507,9 @@ class ESIndexingUtils:
             dimensionValues = res.get("data", [])
             if dimensionValues:
                 for values in dimensionValues:
-                    logging.info("In merging dimensions values is %s", values)
                     if values:
+                        logging.info("Dimensional values is %s", values)
+
                         displayValue = values
                         elasticsearchUniqueId = (
                             str(globalDimensionId) + "_" + str(displayValue)
@@ -736,42 +737,36 @@ class ESIndexingUtils:
             datasetId = dmObj["datasetId"]
             res = Utils.getDimensionalValuesForDimension(datasetId, dimension)
             dimensionValues = res.get("data", [])
-            logging.info("******** dimension is ****** %s", dimension)
-            if dimensionValues:
-                for values in dimensionValues:
+            for values in dimensionValues:
+                if values:
                     logging.info(
                         " Non global dimensional values %s",
                         values,
                     )
-                    if values:
-                        displayValue = values
-                        globalDimensionId = (
-                            str(dimension)
-                            + "_"
-                            + str(displayValue)
-                            + "_"
-                            + str(datasetId)
-                        )
-                        globalDimensionName = str(dataset) + "_" + str(dimension)
-                        elasticsearchUniqueId = (
-                            str(globalDimensionId)
-                            + "_"
-                            + str(displayValue)
-                            + "_"
-                            + str(dataset)
-                        )
+                    displayValue = values
+                    globalDimensionId = (
+                        str(dimension) + "_" + str(displayValue) + "_" + str(datasetId)
+                    )
+                    globalDimensionName = str(dataset) + "_" + str(dimension)
+                    elasticsearchUniqueId = (
+                        str(globalDimensionId)
+                        + "_"
+                        + str(displayValue)
+                        + "_"
+                        + str(dataset)
+                    )
 
-                        document = {
-                            "_id": elasticsearchUniqueId,
-                            "globalDimensionValue": str(displayValue).lower(),
-                            "globalDimensionDisplayValue": str(displayValue),
-                            "globalDimensionName": str(globalDimensionName),
-                            "globalDimensionId": globalDimensionId,
-                            "dimension": dimension,
-                            "dataset": dataset,
-                            "datasetId": datasetId,
-                        }
-                        indexingDocuments.append(document)
+                    document = {
+                        "_id": elasticsearchUniqueId,
+                        "globalDimensionValue": str(displayValue).lower(),
+                        "globalDimensionDisplayValue": str(displayValue),
+                        "globalDimensionName": str(globalDimensionName),
+                        "globalDimensionId": globalDimensionId,
+                        "dimension": dimension,
+                        "dataset": dataset,
+                        "datasetId": datasetId,
+                    }
+                    indexingDocuments.append(document)
         logging.info(
             "Indexing Documents length of non global dimension %s",
             len(indexingDocuments),
