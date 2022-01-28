@@ -507,21 +507,23 @@ class ESIndexingUtils:
             dimensionValues = res.get("data", [])
             if dimensionValues:
                 for values in dimensionValues:
-                    displayValue = values
-                    elasticsearchUniqueId = (
-                        str(globalDimensionId) + "_" + str(displayValue)
-                    )
+                    logging.info("In merging dimensions values is %s", values)
+                    if values:
+                        displayValue = values
+                        elasticsearchUniqueId = (
+                            str(globalDimensionId) + "_" + str(displayValue)
+                        )
 
-                    document = {
-                        "_id": elasticsearchUniqueId,
-                        "globalDimensionValue": str(displayValue).lower(),
-                        "globalDimensionDisplayValue": str(displayValue),
-                        "globalDimensionName": str(globalDimensionName),
-                        "globalDimensionId": globalDimensionId,
-                        "dataset": dataset,
-                        "datasetId": datasetId,
-                    }
-                    indexingDocuments.append(document)
+                        document = {
+                            "_id": elasticsearchUniqueId,
+                            "globalDimensionValue": str(displayValue).lower(),
+                            "globalDimensionDisplayValue": str(displayValue),
+                            "globalDimensionName": str(globalDimensionName),
+                            "globalDimensionId": globalDimensionId,
+                            "dataset": dataset,
+                            "datasetId": datasetId,
+                        }
+                        indexingDocuments.append(document)
                     logging.debug("Document to index: %s", document)
 
         return indexingDocuments
@@ -592,8 +594,9 @@ class ESIndexingUtils:
             logging.info("IndexName %s", indexName)
             logging.info("aliasIndex %s", aliasIndex)
             for globalDimensionGroup in globalDimensions:
-                logging.info("globaldimensionGroup %s", globalDimensionGroup)
                 # globalDimensionGroup is an array
+                logging.info("globaldimensionGroup %s", globalDimensionGroup)
+
                 try:
                     documentsToIndex = ESIndexingUtils.fetchGlobalDimensionsValueForSearchSuggestionIndexing(
                         globalDimensionGroup
@@ -733,9 +736,14 @@ class ESIndexingUtils:
             datasetId = dmObj["datasetId"]
             res = Utils.getDimensionalValuesForDimension(datasetId, dimension)
             dimensionValues = res.get("data", [])
+            logging.info("******** dimension is ****** %s", dimension)
             if dimensionValues:
                 for values in dimensionValues:
-                    if values and values != "None":
+                    logging.info(
+                        " Non global dimensional values %s",
+                        values,
+                    )
+                    if values:
                         displayValue = values
                         globalDimensionId = (
                             str(dimension)
@@ -764,6 +772,8 @@ class ESIndexingUtils:
                             "datasetId": datasetId,
                         }
                         indexingDocuments.append(document)
-                        logging.debug("Document to index: %s", document)
-
+        logging.info(
+            "Indexing Documents length of non global dimension %s",
+            len(indexingDocuments),
+        )
         return indexingDocuments
