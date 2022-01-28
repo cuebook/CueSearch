@@ -4,7 +4,7 @@ import { Router } from "react-router";
 
 import { Switch, Route, Redirect } from "react-router-dom";
 import ReactNotification from "react-notifications-component";
-import createHistory from "history/createHashHistory";
+import { createHashHistory } from "history";
 
 // components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
@@ -32,7 +32,7 @@ import SearchCardPage from "views/admin/SearchCard";
 import installationServices from "services/main/installation";
 import { telemetry } from "telemetry/index.js";
 
-const history = createHistory();
+const history = createHashHistory();
 
 export default function Admin() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

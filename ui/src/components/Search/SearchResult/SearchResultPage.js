@@ -8,13 +8,14 @@ import _ from "lodash";
 import searchResultService from "services/main/searchResult.js";
 import ErrorBoundary from "components/Utils/ErrorBoundary";
 import CardSnippet from "components/Search/Card/CardSnippet";
+import Loader from "components/Utils/Loader"
 
 export default function SearchResultPage(props) {
   const history = useHistory();
   const [searchCards, setSearchCards] = useState();
   const [searchPayload, setSearchPayload] = useState();
   useEffect(() => {
-    getSearchCard();
+    syncResultsWithURL();
   });
 
   const isPayloadSame = (a, b) => {
@@ -36,18 +37,22 @@ export default function SearchResultPage(props) {
     return false;
   };
 
-  const getSearchCard = async () => {
+  const syncResultsWithURL = () => {
     let params = new URLSearchParams(history.location.search);
     let searchPayloadNew = JSON.parse(params.get("search"));
     if (!isPayloadSame(searchPayload, searchPayloadNew)) {
+      getSearchCard(searchPayloadNew)
+      setSearchPayload(searchPayloadNew);
       setSearchCards();
-      const response = await searchResultService.getSearchCards(
-        searchPayloadNew
-      );
-      if (response.success) {
-        setSearchCards(response.data);
-        setSearchPayload(searchPayloadNew);
-      }
+    }
+  }
+
+  const getSearchCard = async (searchPayloadNew) => {
+    const response = await searchResultService.getSearchCards(
+      searchPayloadNew
+    );
+    if (response.success) {
+      setSearchCards(response.data);
     }
   };
 
@@ -73,13 +78,13 @@ export default function SearchResultPage(props) {
     <div>
       <div className="row">
         <div className={`xl:w-8/12 ${style.searchResultsWrapper}`}>
-          <h4>
-            {searchCards
-              ? cardsArray.length > 0
-                ? null
-                : "No results found"
-              : "Loading.."}
-          </h4>
+          <div className={`xl:w-8/12 ${style.loadingDiv}`}>
+          {searchCards
+            ? cardsArray.length > 0
+              ? null
+              : <> <i className="fa fa-exclamation-triangle"></i> <p>No Data</p> </>
+            : <Loader/>}
+          </div>
           {cardsArray}
         </div>
       </div>
