@@ -5,7 +5,7 @@
       "pk": 1,
       "fields": {
         "name": "Index data for cueSearch",
-        "task": "dataset.tasks.indexingJob",
+        "task": "cueSearch.tasks.indexingJob",
         "interval": null,
         "crontab": 1,
         "solar": null,

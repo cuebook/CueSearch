@@ -254,14 +254,14 @@ class SearchCardTemplateServices:
                     query=query,
                     datasource=None,
                     offset=0,
-                    limit=8,
+                    limit=5,
                 ),
                 executor.submit(
                     ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion,
                     query=query,
                     datasource=None,
                     offset=0,
-                    limit=8,
+                    limit=5,
                 ),
                 executor.submit(
                     ESQueryingUtils.findGlobalDimensionNames,

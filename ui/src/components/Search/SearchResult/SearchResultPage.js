@@ -42,8 +42,8 @@ export default function SearchResultPage(props) {
     let searchPayloadNew = JSON.parse(params.get("search"));
     if (!isPayloadSame(searchPayload, searchPayloadNew)) {
       getSearchCard(searchPayloadNew)
-      setSearchPayload(searchPayloadNew);
       setSearchCards();
+      setSearchPayload(searchPayloadNew);
     }
   }
 
