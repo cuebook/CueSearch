@@ -67,20 +67,9 @@ def test_getSearchCard(client, mocker):
 
     gd_id = response.data["data"][0]["id"]
 
-    # Get Search Card
-    path = reverse("getSearchCards")
-    mockResponse.start()
-    payload = [
-    {
-        "value": "AD_Kolkata",
-        "user_entity_identifier": "Kolkata",
-        "id": 1,
-        "type": "Kolkata",
-        "label": "AD",
-        "searchType": "GLOBALDIMENSION"
-    }
-    ]
-    response = client.post(path,payload)
-    mockResponse.stop()
+    #Get search suggestion views
+    path = reverse("searchsuggestions")
+    query = 'AD'
+    response = client.post(path,query)
     assert response.data["success"]
     assert response.status_code == 200
