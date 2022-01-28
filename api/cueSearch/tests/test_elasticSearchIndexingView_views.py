@@ -17,7 +17,7 @@ def test_getSearchCard(client, mocker):
     """
     Test case for delete global dimension
     """
-    #Run all index
+    # Run all index
     path = reverse("runIndexing")
     response = client.get(path)
     assert response.data["success"] == True

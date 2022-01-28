@@ -14,7 +14,7 @@ def test_getCardTemplates(client, mocker):
     """
     Test case for get card templates
     """
-    path =  reverse('getCardTemplate')
+    path = reverse("getCardTemplate")
     response = client.get(path)
     assert response.data["success"]
     assert response.status_code == 200
