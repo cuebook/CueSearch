@@ -4,6 +4,7 @@ import json
 from typing import List, Dict
 from itertools import groupby
 import concurrent.futures
+from unittest import result
 from asgiref.sync import async_to_sync, sync_to_async
 from django.http import response
 import aiohttp
@@ -57,20 +58,29 @@ class SearchCardTemplateServices:
         return responseData
 
     @staticmethod
-    async def fetchCardsData(searchResults):
+    async def fetchCardsData(searchResults: list):
         """
         Async method to fetch data for searched cards
         :param dataUrl: Url endpoint to fetch data
         :param searchResults: List of dicts containing search results
         """
-        async with aiohttp.ClientSession() as session:
-            result = await asyncio.gather(
-                *(
-                    SearchCardTemplateServices._sendDataRequest(session, obj)
-                    for obj in searchResults
-                )
-            )
-            return result
+        # async with aiohttp.ClientSession() as session:
+        #     result = await asyncio.gather(
+        #         *(
+        #             SearchCardTemplateServices._sendDataRequest(session, obj)
+        #             for obj in searchResults
+        #         )
+        #     )
+        #     return result
+         
+
+        for obj in searchResults:
+             loop = asyncio.get_event_loop()
+             result = await loop.run_in_executor(None, Datasets.getDatasetData, obj)
+             responseData = result.json()
+             return responseData
+        
+
 
     @staticmethod
     def ElasticSearchQueryResultsForOnSearchQuery(searchPayload: dict):
@@ -159,11 +169,12 @@ class SearchCardTemplateServices:
 
         dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(results))
         for i in range(len(results)):
-            results[i]["data"] = dataResults[i]
+            results[i]["data"] = dataResults
 
         finalResults = [SearchCardTemplateServices.addChartMetaData(x) for x in results]
         res.update(True, "successfully fetched", finalResults)
         return res
+
 
     @staticmethod
     def renderTemplates(param: dict):
