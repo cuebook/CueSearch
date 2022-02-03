@@ -72,15 +72,12 @@ class SearchCardTemplateServices:
         #         )
         #     )
         #     return result
-         
 
         for obj in searchResults:
-             loop = asyncio.get_event_loop()
-             result = await loop.run_in_executor(None, Datasets.getDatasetData, obj)
-             responseData = result.json()
-             return responseData
-        
-
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(None, Datasets.getDatasetData, obj)
+            responseData = result.json()
+            return responseData
 
     @staticmethod
     def ElasticSearchQueryResultsForOnSearchQuery(searchPayload: dict):
@@ -174,7 +171,6 @@ class SearchCardTemplateServices:
         finalResults = [SearchCardTemplateServices.addChartMetaData(x) for x in results]
         res.update(True, "successfully fetched", finalResults)
         return res
-
 
     @staticmethod
     def renderTemplates(param: dict):
