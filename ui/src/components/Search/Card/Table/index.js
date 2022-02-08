@@ -1,13 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
 import { message, Select, Table } from "antd";
 import _ from "lodash";
-
+import searchResultService from "services/main/searchResult.js";
 import { calculateColumnsWidth } from "components/Utils/columnWidthHelper";
-
 import style from "./style.module.scss";
 
+
+
 export default function TableCard(props) {
-  const data = props.data;
+  const [data, setSearchData] = useState();
+  useEffect(() => {
+    getSearchCardData();
+  },[]);
+
+  const getSearchCardData = async () => {
+    const response = await searchResultService.getSearchCardsData();
+    if (response.success){
+      console.log(response);
+      setSearchData(response.data.data);
+      
+    }
+  };
+  console.log('Data ::',data);
+  // const data = props.data;
   const columns =
     !_.isEmpty(data) &&
     Object.keys(data[0]).map((col) => {

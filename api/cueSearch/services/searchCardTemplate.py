@@ -4,7 +4,6 @@ import json
 from typing import List, Dict
 from itertools import groupby
 import concurrent.futures
-from unittest import result
 from asgiref.sync import async_to_sync, sync_to_async
 from django.http import response
 import aiohttp
@@ -44,42 +43,51 @@ class SearchCardTemplateServices:
             res.update(False, [])
         return res
 
+    # @staticmethod
+    # async def _sendDataRequest(session, payload):
+    #     """
+    #     Async method to fetch individual search card data
+    #     :param session: ClientSession instance for aiohttp
+    #     :param dataUrl: Url endpoint to fetch data
+    #     :param payload: Dict containing parameters for fetching data
+    #     """
+    #     loop = asyncio.get_event_loop()
+    #     result = await loop.run_in_executor(None, Datasets.getDatasetData, payload)
+    #     responseData = result.json()
+    #     return responseData
+
+    # @staticmethod
+    # async def fetchCardsData(searchResults):
+    #     """
+    #     Async method to fetch data for searched cards
+    #     :param dataUrl: Url endpoint to fetch data
+    #     :param searchResults: List of dicts containing search results
+    #     """
+    #     async with aiohttp.ClientSession() as session:
+    #         result = await asyncio.gather(
+    #             *(
+    #                 SearchCardTemplateServices._sendDataRequest(session, obj)
+    #                 for obj in searchResults
+    #             )
+    #         )
+    #         return result
+
     @staticmethod
-    async def _sendDataRequest(session, payload):
+    def getSearchCardData(): #searchPayload
         """
         Async method to fetch individual search card data
-        :param session: ClientSession instance for aiohttp
-        :param dataUrl: Url endpoint to fetch data
         :param payload: Dict containing parameters for fetching data
         """
-        loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(None, Datasets.getDatasetData, payload)
-        responseData = result.json()
-        return responseData
-
-    @staticmethod
-    async def fetchCardsData(searchResults: list):
-        """
-        Async method to fetch data for searched cards
-        :param dataUrl: Url endpoint to fetch data
-        :param searchResults: List of dicts containing search results
-        """
-        # async with aiohttp.ClientSession() as session:
-        #     result = await asyncio.gather(
-        #         *(
-        #             SearchCardTemplateServices._sendDataRequest(session, obj)
-        #             for obj in searchResults
-        #         )
-        #     )
-        #     return result
-         
-
-        for obj in searchResults:
-             loop = asyncio.get_event_loop()
-             result = await loop.run_in_executor(None, Datasets.getDatasetData, obj)
-             responseData = result.json()
-             return responseData
-        
+        searchPayload = [{'params': {'datasetId': 1, 'searchResults': [{'value': 'AP', 'dimension': 'DeliveryRegion', 'globalDimensionName': 'Data', 'user_entity_identifier': 'Data', 'id': 8, 'dataset': 'Test data', 'datasetId': 1, 'type': 'GLOBALDIMENSION'}], 'filter': "( DeliveryRegion = 'AP' )", 'filterDimensions': ['DeliveryRegion'], 'templateSql': ' {% for metric in metrics %} SELECT ({{ timestampColumn }}), SUM({{ metric }}) as {{ metric }} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1 limit 500 +-; {% endfor %}', 'templateTitle': ' {% for metric in metrics %}  <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">Dataset = {{dataset}} , Filter = {{filter}}</span> +-; {% endfor %}', 'templateText': ' {% for metric in metrics %} For <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">{{filter}}</span>  +-; {% endfor %}', 'renderType': 'line', 'dataset': 'Test data', 'dimensions': ['DeliveryRegion', 'Brand', 'WarehouseCode'], 'metrics': ['ReturnEntries', 'RefundAmount'], 'timestampColumn': 'ReturnDate', 'datasetSql': 'SELECT DATE_TRUNC(\'DAY\', __time) as ReturnDate,\nDeliveryRegionCode as DeliveryRegion, P_BRANDCODE as Brand, WarehouseCode,\nSUM("count") as ReturnEntries, sum(P_FINALREFUNDAMOUNT) as RefundAmount\nFROM RETURNENTRY\nWHERE __time >= CURRENT_TIMESTAMP - INTERVAL \'13\' MONTH \nGROUP BY 1, 2, 3, 4\nORDER BY 1', 'granularity': 'day'}, 'title': '   <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">Dataset = Test data , Filter = ( DeliveryRegion = &#x27;AP&#x27; )</span> ', 'text': '  For <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">( DeliveryRegion = &#x27;AP&#x27; )</span>  ', 'sql': '  SELECT (ReturnDate), SUM(RefundAmount) as RefundAmount FROM (SELECT DATE_TRUNC(\'DAY\', __time) as ReturnDate,\nDeliveryRegionCode as DeliveryRegion, P_BRANDCODE as Brand, WarehouseCode,\nSUM("count") as ReturnEntries, sum(P_FINALREFUNDAMOUNT) as RefundAmount\nFROM RETURNENTRY\nWHERE __time >= CURRENT_TIMESTAMP - INTERVAL \'13\' MONTH \nGROUP BY 1, 2, 3, 4\nORDER BY 1) WHERE ( DeliveryRegion = \'AP\' ) GROUP BY 1 limit 500 '}]
+        res = ApiResponse("Data not fetched")
+        #searchResults = {key: searchPayload[key] for key in searchPayload.keys()
+                #& {'data'}}
+        for searchItems in searchPayload:
+            result = Datasets.getDatasetData(searchItems)
+            response = result.json()
+            print("-------------Response------------------",response)
+            res.update(True,"Data fetch Successfully",response)   
+        return res
 
 
     @staticmethod
@@ -166,15 +174,14 @@ class SearchCardTemplateServices:
                     for renderedTemplate in renderedTemplates:
                         x = {"params": paramDict, **renderedTemplate}
                         results.append(x)
-
-        dataResults = asyncio.run(SearchCardTemplateServices.fetchCardsData(results))
+        #dataResults = asyncio.run(SearchCardTemplateServices.getSearchCardData(results))
+        datasetResult = [] 
         for i in range(len(results)):
-            results[i]["data"] = dataResults
-
+            results[i]["data"] = datasetResult
+        
         finalResults = [SearchCardTemplateServices.addChartMetaData(x) for x in results]
         res.update(True, "successfully fetched", finalResults)
         return res
-
 
     @staticmethod
     def renderTemplates(param: dict):
@@ -265,14 +272,14 @@ class SearchCardTemplateServices:
                     query=query,
                     datasource=None,
                     offset=0,
-                    limit=6,
+                    limit=8,
                 ),
                 executor.submit(
                     ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion,
                     query=query,
                     datasource=None,
                     offset=0,
-                    limit=5,
+                    limit=8,
                 ),
                 executor.submit(
                     ESQueryingUtils.findGlobalDimensionNames,

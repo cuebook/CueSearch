@@ -1,3 +1,4 @@
+import logging
 from utils.apiResponse import ApiResponse
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -63,6 +64,14 @@ def getCardTemplates(request: HttpRequest) -> Response:
 def getSearchCards(request: HttpRequest) -> Response:
     payload = request.data
     res = SearchCardTemplateServices.getSearchCards(payload)
+    #result = SearchCardTemplateServices.getSearchCardData(res.json())
+    return Response(res.json())
+
+@api_view(["GET"])
+def getSearchCardsData(request: HttpRequest) -> Response:
+    #payload = request.data
+    res = SearchCardTemplateServices.getSearchCardData()
+    #result = SearchCardTemplateServices.getSearchCardData(res.json())
     return Response(res.json())
 
 
@@ -76,9 +85,13 @@ def getSearchSuggestionsView(request: HttpRequest) -> Response:
 @api_view(["GET"])
 def elasticSearchIndexingView(request: HttpRequest) -> Response:
     res = ApiResponse("Indexing is not completed !")
+    logging.info(
+        "********************** Indexing Starts via API Call !**********************"
+    )
     ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion()  # Used for search suggestion
     ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion()  # Used for index auto global dimension
     ESIndexingUtils.indexGlobalDimensionName()
     ESIndexingUtils.indexGlobalDimensionsData()
+    logging.info("************** Indexing Completed !****************")
     res.update(True, "Indexing completed !", [])
     return Response(res.json())
