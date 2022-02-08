@@ -5,6 +5,7 @@ from django import template
 
 register = template.Library()
 
+
 @register.simple_tag(takes_context=True, name="stringify")
 def render_values(context, value):
     """
@@ -15,6 +16,7 @@ def render_values(context, value):
         return json.dumps(context.dicts[-1][value])
 
     return ""
+
 
 @register.simple_tag(name="conditionalCount")
 def conditionalCount(givenDictList: List[Dict], givenKey: str, givenValue: str) -> int:
@@ -31,6 +33,7 @@ def conditionalCount(givenDictList: List[Dict], givenKey: str, givenValue: str) 
 
     return count
 
+
 @register.filter
 def getDictKey(dictionary, index):
     return list(dictionary.keys())[index]
@@ -39,4 +42,3 @@ def getDictKey(dictionary, index):
 @register.filter
 def getDictValue(dictionary, index):
     return dictionary[list(dictionary.keys())[index]]
-
