@@ -1,6 +1,6 @@
-import React from 'react'
-import classNames from 'classnames'
-import styles from './style.module.scss'
+import React from "react";
+import classNames from "classnames";
+import styles from "./style.module.scss";
 
 const Loader = ({ spinning = true, fullScreen }) => (
   <div
@@ -9,6 +9,6 @@ const Loader = ({ spinning = true, fullScreen }) => (
       [styles.fullScreen]: fullScreen,
     })}
   />
-)
+);
 
-export default Loader
+export default Loader;

@@ -56,7 +56,7 @@ export default function Admin() {
       setIsLogout(true);
       setIsAuthRequired(true);
       setIsLoggedIn(true);
-      history.push("/")
+      history.push("/");
     } else if (
       response &&
       !response.success &&
