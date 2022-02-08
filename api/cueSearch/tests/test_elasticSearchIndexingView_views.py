@@ -11,18 +11,19 @@ from django.test import TestCase, Client
 from rest_framework.test import APITestCase, APIClient
 from mixer.backend.django import mixer
 from dataset.models import Dataset
-from cueSearch.elasticSearch import ESIndexingUtils, Utils,ESQueryingUtils
+from cueSearch.elasticSearch import ESIndexingUtils, Utils, ESQueryingUtils
 import logging
 from cueSearch.services import GlobalDimensionServices
 
+
 @pytest.mark.django_db(transaction=True)
-def test_indexGlobalDimensionsDataForSearchSuggestion(client,mocker):
-    '''
+def test_indexGlobalDimensionsDataForSearchSuggestion(client, mocker):
+    """
     Method for test index global dimension data for suggestion
-    '''
+    """
     mockResponse = mocker.patch(
-    "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
-    new=mock.MagicMock(autospec=True, return_value=True),
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+        new=mock.MagicMock(autospec=True, return_value=True),
     )
     mockResponse.start()
     connection = mixer.blend("dataset.connection")
@@ -59,34 +60,33 @@ def test_indexGlobalDimensionsDataForSearchSuggestion(client,mocker):
 
     # Getting global dimension id
     temp = GlobalDimensionServices.getGlobalDimensions()
-    globalDimensionId = temp.data[0]['values'][0]['id']
+    globalDimensionId = temp.data[0]["values"][0]["id"]
     # Publishing global dimension by id
     path = reverse("pubGlobalDimension")
     payload = {"id": globalDimensionId, "published": True}
     response = client.post(path, payload)
 
-    res = {"success": True, "data":["adidas", "nike"] }  
+    res = {"success": True, "data": ["adidas", "nike"]}
     mockResponse = mocker.patch(
-    "cueSearch.elasticSearch.utils.Utils.getDimensionalValuesForDimension",
-    new=mock.MagicMock(autospec=True, return_value=res),
+        "cueSearch.elasticSearch.utils.Utils.getDimensionalValuesForDimension",
+        new=mock.MagicMock(autospec=True, return_value=res),
     )
     ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion()
     mockResponse.stop()
     query = "n"
-    searchResults = ESQueryingUtils.findGlobalDimensionResultsForSearchSuggestion(query=query)
-
-    
-
+    searchResults = ESQueryingUtils.findGlobalDimensionResultsForSearchSuggestion(
+        query=query
+    )
 
 
 @pytest.mark.django_db(transaction=True)
-def test_indexNonGlobalDimensionsDataForSearchSuggestion(client,mocker):
-    '''
+def test_indexNonGlobalDimensionsDataForSearchSuggestion(client, mocker):
+    """
     Method for test non global dimension data for suggestion
-    '''
+    """
     mockResponse = mocker.patch(
-    "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
-    new=mock.MagicMock(autospec=True, return_value=True),
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+        new=mock.MagicMock(autospec=True, return_value=True),
     )
     mockResponse.start()
     connection = mixer.blend("dataset.connection")
@@ -105,30 +105,30 @@ def test_indexNonGlobalDimensionsDataForSearchSuggestion(client,mocker):
     mockResponse.stop()
     assert response.data["success"]
 
-    res = {"success": True, "data":["adidas", "nike"] }  
+    res = {"success": True, "data": ["adidas", "nike"]}
     mockResponse = mocker.patch(
-    "cueSearch.elasticSearch.utils.Utils.getDimensionalValuesForDimension",
-    new=mock.MagicMock(autospec=True, return_value=res),
+        "cueSearch.elasticSearch.utils.Utils.getDimensionalValuesForDimension",
+        new=mock.MagicMock(autospec=True, return_value=res),
     )
     temp = ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion()
     mockResponse.stop()
-    query = 'adidas'
-    respQuery = ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion(query=query)
-    #breakpoint()
-    
+    query = "adidas"
+    respQuery = ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion(
+        query=query
+    )
+    # breakpoint()
 
 
-    
 @pytest.mark.django_db(transaction=True)
-def test_indexGlobalDimensionName(client,mocker):
+def test_indexGlobalDimensionName(client, mocker):
     """
     Method for test global dimension name
     """
-        # response = ESIndexingUtils.indexGlobalDimensionName()
-        # breakpoint()
+    # response = ESIndexingUtils.indexGlobalDimensionName()
+    # breakpoint()
     mockResponse = mocker.patch(
-    "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
-    new=mock.MagicMock(autospec=True, return_value=True),
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+        new=mock.MagicMock(autospec=True, return_value=True),
     )
     mockResponse.start()
     connection = mixer.blend("dataset.connection")
@@ -165,7 +165,7 @@ def test_indexGlobalDimensionName(client,mocker):
 
     # Getting global dimension id
     temp = GlobalDimensionServices.getGlobalDimensions()
-    globalDimensionId = temp.data[0]['values'][0]['id']
+    globalDimensionId = temp.data[0]["values"][0]["id"]
     # Publishing global dimension by id
     path = reverse("pubGlobalDimension")
     payload = {"id": globalDimensionId, "published": True}
@@ -173,19 +173,16 @@ def test_indexGlobalDimensionName(client,mocker):
 
     ESIndexingUtils.indexGlobalDimensionName()
     searchResults = ESQueryingUtils.findGlobalDimensionNames("City")
-        
-
-
 
 
 @pytest.mark.django_db(transaction=True)
-def test_indexGlobalDimensionsData(client,mocker):
-    '''
+def test_indexGlobalDimensionsData(client, mocker):
+    """
     Method for test index global dimension data
-    '''
+    """
     mockResponse = mocker.patch(
-    "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
-    new=mock.MagicMock(autospec=True, return_value=True),
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+        new=mock.MagicMock(autospec=True, return_value=True),
     )
     mockResponse.start()
     connection = mixer.blend("dataset.connection")
@@ -222,11 +219,10 @@ def test_indexGlobalDimensionsData(client,mocker):
 
     # Getting global dimension id
     temp = GlobalDimensionServices.getGlobalDimensions()
-    globalDimensionId = temp.data[0]['values'][0]['id']
+    globalDimensionId = temp.data[0]["values"][0]["id"]
     # Publishing global dimension by id
     path = reverse("pubGlobalDimension")
     payload = {"id": globalDimensionId, "published": True}
     response = client.post(path, payload)
 
     ESIndexingUtils.indexGlobalDimensionsData()
-
