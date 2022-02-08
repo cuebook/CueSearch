@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "dataset",
     "users",
+    "app",
     "cueSearch",
     "rest_framework",
 ]

@@ -187,7 +187,7 @@ class SearchCardTemplateServices:
 
             if len(titles) != len(texts) or len(titles) != len(sqls):
                 raise ValueError(
-                    "Incosistent use of delimiter (%s) in title, text, sql of template"
+                    "Inconsistent use of delimiter (%s) in title, text, sql of template"
                     % delimiter
                 )
 
