@@ -67,9 +67,9 @@ def test_getSearchCard(client, mocker):
 
     gd_id = response.data["data"][0]["id"]
 
-    # Get search suggestion views
+    #Get search suggestion views
     path = reverse("searchsuggestions")
-    query = "AD"
-    response = client.post(path, query)
+    query = 'AD'
+    response = client.post(path,query)
     assert response.data["success"]
     assert response.status_code == 200
