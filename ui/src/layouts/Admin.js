@@ -56,7 +56,7 @@ export default function Admin() {
       setIsLogout(true);
       setIsAuthRequired(true);
       setIsLoggedIn(true);
-      window.location.href = "/#/anomalies";
+      history.push("/");
     } else if (
       response &&
       !response.success &&
