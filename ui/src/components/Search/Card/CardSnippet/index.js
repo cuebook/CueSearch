@@ -28,9 +28,9 @@ export default function CardSnippet(props) {
       <div className={style.searchSnippet}>
         <div className={style.chartSnippet}>
           {params.renderType == "table" ? (
-            <TableCard data={data} isSnippet={true} />
+            <TableCard params={params} isSnippet={true} />
           ) : (
-            <Chart cardData={tailoredCardData} isMiniChart={true} />
+            <Chart cardData={tailoredCardData} params={params} isMiniChart={true} />
           )}
         </div>
         <div className={style.contentSnippet}>

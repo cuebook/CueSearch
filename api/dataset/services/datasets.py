@@ -120,14 +120,20 @@ class Datasets:
         res.update(True, "Successfully created dataset")
         return res
 
-    def getDatasetData(payload: dict):
+    def getDatasetData(params: dict):
         """
         Utility service to fetch data for a payload
         :param payload: Dict containing dataset name, and dataset dimension
         """
         res = ApiResponse("Error in fetching data")
-        dataset = Dataset.objects.get(id=payload["params"]["datasetId"])
-        dataDf = Data.fetchDatasetDataframe(dataset, payload["sql"])
-        dfDict = dataDf.to_dict("records")
-        res.update(True, "Successfully fetched data", dfDict)
+        dataset = Dataset.objects.get(id=params["datasetId"])
+        dataDf = Data.fetchDatasetDataframe(dataset, params["sql"])
+        data = dataDf.to_dict("records")
+
+        chartMetaData = ESIndexingUtils.addChartMetaData(params, data)
+        finaldata = {
+            "data":data,
+            "chartMetaData": chartMetaData
+        }
+        res.update(True, "Successfully fetched data", finaldata)
         return res

@@ -8,20 +8,19 @@ import style from "./style.module.scss";
 
 
 export default function TableCard(props) {
-  const [data, setSearchData] = useState();
+  const [data, setSearchData] = useState("");
   useEffect(() => {
     getSearchCardData();
   },[]);
 
   const getSearchCardData = async () => {
-    const response = await searchResultService.getSearchCardsData();
+    const response = await searchResultService.getSearchCardsData(props.params);
     if (response.success){
       console.log(response);
       setSearchData(response.data.data);
       
     }
   };
-  console.log('Data ::',data);
   // const data = props.data;
   const columns =
     !_.isEmpty(data) &&

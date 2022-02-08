@@ -73,24 +73,6 @@ class SearchCardTemplateServices:
     #         return result
 
     @staticmethod
-    def getSearchCardData(): #searchPayload
-        """
-        Async method to fetch individual search card data
-        :param payload: Dict containing parameters for fetching data
-        """
-        searchPayload = [{'params': {'datasetId': 1, 'searchResults': [{'value': 'AP', 'dimension': 'DeliveryRegion', 'globalDimensionName': 'Data', 'user_entity_identifier': 'Data', 'id': 8, 'dataset': 'Test data', 'datasetId': 1, 'type': 'GLOBALDIMENSION'}], 'filter': "( DeliveryRegion = 'AP' )", 'filterDimensions': ['DeliveryRegion'], 'templateSql': ' {% for metric in metrics %} SELECT ({{ timestampColumn }}), SUM({{ metric }}) as {{ metric }} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1 limit 500 +-; {% endfor %}', 'templateTitle': ' {% for metric in metrics %}  <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">Dataset = {{dataset}} , Filter = {{filter}}</span> +-; {% endfor %}', 'templateText': ' {% for metric in metrics %} For <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">{{filter}}</span>  +-; {% endfor %}', 'renderType': 'line', 'dataset': 'Test data', 'dimensions': ['DeliveryRegion', 'Brand', 'WarehouseCode'], 'metrics': ['ReturnEntries', 'RefundAmount'], 'timestampColumn': 'ReturnDate', 'datasetSql': 'SELECT DATE_TRUNC(\'DAY\', __time) as ReturnDate,\nDeliveryRegionCode as DeliveryRegion, P_BRANDCODE as Brand, WarehouseCode,\nSUM("count") as ReturnEntries, sum(P_FINALREFUNDAMOUNT) as RefundAmount\nFROM RETURNENTRY\nWHERE __time >= CURRENT_TIMESTAMP - INTERVAL \'13\' MONTH \nGROUP BY 1, 2, 3, 4\nORDER BY 1', 'granularity': 'day'}, 'title': '   <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">Dataset = Test data , Filter = ( DeliveryRegion = &#x27;AP&#x27; )</span> ', 'text': '  For <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">( DeliveryRegion = &#x27;AP&#x27; )</span>  ', 'sql': '  SELECT (ReturnDate), SUM(RefundAmount) as RefundAmount FROM (SELECT DATE_TRUNC(\'DAY\', __time) as ReturnDate,\nDeliveryRegionCode as DeliveryRegion, P_BRANDCODE as Brand, WarehouseCode,\nSUM("count") as ReturnEntries, sum(P_FINALREFUNDAMOUNT) as RefundAmount\nFROM RETURNENTRY\nWHERE __time >= CURRENT_TIMESTAMP - INTERVAL \'13\' MONTH \nGROUP BY 1, 2, 3, 4\nORDER BY 1) WHERE ( DeliveryRegion = \'AP\' ) GROUP BY 1 limit 500 '}]
-        res = ApiResponse("Data not fetched")
-        #searchResults = {key: searchPayload[key] for key in searchPayload.keys()
-                #& {'data'}}
-        for searchItems in searchPayload:
-            result = Datasets.getDatasetData(searchItems)
-            response = result.json()
-            print("-------------Response------------------",response)
-            res.update(True,"Data fetch Successfully",response)   
-        return res
-
-
-    @staticmethod
     def ElasticSearchQueryResultsForOnSearchQuery(searchPayload: dict):
         searchResults = []
         for payload in searchPayload:
@@ -172,9 +154,8 @@ class SearchCardTemplateServices:
                         paramDict
                     )
                     for renderedTemplate in renderedTemplates:
-                        x = {"params": paramDict, **renderedTemplate}
+                        x = {"params": {**paramDict, "sql":renderedTemplate["sql"]}, **renderedTemplate}
                         results.append(x)
-        #dataResults = asyncio.run(SearchCardTemplateServices.getSearchCardData(results))
         datasetResult = [] 
         for i in range(len(results)):
             results[i]["data"] = datasetResult

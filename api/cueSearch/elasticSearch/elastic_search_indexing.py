@@ -47,6 +47,46 @@ class ESIndexingUtils:
         return esClient
 
     @staticmethod
+    def addChartMetaData(params: Dict, data: List) -> Dict:
+        """
+        Calculate meta data for chart rendering UI
+        :param params: 
+        :param data: chart data
+        """
+        timestampColumn = None
+        metric = None
+        dimension = None
+        mask = "M/D/H"
+        order = "0"
+        chartMetaData = {}
+
+        if params["renderType"] == "line" and data:
+            dataColumns = data[0].keys()
+            if params["timestampColumn"] in dataColumns:
+                timestampColumn = params["timestampColumn"]
+            if params["granularity"] == "day":
+                mask = "M/D"
+            metric = list(set(params["metrics"]) & set(dataColumns))[0]
+
+            chartMetaData = {
+                "xColumn": timestampColumn,
+                "yColumn": metric,
+                "scale": {
+                    timestampColumn: {"type": "time", "mask": mask},
+                },
+                "order": "O",
+            }
+
+            try:
+                dimension = list(set(params["dimensions"]) & set(dataColumns))[0]
+                chartMetaData["color"] = dimension
+                chartMetaData["scale"][dimension] = {"alias": dimension}
+            except Exception as ex:
+                pass
+
+        return chartMetaData
+
+    @staticmethod
     def initializeIndex(indexName: str, indexDefinition: dict) -> str:
         """
         Method to name the index in Elasticsearch

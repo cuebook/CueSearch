@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import HttpRequest
+from dataset.services import Datasets
 from cueSearch.services import GlobalDimensionServices, SearchCardTemplateServices
 from cueSearch.elasticSearch import ESIndexingUtils
 
@@ -64,14 +65,12 @@ def getCardTemplates(request: HttpRequest) -> Response:
 def getSearchCards(request: HttpRequest) -> Response:
     payload = request.data
     res = SearchCardTemplateServices.getSearchCards(payload)
-    #result = SearchCardTemplateServices.getSearchCardData(res.json())
     return Response(res.json())
 
-@api_view(["GET"])
+@api_view(["POST"])
 def getSearchCardsData(request: HttpRequest) -> Response:
-    #payload = request.data
-    res = SearchCardTemplateServices.getSearchCardData()
-    #result = SearchCardTemplateServices.getSearchCardData(res.json())
+    params = request.data
+    res = Datasets.getDatasetData(params)
     return Response(res.json())
 
 
