@@ -43,7 +43,7 @@ class ESIndexingUtils:
         Method to get the ES Client
         """
         esHost = ELASTICSEARCH_URL
-        esClient = Elasticsearch(hosts=[esHost])
+        esClient = Elasticsearch(hosts=[esHost], timeout=30)
         return esClient
 
     @staticmethod
@@ -176,6 +176,7 @@ class ESIndexingUtils:
         Method to spawn a thread to index global dimension into elasticsearch existing indices
         The child thread assumes an index existing with a predefined unaltered indexDefinition
         """
+        logging.info("Indexing starts on global dimension action")
         cardIndexer = threading.Thread(target=ESIndexingUtils.indexGlobalDimensionName)
         cardIndexer.start()
         cardIndexer1 = threading.Thread(
@@ -190,15 +191,17 @@ class ESIndexingUtils:
             target=ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion
         )
         cardIndexer3.start()
+        logging.info("Indexing completed !! ")
 
     @staticmethod
     def indexGlobalDimensionName(joblogger=None):
         """
         Method to index global dimensions data
         """
-        logging.info("Fetching the global dimensions and the dimension values")
+        logging.info(
+            "*************************** Indexing starts for GlobalDimensionName *****************************"
+        )
         response = Utils.getGlobalDimensionForIndex()
-        logging.info("response of globaldimension value %s", response)
         if response["success"]:
             globalDimensions = response.get("data", [])
             logging.debug("Global dimensions: %s", globalDimensions)
@@ -241,8 +244,8 @@ class ESIndexingUtils:
             indexName = ESIndexingUtils.GLOBAL_DIMENSIONS_NAMES_INDEX_NAME
 
             aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
-            # app.logger.info("IndexName %s", indexName)
-            # app.logger.info("aliasIndex %s", aliasIndex)
+            logging.info("IndexName %s", indexName)
+            logging.info("aliasIndex %s", aliasIndex)
             for globalDimensionGroup in globalDimensions:
                 logging.info("globaldimensionGroup %s", globalDimensionGroup)
                 # globalDimensionGroup is an array
@@ -258,6 +261,9 @@ class ESIndexingUtils:
                     pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
+            logging.info(
+                "***************************** Indexing completed for GlobalDimensionName ***************************"
+            )
 
         else:
             logging.error("Error in fetching global dimensions.")
@@ -354,8 +360,9 @@ class ESIndexingUtils:
             datasetId = dmObj["datasetId"]
             res = Utils.getDimensionalValuesForDimension(datasetId, dimension)
             dimensionValues = res.get("data", [])
-            if dimensionValues:
-                for values in dimensionValues:
+            for values in dimensionValues:
+                if values:
+                    logging.info("Dimensional value is %s", values)
                     displayValue = values
                     elasticsearchUniqueId = (
                         str(globalDimensionId)
@@ -385,12 +392,13 @@ class ESIndexingUtils:
         """
         Method to index global dimensions data
         """
-        logging.info("Fetching the global dimensions and the dimension values")
+        logging.info(
+            "****************** Indexing Starts for Global Dimension values **************** "
+        )
         response = Utils.getGlobalDimensionForIndex()
-        logging.info("response of globaldimension value %s", response)
         if response["success"]:
             globalDimensions = response.get("data", [])
-            logging.debug("Global dimensions: %s", globalDimensions)
+            logging.debug("Global dimensions Fetched ")
 
             indexDefinition = {
                 "settings": {
@@ -449,10 +457,8 @@ class ESIndexingUtils:
             indexName = ESIndexingUtils.GLOBAL_DIMENSIONS_INDEX_DATA
 
             aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
-            print("indexName", indexName)
-            print("alias index", aliasIndex)
-            # app.logger.info("IndexName %s", indexName)
-            # app.logger.info("aliasIndex %s", aliasIndex)
+            logging.info("IndexName %s", indexName)
+            logging.info("aliasIndex %s", aliasIndex)
             for globalDimensionGroup in globalDimensions:
                 logging.info("globaldimensionGroup %s", globalDimensionGroup)
                 # globalDimensionGroup is an array
@@ -470,6 +476,9 @@ class ESIndexingUtils:
                     pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
+            logging.info(
+                "****************** Indexing Completed for Global Dimension values **************** "
+            )
 
         else:
             logging.error("Error in fetching global dimensions.")
@@ -482,13 +491,12 @@ class ESIndexingUtils:
         :return List of Documents to be indexed
         """
         indexingDocuments = []
-        logging.info("global dimension group in fetch %s", globalDimensionGroup)
         globalDimensionName = globalDimensionGroup["name"]
         logging.debug("Starting fetch for global dimension: %s", globalDimensionName)
         globalDimensionId = globalDimensionGroup["id"]
         dimensionObjs = globalDimensionGroup["values"]  # dimensional values
         logging.info(
-            "Merging dimensions Value percentile with mulitple values in list of dimensionValues"
+            "Merging dimensions Value with mulitple values in list of dimensionValues"
         )
         for dmObj in dimensionObjs:
             displayValue = ""
@@ -499,22 +507,25 @@ class ESIndexingUtils:
             dimensionValues = res.get("data", [])
             if dimensionValues:
                 for values in dimensionValues:
-                    displayValue = values
-                    elasticsearchUniqueId = (
-                        str(globalDimensionId) + "_" + str(displayValue)
-                    )
+                    if values:
+                        logging.info("Dimensional values is %s", values)
 
-                    document = {
-                        "_id": elasticsearchUniqueId,
-                        "globalDimensionValue": str(displayValue).lower(),
-                        "globalDimensionDisplayValue": str(displayValue),
-                        "globalDimensionName": str(globalDimensionName),
-                        "globalDimensionId": globalDimensionId,
-                        "dataset": dataset,
-                        "datasetId": datasetId,
-                    }
-                    indexingDocuments.append(document)
-                    logging.debug("Document to index: %s", document)
+                        displayValue = values
+                        elasticsearchUniqueId = (
+                            str(globalDimensionId) + "_" + str(displayValue)
+                        )
+
+                        document = {
+                            "_id": elasticsearchUniqueId,
+                            "globalDimensionValue": str(displayValue).lower(),
+                            "globalDimensionDisplayValue": str(displayValue),
+                            "globalDimensionName": str(globalDimensionName),
+                            "globalDimensionId": globalDimensionId,
+                            "dataset": dataset,
+                            "datasetId": datasetId,
+                        }
+                        indexingDocuments.append(document)
+                        logging.debug("Document to index: %s", document)
 
         return indexingDocuments
 
@@ -524,9 +535,10 @@ class ESIndexingUtils:
         """
         Indexing is being done for dropdown suggestion
         """
-        logging.info("Fetching the global dimensions and the dimension values")
+        logging.info(
+            "*************************** Indexing starts of Global Dimension Values for Search Suggestion **************************"
+        )
         response = Utils.getGlobalDimensionForIndex()
-        logging.info("response of globaldimension value %s", response)
         if response["success"]:
             globalDimensions = response.get("data", [])
             logging.debug("Global dimensions: %s", globalDimensions)
@@ -580,11 +592,12 @@ class ESIndexingUtils:
             indexName = ESIndexingUtils.GLOBAL_DIMENSIONS_INDEX_SEARCH_SUGGESTION_DATA
 
             aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
-            # app.logger.info("IndexName %s", indexName)
-            # app.logger.info("aliasIndex %s", aliasIndex)
+            logging.info("IndexName %s", indexName)
+            logging.info("aliasIndex %s", aliasIndex)
             for globalDimensionGroup in globalDimensions:
-                logging.info("globaldimensionGroup %s", globalDimensionGroup)
                 # globalDimensionGroup is an array
+                logging.info("globaldimensionGroup %s", globalDimensionGroup)
+
                 try:
                     documentsToIndex = ESIndexingUtils.fetchGlobalDimensionsValueForSearchSuggestionIndexing(
                         globalDimensionGroup
@@ -597,6 +610,9 @@ class ESIndexingUtils:
                     pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
+            logging.info(
+                "*************************** Indexing Completed of Global Dimension Values for Search Suggestion **************************"
+            )
 
         else:
             logging.error("Error in fetching global dimensions.")
@@ -607,16 +623,16 @@ class ESIndexingUtils:
         """
         Method to index global dimensions data
         """
-        from cueSearch.services import globalDimension, GlobalDimensionServices
+        from cueSearch.services import GlobalDimensionServices
 
         logging.info(
-            "Fetching the global dimensions and the dimension values for auto global dimension"
+            "*************************** Indexing Starts of Non Global Dimension Values for Search Suggestion **************************"
         )
+
         response = GlobalDimensionServices.nonGlobalDimensionForIndexing()
-        logging.info("response of globaldimension value %s", response)
         if response["success"]:
             datsetDimensions = response.get("data", [])
-            logging.debug("Global dimensions: %s", datsetDimensions)
+            logging.debug("Dataset dimensions: %s", datsetDimensions)
 
             indexDefinition = {
                 "settings": {
@@ -675,12 +691,8 @@ class ESIndexingUtils:
             indexName = ESIndexingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA
 
             aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
-            print("indexName", indexName)
-            print("alias index", aliasIndex)
-            # app.logger.info("IndexName %s", indexName)
-            # app.logger.info("aliasIndex %s", aliasIndex)
-            # for globalDimensionGroup in datsetDimensions:
-            logging.info("datsetDimensions %s", datsetDimensions)
+            logging.info("IndexName %s", indexName)
+            logging.info("aliasIndex %s", aliasIndex)
             # datsetDimensions is an array
             try:
                 documentsToIndex = (
@@ -696,6 +708,9 @@ class ESIndexingUtils:
                 pass
 
             ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
+            logging.info(
+                "*************************** Indexing Completed of Non Dimensional Values for Search Suggestion **************************"
+            )
 
         else:
             logging.error("Error in fetching global dimensions.")
@@ -722,8 +737,12 @@ class ESIndexingUtils:
             datasetId = dmObj["datasetId"]
             res = Utils.getDimensionalValuesForDimension(datasetId, dimension)
             dimensionValues = res.get("data", [])
-            if dimensionValues:
-                for values in dimensionValues:
+            for values in dimensionValues:
+                if values:
+                    logging.info(
+                        " Non global dimensional values %s",
+                        values,
+                    )
                     displayValue = values
                     globalDimensionId = (
                         str(dimension) + "_" + str(displayValue) + "_" + str(datasetId)
@@ -748,6 +767,8 @@ class ESIndexingUtils:
                         "datasetId": datasetId,
                     }
                     indexingDocuments.append(document)
-                    logging.debug("Document to index: %s", document)
-
+        logging.info(
+            "Indexing Documents length of non global dimension %s",
+            len(indexingDocuments),
+        )
         return indexingDocuments
