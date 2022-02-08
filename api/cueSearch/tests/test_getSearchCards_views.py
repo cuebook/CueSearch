@@ -80,7 +80,7 @@ def test_getSearchCard(client, mocker):
             "searchType": "GLOBALDIMENSION",
         }
     ]
-    response = client.post(path, payload,content_type="application/json")
+    response = client.post(path, payload, content_type="application/json")
     mockResponse.stop()
     assert response.data["success"]
     assert response.status_code == 200
