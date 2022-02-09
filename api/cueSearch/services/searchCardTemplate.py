@@ -190,7 +190,7 @@ class SearchCardTemplateServices:
 
             if len(titles) != len(texts) or len(titles) != len(sqls):
                 raise ValueError(
-                    "Incosistent use of delimiter (%s) in title, text, sql of template"
+                    "Inconsistent use of delimiter (%s) in title, text, sql of template"
                     % delimiter
                 )
 
@@ -283,8 +283,7 @@ class SearchCardTemplateServices:
         res.update(True, "success", data)
         return res
 
-
-    def getSearchCardsData(params: dict):
+    def getSearchCardData(params: dict):
         """
         Utility service to fetch data for a payload
         :param params: Dict containing dataset name, and dataset dimension

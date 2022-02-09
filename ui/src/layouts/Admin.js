@@ -1,6 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
+import { Router } from "react-router";
+// import { ConnectedRouter } from "connected-react-router";
+
 import { Switch, Route, Redirect } from "react-router-dom";
 import ReactNotification from "react-notifications-component";
+import { createHashHistory } from "history";
 
 // components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
@@ -28,6 +32,8 @@ import SearchCardPage from "views/admin/SearchCard";
 import installationServices from "services/main/installation";
 import { telemetry } from "telemetry/index.js";
 
+const history = createHashHistory();
+
 export default function Admin() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loader, setLoader] = useState(false);
@@ -50,7 +56,7 @@ export default function Admin() {
       setIsLogout(true);
       setIsAuthRequired(true);
       setIsLoggedIn(true);
-      window.location.href = "/#/anomalies";
+      history.push("/");
     } else if (
       response &&
       !response.success &&
@@ -117,7 +123,7 @@ export default function Admin() {
                 padding: "0.5rem 0rem 0 0rem",
               }}
             >
-              <Switch>
+              <Router history={history}>
                 <Route path="/dataset/create" exact component={Dataset} />
                 <Route path="/dataset/:datasetId" exact component={Dataset} />
                 <Route path="/datasets" exact component={Datasets} />
@@ -130,8 +136,12 @@ export default function Admin() {
                 />
                 <Route path="/search/" exact component={SearchResultPage} />
                 <Route path="/search/card" exact component={SearchCardPage} />
-                <Redirect from="/" to="/search/global-dimension" />
-              </Switch>
+                <Route
+                  exact
+                  path="/"
+                  render={() => <Redirect to="/datasets" />}
+                />
+              </Router>
             </div>
           </div>
         </GlobalContextProvider>

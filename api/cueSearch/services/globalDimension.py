@@ -172,7 +172,6 @@ class GlobalDimensionServices:
 
                 if not flag:
                     listToIndex.append(dimensionObj)
-            print(len(listToIndex))
             res = {"success": True, "data": listToIndex}
 
         except Exception as ex:

@@ -17,6 +17,7 @@ import SearchResultService from "services/main/searchResult.js";
 const SearchTypeConstants = {
   ANOMALIES: "ANOMALIES",
   GLOBALDIMENSION: "GLOBALDIMENSION",
+  DATASETDIMENSION: "DATASETDIMENSION",
   MEASURE: "MEASURE",
   OPERATION: "OPERATION",
   DIMENSION: "DIMENSION",
@@ -31,10 +32,11 @@ const formatOptionLabel = (data) => {
   const type = data.type ? data.type.trim() : null;
   let metadata;
   if (_.isNil(type) || type.length === 0) metadata = <div />;
-  else if (type === SearchTypeConstants.ANOMALIES) metadata = <div />;
-  else if (type === SearchTypeConstants.DIMENSION)
+  else if (data.searchType === SearchTypeConstants.ANOMALIES)
+    metadata = <div />;
+  else if (data.searchType === SearchTypeConstants.GLOBALDIMENSION)
     metadata = <Tag color="green">{type}</Tag>;
-  else if (type === SearchTypeConstants.MEASURE)
+  else if (data.searchType === SearchTypeConstants.MEASURE)
     metadata = <Tag color="red">{type}</Tag>;
   else metadata = <Tag color="blue">{type}</Tag>;
 
@@ -118,6 +120,7 @@ class Search extends React.Component {
         }
       });
   };
+
   onChangeFilter = (selectedEntries, action) => {
     this.selectedEntries = selectedEntries;
     if (!_.isNil(selectedEntries)) {
@@ -126,6 +129,7 @@ class Search extends React.Component {
         this.setState({ ...this.state, selectedGlobalDimensionItems: [] });
       } else if (
         e.searchType === SearchTypeConstants.GLOBALDIMENSION ||
+        e.searchType === SearchTypeConstants.DATASETDIMENSION ||
         e.searchType === SearchTypeConstants.MEASURE ||
         e.searchType === SearchTypeConstants.ANOMALIES ||
         e.searchType === SearchTypeConstants.DIMENSION ||
@@ -210,9 +214,6 @@ class Search extends React.Component {
           }, 200);
         }
       }
-      if (this.props.isCueDrill) {
-        this.getSearchResults();
-      }
     } else if (e.key == "Enter") {
       if (document.activeElement === valueInput) {
         if (valueInput2 && valueInput2.type) {
@@ -222,9 +223,6 @@ class Search extends React.Component {
         }
       } else if (document.activeElement === valueInput2) {
         this.searchInputRef.current.focus();
-      }
-      if (this.props.isCueDrill) {
-        this.getSearchResults();
       }
     } else if (e.key == "Tab" && this.props.isSeachButtonVisible) {
       this.searchButtonRef.current.buttonNode.focus();

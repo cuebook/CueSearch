@@ -13,9 +13,9 @@ class SearchResultService {
     }
   }
 
-  async getSearchCardsData(payload) {
+  async getSearchCardData(payload) {
     const response = await apiService.post(
-      "cueSearch/getSearchCardsData/",
+      "cueSearch/getSearchCardData/",
       payload
     );
     if (response.success) {

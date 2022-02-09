@@ -35,7 +35,7 @@ urlpatterns = [
     # Card Templates
     path("cardTemplates/", views.getCardTemplates, name="getCardTemplate"),
     path("getCards/", views.getSearchCards, name="getSearchCards"),
-    path("getSearchCardsData/", views.getSearchCardsData, name="getSearchCardData"),
+    path("getSearchCardData/", views.getSearchCardData, name="getSearchCardData"),
     path(
         "searchsuggestions/",
         views.getSearchSuggestionsView,

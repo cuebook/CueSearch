@@ -38,7 +38,7 @@ class ChartCard extends React.Component {
   }
 
   getSearchCardData = async () => {
-    const response = await searchResultService.getSearchCardsData(this.props.params);
+    const response = await searchResultService.getSearchCardData(this.props.params);
     if (response.success) {
       this.setState({cardData: response.data});
     }
@@ -136,9 +136,14 @@ class ChartCard extends React.Component {
         {this.props.hasMarker ? this.props.markerElement : null}
       </Chart>
     ) : (
-      <div className={`${style.loadingDiv} pt-5 mt-2`}>
-        <i className="fa fa-exclamation-triangle"></i>
-        <p>No Data</p>
+      <div
+        className={`${style.loadingDiv} pt-5 mt-2`}
+        style={{ height: this.props.isMiniChart ? 120 : 400 }}
+      >
+        <div>
+          <i className="fa fa-exclamation-triangle"></i>
+          <p>No Data</p>
+        </div>
       </div>
     );
 

@@ -1,5 +1,8 @@
 name: auto-format
-on: push
+on: 
+  push:
+    branches:
+      - main
 jobs:
   format-python:
     runs-on: ubuntu-latest
