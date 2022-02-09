@@ -6,9 +6,8 @@ import { calculateColumnsWidth } from "components/Utils/columnWidthHelper";
 import style from "./style.module.scss";
 
 
-
 export default function TableCard(props) {
-  const [data, setSearchData] = useState("");
+  const [data, setSearchData] = useState();
   useEffect(() => {
     getSearchCardData();
   },[]);

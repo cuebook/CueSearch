@@ -131,6 +131,7 @@ class Datasets:
         data = dataDf.to_dict("records")
 
         chartMetaData = ESIndexingUtils.addChartMetaData(params, data)
+        print("-----------------Chart data-------------------",chartMetaData)
         finaldata = {
             "data":data,
             "chartMetaData": chartMetaData

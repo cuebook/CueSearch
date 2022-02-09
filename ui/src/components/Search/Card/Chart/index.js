@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import style from "./style.module.scss";
 import { useParams, useHistory } from "react-router-dom";
+import searchResultService from "services/main/searchResult.js";
+
 import {
   Chart,
   Geom,
@@ -22,6 +24,8 @@ const renderTypeMap = {
   area: "areaStack",
 };
 
+
+
 class ChartCard extends React.Component {
   constructor(props) {
     super(props);
@@ -34,8 +38,10 @@ class ChartCard extends React.Component {
     this.chart = null;
   }
 
+  
+
   render() {
-    const { cardData } = this.props;
+    const { cardData } = this.props.chartMetaData;
     const showPercentageButton = cardData && cardData.rowsTotal;
     let data = [];
     let chartMetaData = {};
