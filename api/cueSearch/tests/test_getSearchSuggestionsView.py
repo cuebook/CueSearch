@@ -70,7 +70,7 @@ def test_getSearchCard(client, mocker):
 
     # Get search suggestion views
     path = reverse("getSearchSuggestionsView")
-    query = 'AP'
+    query = "AP"
     response = client.post(path, query, content_type="application/json")
     breakpoint()
     assert response.data["success"] == True

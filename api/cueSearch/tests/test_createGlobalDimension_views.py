@@ -58,4 +58,3 @@ def test_createGlobalDimension(client, mocker):
     mockResponse.stop()
     assert response.data["success"]
     assert response.status_code == 200
-
