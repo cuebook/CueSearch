@@ -5,19 +5,17 @@ import searchResultService from "services/main/searchResult.js";
 import { calculateColumnsWidth } from "components/Utils/columnWidthHelper";
 import style from "./style.module.scss";
 
-
 export default function TableCard(props) {
   const [data, setSearchData] = useState();
   useEffect(() => {
     getSearchCardData();
-  },[]);
+  }, []);
 
   const getSearchCardData = async () => {
-    const response = await  searchResultService.getSearchCardsData(props.params);
-    if (response.success){
+    const response = await searchResultService.getSearchCardsData(props.params);
+    if (response.success) {
       console.log(response);
       setSearchData(response.data.data);
-      
     }
   };
   // const data = props.data;

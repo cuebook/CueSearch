@@ -23,19 +23,18 @@ const renderTypeMap = {
   area: "areaStack",
 };
 
-export default ChartCard(props); {
-
+export default ChartCard(props);
+{
   const [data, setChartData] = useState();
   useEffect(() => {
     getSearchCardData();
-  },[]);
+  }, []);
 
   const getSearchCardData = async () => {
     const response = await searchResultService.getSearchCardsData(props.params);
-    if (response.success){
+    if (response.success) {
       console.log(response);
       setChartData(response.data.chartMetaData);
-      
     }
   };
 }
