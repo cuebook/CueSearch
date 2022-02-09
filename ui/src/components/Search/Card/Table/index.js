@@ -13,7 +13,7 @@ export default function TableCard(props) {
   },[]);
 
   const getSearchCardData = async () => {
-    const response = await searchResultService.getSearchCardsData(props.params);
+    const response = await  searchResultService.getSearchCardsData(props.params);
     if (response.success){
       console.log(response);
       setSearchData(response.data.data);

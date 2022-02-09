@@ -5,6 +5,7 @@ from access.data import Data
 from dataset.models import Dataset
 from dataset.serializers import DatasetsSerializer, DatasetSerializer
 from cueSearch.elasticSearch import ESIndexingUtils
+from cueSearch.elasticSearch.utils import Utils
 
 
 class Datasets:
@@ -130,8 +131,7 @@ class Datasets:
         dataDf = Data.fetchDatasetDataframe(dataset, params["sql"])
         data = dataDf.to_dict("records")
 
-        chartMetaData = ESIndexingUtils.addChartMetaData(params, data)
-        print("-----------------Chart data-------------------",chartMetaData)
+        chartMetaData = Utils.addChartMetaData(params, data)
         finaldata = {
             "data":data,
             "chartMetaData": chartMetaData

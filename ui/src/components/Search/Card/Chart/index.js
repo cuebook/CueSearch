@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import style from "./style.module.scss";
 import { useParams, useHistory } from "react-router-dom";
+import searchResultService from "services/main/searchResult.js";
 import {
   Chart,
   Geom,
@@ -22,6 +23,22 @@ const renderTypeMap = {
   area: "areaStack",
 };
 
+export default ChartCard(props); {
+
+  const [data, setChartData] = useState();
+  useEffect(() => {
+    getSearchCardData();
+  },[]);
+
+  const getSearchCardData = async () => {
+    const response = await searchResultService.getSearchCardsData(props.params);
+    if (response.success){
+      console.log(response);
+      setChartData(response.data.chartMetaData);
+      
+    }
+  };
+}
 class ChartCard extends React.Component {
   constructor(props) {
     super(props);
@@ -139,5 +156,3 @@ class ChartCard extends React.Component {
     );
   }
 }
-
-export default ChartCard;
