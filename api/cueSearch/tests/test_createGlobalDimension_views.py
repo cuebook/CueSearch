@@ -56,6 +56,26 @@ def test_createGlobalDimension(client, mocker):
 
     response = client.post(path, gd_data, content_type="application/json")
     mockResponse.stop()
+    breakpoint()
     assert response.data["success"]
     assert response.status_code == 200
 
+    # name exception testing
+    dataset = Dataset.objects.all()[0]
+    path = reverse("globalDimensionCreate")
+    mockResponse.start()
+    gd_data = {
+        "name": "test01",
+        "dimensionalValues": [
+            {
+                "datasetId": dataset.id,
+                "dataset": "Returns",
+                "dimension": "WarehouseCode",
+            }
+        ],
+    }
+
+    response = client.post(path, gd_data, content_type="application/json")
+    mockResponse.stop()
+    # if exception throw then reponse will be false or else it will be true and test case willbe failed
+    assert response.data["success"] == False

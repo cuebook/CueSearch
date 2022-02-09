@@ -42,7 +42,7 @@ def test_getSearchCard(client, mocker):
     dataset = Dataset.objects.all()[0]
     mockResponse.start()
     path = reverse("globalDimensionCreate")
-    gd_data = {
+    globalDimensionData = {
         "name": "test",
         "dimensionalValues": [
             {
@@ -52,24 +52,26 @@ def test_getSearchCard(client, mocker):
             }
         ],
     }
-    response = client.post(path, gd_data, content_type="application/json")
+    response = client.post(path, globalDimensionData, content_type="application/json")
     mockResponse.stop()
     assert response.data["success"] == True
     assert response.status_code == 200
+
     # get global dimension
     path = reverse("globalDimension")
     mockResponse.start()
-    response = client.get(path)
+    response = client.get(path, content_type="application/json")
     mockResponse.stop()
     assert response.data["data"][0]["id"] == dataset.id
     assert response.data["success"]
     assert response.status_code == 200
 
-    gd_id = response.data["data"][0]["id"]
+    globalDimensionDataId = response.data["data"][0]["id"]
 
     # Get search suggestion views
-    path = reverse("searchsuggestions")
-    query = "AD"
-    response = client.post(path, query)
-    assert response.data["success"]
+    path = reverse("getSearchSuggestionsView")
+    query = 'AP'
+    response = client.post(path, query, content_type="application/json")
+    breakpoint()
+    assert response.data["success"] == True
     assert response.status_code == 200
