@@ -131,10 +131,7 @@ class Datasets:
         data = dataDf.to_dict("records")
 
         chartMetaData = ESIndexingUtils.addChartMetaData(params, data)
-        print("-----------------Chart data-------------------",chartMetaData)
-        finaldata = {
-            "data":data,
-            "chartMetaData": chartMetaData
-        }
+        print("-----------------Chart data-------------------", chartMetaData)
+        finaldata = {"data": data, "chartMetaData": chartMetaData}
         res.update(True, "Successfully fetched data", finaldata)
         return res

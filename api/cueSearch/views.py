@@ -67,6 +67,7 @@ def getSearchCards(request: HttpRequest) -> Response:
     res = SearchCardTemplateServices.getSearchCards(payload)
     return Response(res.json())
 
+
 @api_view(["POST"])
 def getSearchCardsData(request: HttpRequest) -> Response:
     params = request.data
