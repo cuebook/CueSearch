@@ -24,8 +24,6 @@ const renderTypeMap = {
   area: "areaStack",
 };
 
-
-
 class ChartCard extends React.Component {
   constructor(props) {
     super(props);
@@ -37,8 +35,6 @@ class ChartCard extends React.Component {
     this.chartRef = React.createRef();
     this.chart = null;
   }
-
-  
 
   render() {
     const { cardData } = this.props.chartMetaData;

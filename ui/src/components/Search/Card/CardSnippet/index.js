@@ -30,7 +30,11 @@ export default function CardSnippet(props) {
           {params.renderType == "table" ? (
             <TableCard params={params} isSnippet={true} />
           ) : (
-            <Chart cardData={tailoredCardData} params={params} isMiniChart={true} />
+            <Chart
+              cardData={tailoredCardData}
+              params={params}
+              isMiniChart={true}
+            />
           )}
         </div>
         <div className={style.contentSnippet}>
