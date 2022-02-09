@@ -18,6 +18,7 @@ from cueSearch.services.utils import (
     addDimensionsInParam,
     makeFilter,
     getOrderFromDataframe,
+    getChartMetaData
 )
 
 logger = logging.getLogger(__name__)
@@ -280,6 +281,20 @@ class SearchCardTemplateServices:
                 except Exception as ex:
                     logging.error("Error in fetching search suggestions :%s", str(ex))
         res.update(True, "success", data)
+        return res
+
+
+    def getSearchCardsData(params: dict):
+        """
+        Utility service to fetch data for a payload
+        :param params: Dict containing dataset name, and dataset dimension
+        """
+        res = ApiResponse("Error in fetching data")
+        data = Datasets.getDatasetData(params).data
+        print("data ----- ", data[:15])
+        chartMetaData = getChartMetaData(params, data)
+        finaldata = {"data": data, "chartMetaData": chartMetaData}
+        res.update(True, "Successfully fetched data", finaldata)
         return res
 
 

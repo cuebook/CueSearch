@@ -6,7 +6,7 @@ import { calculateColumnsWidth } from "components/Utils/columnWidthHelper";
 import style from "./style.module.scss";
 
 export default function TableCard(props) {
-  const [data, setSearchData] = useState();
+  const [tableData, setSearchData] = useState();
   useEffect(() => {
     getSearchCardData();
   }, []);
@@ -14,30 +14,29 @@ export default function TableCard(props) {
   const getSearchCardData = async () => {
     const response = await searchResultService.getSearchCardsData(props.params);
     if (response.success) {
-      console.log(response);
       setSearchData(response.data.data);
     }
   };
-  // const data = props.data;
+
   const columns =
-    !_.isEmpty(data) &&
-    Object.keys(data[0]).map((col) => {
+    !_.isEmpty(tableData) &&
+    Object.keys(tableData[0]).map((col) => {
       return { title: col, dataIndex: col, key: col };
     });
 
-  const styledTable = !_.isEmpty(data)
-    ? calculateColumnsWidth(columns, data, 400)
+  const styledTable = !_.isEmpty(tableData)
+    ? calculateColumnsWidth(columns, tableData, 400)
     : {};
 
   const tableScroll = props.isSnippet
-    ? { x: data ? 1200 : styledTable.tableWidth, y: 120 }
-    : { x: data ? 1200 : styledTable.tableWidth, y: 480 };
+    ? { x: tableData ? 1200 : styledTable.tableWidth, y: 120 }
+    : { x: tableData ? 1200 : styledTable.tableWidth, y: 480 };
 
   const dataTable = (
     <Table
       className={style.antdTable}
       columns={columns}
-      dataSource={data ? styledTable.source : data}
+      dataSource={tableData ? styledTable.source : tableData}
       pagination={false}
       size="xs"
       bordered={true}

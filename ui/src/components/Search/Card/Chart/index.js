@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import style from "./style.module.scss";
 import { useParams, useHistory } from "react-router-dom";
-import searchResultService from "services/main/searchResult.js";
+import searchResultService from "services/main/searchResult";
 import {
   Chart,
   Geom,
@@ -23,21 +23,6 @@ const renderTypeMap = {
   area: "areaStack",
 };
 
-export default ChartCard(props);
-{
-  const [data, setChartData] = useState();
-  useEffect(() => {
-    getSearchCardData();
-  }, []);
-
-  const getSearchCardData = async () => {
-    const response = await searchResultService.getSearchCardsData(props.params);
-    if (response.success) {
-      console.log(response);
-      setChartData(response.data.chartMetaData);
-    }
-  };
-}
 class ChartCard extends React.Component {
   constructor(props) {
     super(props);
@@ -45,13 +30,22 @@ class ChartCard extends React.Component {
       chartData: null,
       showPercentageChart: false,
       renderType: null,
+      cardData: null,
     };
     this.chartRef = React.createRef();
     this.chart = null;
+    this.getSearchCardData()
   }
 
+  getSearchCardData = async () => {
+    const response = await searchResultService.getSearchCardsData(this.props.params);
+    if (response.success) {
+      this.setState({cardData: response.data});
+    }
+  };
+
   render() {
-    const { cardData } = this.props;
+    const cardData = this.state.cardData;
     const showPercentageButton = cardData && cardData.rowsTotal;
     let data = [];
     let chartMetaData = {};
@@ -60,7 +54,7 @@ class ChartCard extends React.Component {
 
     let renderType = this.state.renderType
       ? this.state.renderType
-      : this.props.cardData.renderType;
+      : this.props.params.renderType;
 
     if (cardData) {
       if (cardData.data && cardData.chartMetaData) {
@@ -155,3 +149,5 @@ class ChartCard extends React.Component {
     );
   }
 }
+
+export default ChartCard;
