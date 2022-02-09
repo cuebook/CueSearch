@@ -154,12 +154,15 @@ class SearchCardTemplateServices:
                         paramDict
                     )
                     for renderedTemplate in renderedTemplates:
-                        x = {"params": {**paramDict, "sql":renderedTemplate["sql"]}, **renderedTemplate}
+                        x = {
+                            "params": {**paramDict, "sql": renderedTemplate["sql"]},
+                            **renderedTemplate,
+                        }
                         results.append(x)
-        datasetResult = [] 
+        datasetResult = []
         for i in range(len(results)):
             results[i]["data"] = datasetResult
-        
+
         finalResults = [SearchCardTemplateServices.addChartMetaData(x) for x in results]
         res.update(True, "successfully fetched", finalResults)
         return res

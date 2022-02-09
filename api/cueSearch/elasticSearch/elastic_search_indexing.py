@@ -46,8 +46,6 @@ class ESIndexingUtils:
         esClient = Elasticsearch(hosts=[esHost])
         return esClient
 
-
-
     @staticmethod
     def initializeIndex(indexName: str, indexDefinition: dict) -> str:
         """

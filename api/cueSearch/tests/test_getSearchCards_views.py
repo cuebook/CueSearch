@@ -71,16 +71,16 @@ def test_getSearchCard(client, mocker):
     path = reverse("getSearchCards")
     mockResponse.start()
     payload = [
-    {
-        "value": "AD_Data",
-        "user_entity_identifier": "Data",
-        "id": 8,
-        "type": "Data",
-        "label": "AD",
-        "searchType": "GLOBALDIMENSION"
-    }
+        {
+            "value": "AD_Data",
+            "user_entity_identifier": "Data",
+            "id": 8,
+            "type": "Data",
+            "label": "AD",
+            "searchType": "GLOBALDIMENSION",
+        }
     ]
-    response = client.post(path,payload, content_type="application/json")
+    response = client.post(path, payload, content_type="application/json")
     mockResponse.stop()
     assert response.data["success"]
     assert response.status_code == 200

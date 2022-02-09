@@ -132,9 +132,6 @@ class Datasets:
         data = dataDf.to_dict("records")
 
         chartMetaData = Utils.addChartMetaData(params, data)
-        finaldata = {
-            "data":data,
-            "chartMetaData": chartMetaData
-        }
+        finaldata = {"data": data, "chartMetaData": chartMetaData}
         res.update(True, "Successfully fetched data", finaldata)
         return res

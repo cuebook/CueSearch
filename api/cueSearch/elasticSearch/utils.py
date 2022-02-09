@@ -45,12 +45,11 @@ class Utils:
             }
         return res
 
-    
     @staticmethod
     def addChartMetaData(params: Dict, data: List) -> Dict:
         """
         Calculate meta data for chart rendering UI
-        :param params: 
+        :param params:
         :param data: chart data
         """
         timestampColumn = None
