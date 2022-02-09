@@ -525,7 +525,7 @@ class ESIndexingUtils:
                             "datasetId": datasetId,
                         }
                         indexingDocuments.append(document)
-                    logging.debug("Document to index: %s", document)
+                        logging.debug("Document to index: %s", document)
 
         return indexingDocuments
 
