@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { message, Select, Table } from "antd";
 import { useHistory } from "react-router-dom";
+import TrackVisibility from "react-on-screen";
 
 import DataDisplay from "components/Search/Card/DataDisplay";
 
@@ -22,7 +23,13 @@ export default function CardSnippet(props) {
     <div>
       <div className={style.searchSnippet}>
         <div className={style.chartSnippet}>
-          <DataDisplay params={params} isSnippet={true}/>
+          <TrackVisibility offset={70} once>
+            {({ isVisible }) =>
+              isVisible ? (
+              <DataDisplay params={params} isSnippet={true}/>
+              ) : null
+            }
+          </TrackVisibility>
         </div>
         <div className={style.contentSnippet}>
           <a
