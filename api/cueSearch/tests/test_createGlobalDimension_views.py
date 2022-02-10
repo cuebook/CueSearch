@@ -41,19 +41,20 @@ def test_createGlobalDimension(client, mocker):
 
     # create dimension for testing
     dataset = Dataset.objects.all()[0]
+    mockResponse.start()
     path = reverse("globalDimensionCreate")
-    globalDimension = {
+    gd_data = {
         "name": "test01",
         "dimensionalValues": [
             {
                 "datasetId": dataset.id,
                 "dataset": "Returns",
                 "dimension": "WarehouseCode",
-                "published": True,
             }
         ],
     }
-    response = client.post(path, globalDimension, content_type="application/json")
+
+    response = client.post(path, gd_data, content_type="application/json")
     mockResponse.stop()
     assert response.data["success"]
     assert response.status_code == 200
