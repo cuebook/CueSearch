@@ -2,10 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { message, Select, Table } from "antd";
 import { useHistory } from "react-router-dom";
 
-import TableCard from "components/Search/Card/Table";
-import Chart from "components/Search/Card/Chart";
-
-import { GlobalContext } from "layouts/GlobalContext";
+import DataDisplay from "components/Search/Card/DataDisplay";
 
 import style from "./style.module.scss";
 
@@ -25,14 +22,7 @@ export default function CardSnippet(props) {
     <div>
       <div className={style.searchSnippet}>
         <div className={style.chartSnippet}>
-          {params.renderType == "table" ? (
-            <TableCard params={params} isSnippet={true} />
-          ) : (
-            <Chart
-              params={params}
-              isMiniChart={true}
-            />
-          )}
+          <DataDisplay params={params} isSnippet={true}/>
         </div>
         <div className={style.contentSnippet}>
           <a

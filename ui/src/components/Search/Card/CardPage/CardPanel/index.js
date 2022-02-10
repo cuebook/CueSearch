@@ -3,8 +3,7 @@ import { useHistory } from "react-router-dom";
 import { message, Select, Button } from "antd";
 import _ from "lodash";
 
-import TableCard from "components/Search/Card/Table";
-import Chart from "components/Search/Card/Chart";
+import DataDisplay from "components/Search/Card/DataDisplay";
 
 import style from "./style.module.scss";
 
@@ -47,11 +46,7 @@ export default function CardPanel(props) {
             dangerouslySetInnerHTML={{ __html: text }}
           />
           <div className={style.chartDiv}>
-            {params.renderType == "table" ? (
-              <TableCard params={params} />
-            ) : (
-              <Chart params={params} />
-            )}
+            <DataDisplay params={params} />
           </div>
         </div>
       </div>
