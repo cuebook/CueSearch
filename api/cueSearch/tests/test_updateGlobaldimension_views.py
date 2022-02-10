@@ -61,8 +61,10 @@ def test_updateGlobalDimension(client, mocker):
     # get global dimension
     path = reverse("globalDimension")
     response = client.get(path)
-    assert response.data["data"][0]["id"] == dataset.id
+    assert response.data["data"][0]["values"][0]["datasetId"] == dataset.id
     assert response.data["success"]
+    assert response.data["data"][0]["name"] == "test"
+    assert response.data["data"][0]["values"][0]["dataset"] == "demo_dataset"
     assert response.status_code == 200
 
     # Getting global dimension id
