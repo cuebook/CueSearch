@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import style from "./style.module.scss";
 import { useParams, useHistory } from "react-router-dom";
-import searchResultService from "services/main/searchResult";
 import Loader from "components/Utils/Loader"
 import {
   Chart,
@@ -31,25 +30,13 @@ class ChartCard extends React.Component {
       chartData: null,
       showPercentageChart: false,
       renderType: null,
-      loadingCardData: true,
-      cardData: null,
     };
     this.chartRef = React.createRef();
     this.chart = null;
-    this.getSearchCardData()
   }
 
-  getSearchCardData = async () => {
-    this.setState({loadingCardData: true})
-    const response = await searchResultService.getSearchCardData(this.props.params);
-    if (response.success) {
-      this.setState({cardData: response.data});
-    }
-    this.setState({loadingCardData: false})
-  };
-
   render() {
-    const cardData = this.state.cardData;
+    const cardData = this.props.cardData;
     const showPercentageButton = cardData && cardData.rowsTotal;
     let data = [];
     let chartMetaData = {};
@@ -60,7 +47,7 @@ class ChartCard extends React.Component {
 
     let renderType = this.state.renderType
       ? this.state.renderType
-      : this.props.params.renderType;
+      : this.props.renderType;
 
     if (cardData) {
       if (cardData.data && cardData.chartMetaData) {
@@ -154,7 +141,7 @@ class ChartCard extends React.Component {
     return (
       <div>
         <div className={style.chartDiv}>
-          {this.state.loadingCardData ? 
+          {this.props.loadingData ? 
             <div><Loader height={height} /></div>
             :
             this.chart

@@ -11,7 +11,6 @@ export default function CardPage(props) {
   const history = useHistory();
 
   let params = new URLSearchParams(history.location.search);
-  console.log(params.get("searchCardDetails"))
   let searchCardDetails = JSON.parse(params.get("searchCardDetails"));
 
   return (
