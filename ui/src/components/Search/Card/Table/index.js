@@ -33,7 +33,7 @@ export default function TableCard(props) {
     ? calculateColumnsWidth(columns, tableData, 400)
     : {};
 
-  const height = props.isSnippet ? 120 : 140;
+  const height = props.isSnippet ? 120 : 480;
   const tableScroll = { x: tableData ? 1200 : styledTable.tableWidth, y: height };
 
   const dataTable = (

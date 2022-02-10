@@ -11,7 +11,7 @@ import style from "./style.module.scss";
 export default function CardPanel(props) {
   const history = useHistory();
 
-  if (_.isEmpty(props.cardData)) {
+  if (_.isEmpty(props.cardDetails)) {
     return (
       <div>
         <Button className="mr-2" type="primary" onClick={history.goBack}>
@@ -32,7 +32,7 @@ export default function CardPanel(props) {
     );
   }
 
-  const { title, text, params } = props.cardData;
+  const { title, text, params } = props.cardDetails;
 
   return (
     <div>

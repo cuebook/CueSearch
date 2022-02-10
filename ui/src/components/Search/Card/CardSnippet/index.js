@@ -10,12 +10,13 @@ import { GlobalContext } from "layouts/GlobalContext";
 import style from "./style.module.scss";
 
 export default function CardSnippet(props) {
-  const { searchCardData, updateSearchCardData } = useContext(GlobalContext);
   const history = useHistory();
 
   const handleCardClick = () => {
-    updateSearchCardData(props.cardData);
-    history.push("/search/card")
+    history.push({
+      pathname: "/search/card/",
+      search: "?searchCardDetails=" + encodeURIComponent(JSON.stringify(props.cardData))
+    })
   };
 
   const { title, text, params } = props.cardData;

@@ -19,7 +19,7 @@ export default function TopBar(props) {
   let params = new URLSearchParams(history.location.search);
   let initialSearchValue = [];
   try {
-    let searchQuery = JSON.parse(params.get("search"));
+    let searchQuery = JSON.parse(decodeURIComponent(params.get("search")));
     initialSearchValue = searchQuery
       ? [
           {

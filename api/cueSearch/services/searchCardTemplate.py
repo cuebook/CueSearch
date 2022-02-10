@@ -160,12 +160,8 @@ class SearchCardTemplateServices:
                             **renderedTemplate,
                         }
                         results.append(x)
-        datasetResult = []
-        for i in range(len(results)):
-            results[i]["data"] = datasetResult
-
-        finalResults = [SearchCardTemplateServices.addChartMetaData(x) for x in results]
-        res.update(True, "successfully fetched", finalResults)
+                        
+        res.update(True, "successfully fetched", results)
         return res
 
     @staticmethod
