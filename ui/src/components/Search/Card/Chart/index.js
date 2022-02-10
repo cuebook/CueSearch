@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import style from "./style.module.scss";
 import { useParams, useHistory } from "react-router-dom";
 import searchResultService from "services/main/searchResult";
+import Loader from "components/Utils/Loader"
 import {
   Chart,
   Geom,
@@ -30,6 +31,7 @@ class ChartCard extends React.Component {
       chartData: null,
       showPercentageChart: false,
       renderType: null,
+      loadingCardData: true,
       cardData: null,
     };
     this.chartRef = React.createRef();
@@ -38,10 +40,12 @@ class ChartCard extends React.Component {
   }
 
   getSearchCardData = async () => {
+    this.setState({loadingCardData: true})
     const response = await searchResultService.getSearchCardData(this.props.params);
     if (response.success) {
       this.setState({cardData: response.data});
     }
+    this.setState({loadingCardData: false})
   };
 
   render() {
@@ -51,6 +55,8 @@ class ChartCard extends React.Component {
     let chartMetaData = {};
     let geomElements = null;
     let xAxisLabel = null;
+    const height = this.props.isMiniChart ? 120 : 400;
+    const width = this.props.isMiniChart ? 480 : undefined
 
     let renderType = this.state.renderType
       ? this.state.renderType
@@ -101,27 +107,29 @@ class ChartCard extends React.Component {
         data={data}
         scale={chartMetaData.scale}
         forceFit={true}
-        height={this.props.isMiniChart ? 120 : 400}
-        width={this.props.isMiniChart ? 480 : undefined}
+        height={height}
+        width={width}
         padding="auto"
       >
         {this.props.isMiniChart ? (
-          <Axis
-            name={cardData.chartMetaData.yColumn}
-            position="left"
-            label={{ textStyle: { fill: "#888", fontSize: "10" } }}
-          />
+          <>
+            <Axis
+              name={cardData.chartMetaData.yColumn}
+              position="left"
+              label={{ textStyle: { fill: "#888", fontSize: "10" } }}
+            />
+            <Axis name={cardData.chartMetaData.xColumn} visible={false} />
+          </>
         ) : (
-          <Axis name={cardData.chartMetaData.yColumn} />
-        )}
-        {this.props.isMiniChart ? (
-          <Axis name={cardData.chartMetaData.xColumn} visible={false} />
-        ) : (
-          <Axis
-            name={cardData.chartMetaData.xColumn}
-            // label={xAxisLabel}
-            title={{ textStyle: { fill: "#888" } }}
-          />
+          <>
+            <Axis name={cardData.chartMetaData.yColumn} />
+            <Axis
+              name={cardData.chartMetaData.xColumn}
+              // label={xAxisLabel}
+              title={{ textStyle: { fill: "#888" } }}
+            />
+            <Legend name="annotate" visible={false} />
+          </>
         )}
         <Tooltip
           crosshairs={{
@@ -130,14 +138,11 @@ class ChartCard extends React.Component {
           hideTime={1000}
         />
         {geomElements}
-        {this.props.isMiniChart ? null : (
-          <Legend name="annotate" visible={false} />
-        )}
       </Chart>
     ) : (
       <div
         className={`${style.loadingDiv} pt-5 mt-2`}
-        style={{ height: this.props.isMiniChart ? 120 : 400 }}
+        style={{ height: height }}
       >
         <div>
           <i className="fa fa-exclamation-triangle"></i>
@@ -148,7 +153,13 @@ class ChartCard extends React.Component {
 
     return (
       <div>
-        <div className={style.chartDiv}>{this.chart}</div>
+        <div className={style.chartDiv}>
+          {this.state.loadingCardData ? 
+            <div><Loader height={height} /></div>
+            :
+            this.chart
+          }
+        </div>
       </div>
     );
   }

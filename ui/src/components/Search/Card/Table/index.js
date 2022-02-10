@@ -3,11 +3,15 @@ import { message, Select, Table } from "antd";
 import _ from "lodash";
 import searchResultService from "services/main/searchResult.js";
 import { calculateColumnsWidth } from "components/Utils/columnWidthHelper";
+import Loader from "components/Utils/Loader"
 import style from "./style.module.scss";
 
 export default function TableCard(props) {
   const [tableData, setSearchData] = useState();
+  const [loadingTableData, setLoadingTableData] = useState(false);
+
   useEffect(() => {
+    setLoadingTableData(true)
     getSearchCardData();
   }, []);
 
@@ -16,6 +20,7 @@ export default function TableCard(props) {
     if (response.success) {
       setSearchData(response.data.data);
     }
+    setLoadingTableData(false)
   };
 
   const columns =
@@ -28,9 +33,8 @@ export default function TableCard(props) {
     ? calculateColumnsWidth(columns, tableData, 400)
     : {};
 
-  const tableScroll = props.isSnippet
-    ? { x: tableData ? 1200 : styledTable.tableWidth, y: 120 }
-    : { x: tableData ? 1200 : styledTable.tableWidth, y: 480 };
+  const height = props.isSnippet ? 120 : 140;
+  const tableScroll = { x: tableData ? 1200 : styledTable.tableWidth, y: height };
 
   const dataTable = (
     <Table
@@ -44,5 +48,13 @@ export default function TableCard(props) {
     />
   );
 
-  return <div className="cardTable">{dataTable}</div>;
+  return (
+      <div className="cardTable">
+        {loadingTableData ? 
+          <div><Loader height={height}/></div>
+          :
+          dataTable
+        }
+      </div>
+    )
 }
