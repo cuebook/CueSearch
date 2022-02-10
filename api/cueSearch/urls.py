@@ -34,7 +34,7 @@ urlpatterns = [
     ),
     # Card Templates
     path("cardTemplates/", views.getCardTemplates, name="getCardTemplate"),
-    path("getCards/", views.getSearchCards, name="getSearchCards"),
+    path("getSearchCards/", views.getSearchCards, name="getSearchCards"),
     path("getSearchCardData/", views.getSearchCardData, name="getSearchCardData"),
     path(
         "searchsuggestions/",

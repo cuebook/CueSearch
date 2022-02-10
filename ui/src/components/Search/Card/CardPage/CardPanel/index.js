@@ -33,12 +33,6 @@ export default function CardPanel(props) {
   }
 
   const { title, text, params } = props.cardData;
-  const data = props.cardData.data.data;
-  const tailoredCardData = {
-    data: data,
-    chartMetaData: props.cardData.chartMetaData,
-    renderType: params.renderType,
-  };
 
   return (
     <div>
@@ -54,9 +48,9 @@ export default function CardPanel(props) {
           />
           <div className={style.chartDiv}>
             {params.renderType == "table" ? (
-              <TableCard data={data} />
+              <TableCard params={params} />
             ) : (
-              <Chart cardData={tailoredCardData} />
+              <Chart params={params} />
             )}
           </div>
         </div>

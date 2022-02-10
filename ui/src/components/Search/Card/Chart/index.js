@@ -133,7 +133,6 @@ class ChartCard extends React.Component {
         {this.props.isMiniChart ? null : (
           <Legend name="annotate" visible={false} />
         )}
-        {this.props.hasMarker ? this.props.markerElement : null}
       </Chart>
     ) : (
       <div

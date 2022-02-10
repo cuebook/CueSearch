@@ -3,7 +3,7 @@ import { message } from "antd";
 
 class SearchResultService {
   async getSearchCards(payload) {
-    const response = await apiService.post("cueSearch/getCards/", payload);
+    const response = await apiService.post("cueSearch/getSearchCards/", payload);
     if (response.success) {
       console.log("Response Data", response.data);
       return response;

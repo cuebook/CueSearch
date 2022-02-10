@@ -1,27 +1,24 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { message, Select, Table } from "antd";
-
-import style from "./style.module.scss";
+import { useHistory } from "react-router-dom";
 
 import TableCard from "components/Search/Card/Table";
 import Chart from "components/Search/Card/Chart";
 
 import { GlobalContext } from "layouts/GlobalContext";
 
+import style from "./style.module.scss";
+
 export default function CardSnippet(props) {
   const { searchCardData, updateSearchCardData } = useContext(GlobalContext);
+  const history = useHistory();
 
   const handleCardClick = () => {
     updateSearchCardData(props.cardData);
+    history.push("/search/card")
   };
 
   const { title, text, params } = props.cardData;
-  const data = props.cardData.data.data;
-  const tailoredCardData = {
-    data: data,
-    chartMetaData: props.cardData.chartMetaData,
-    renderType: params.renderType,
-  };
 
   return (
     <div>
@@ -31,7 +28,6 @@ export default function CardSnippet(props) {
             <TableCard params={params} isSnippet={true} />
           ) : (
             <Chart
-              cardData={tailoredCardData}
               params={params}
               isMiniChart={true}
             />
@@ -41,7 +37,6 @@ export default function CardSnippet(props) {
           <a
             onClick={handleCardClick}
             className={`header mb-0 ${style.cardLink}`}
-            href={"#/search/card"}
           >
             <h4
               className={`mb-1 ${style.cardTitle}`}
