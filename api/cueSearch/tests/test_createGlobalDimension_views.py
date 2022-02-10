@@ -14,7 +14,7 @@ from dataset.models import Dataset
 
 @pytest.mark.django_db(transaction=True)
 def test_createGlobalDimension(client, mocker):
-    """
+    """   
     Test case for creating global dimension
     """
     # create demo data for global dimension
@@ -41,20 +41,19 @@ def test_createGlobalDimension(client, mocker):
 
     # create dimension for testing
     dataset = Dataset.objects.all()[0]
-    mockResponse.start()
     path = reverse("globalDimensionCreate")
-    gd_data = {
+    globalDimension = {
         "name": "test01",
         "dimensionalValues": [
             {
                 "datasetId": dataset.id,
                 "dataset": "Returns",
                 "dimension": "WarehouseCode",
+                "published": True,
             }
         ],
     }
-
-    response = client.post(path, gd_data, content_type="application/json")
+    response = client.post(path, globalDimension, content_type="application/json")
     mockResponse.stop()
     assert response.data["success"]
     assert response.status_code == 200
