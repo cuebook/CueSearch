@@ -1,15 +1,9 @@
-from builtins import breakpoint
-from http import client
-import re
 import pandas as pd
-from django.db import utils
 import pytest
 from unittest import mock
 from django.urls import reverse
 from dataset.models import Dataset
 from cueSearch.elasticSearch import Utils
-import unittest
-from django.test import TestCase, Client
 from mixer.backend.django import mixer
 
 
