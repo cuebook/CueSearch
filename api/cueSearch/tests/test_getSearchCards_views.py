@@ -56,6 +56,7 @@ def test_getSearchCard(client, mocker):
     mockResponse.stop()
     assert response.data["success"] == True
     assert response.status_code == 200
+
     # get global dimension
     path = reverse("globalDimension")
     mockResponse.start()
@@ -67,4 +68,19 @@ def test_getSearchCard(client, mocker):
     gd_id = response.data["data"][0]["id"]
 
     # Get Search Card
-    # path = reverse("getSearchCards")
+    path = reverse("getSearchCards")
+    mockResponse.start()
+    payload = [
+        {
+            "value": "AD_Data",
+            "user_entity_identifier": "Data",
+            "id": 8,
+            "type": "Data",
+            "label": "AD",
+            "searchType": "GLOBALDIMENSION",
+        }
+    ]
+    response = client.post(path, payload, content_type="application/json")
+    mockResponse.stop()
+    assert response.data["success"]
+    assert response.status_code == 200

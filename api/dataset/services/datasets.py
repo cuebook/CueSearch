@@ -1,8 +1,8 @@
 import json
 import logging
 from utils.apiResponse import ApiResponse
-from access.data import Data
 from dataset.models import Dataset
+from access.data import Data
 from dataset.serializers import DatasetsSerializer, DatasetSerializer
 from cueSearch.elasticSearch import ESIndexingUtils
 
@@ -120,14 +120,16 @@ class Datasets:
         res.update(True, "Successfully created dataset")
         return res
 
-    def getDatasetData(payload: dict):
+    @staticmethod
+    def getDatasetData(params: dict):
         """
         Utility service to fetch data for a payload
-        :param payload: Dict containing dataset name, and dataset dimension
+        :param params: Dict containing dataset name, and dataset dimension
         """
         res = ApiResponse("Error in fetching data")
-        dataset = Dataset.objects.get(id=payload["params"]["datasetId"])
-        dataDf = Data.fetchDatasetDataframe(dataset, payload["sql"])
-        dfDict = dataDf.to_dict("records")
-        res.update(True, "Successfully fetched data", dfDict)
+        dataset = Dataset.objects.get(id=params["datasetId"])
+        dataDf = Data.fetchDatasetDataframe(dataset, params["sql"])
+        data = dataDf.to_dict("records")
+
+        res.update(True, "Successfully fetched data", data)
         return res

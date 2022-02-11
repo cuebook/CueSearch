@@ -3,15 +3,14 @@ import { useHistory } from "react-router-dom";
 import { message, Select, Button } from "antd";
 import _ from "lodash";
 
-import TableCard from "components/Search/Card/Table";
-import Chart from "components/Search/Card/Chart";
+import DataDisplay from "components/Search/Card/DataDisplay";
 
 import style from "./style.module.scss";
 
 export default function CardPanel(props) {
   const history = useHistory();
 
-  if (_.isEmpty(props.cardData)) {
+  if (_.isEmpty(props.cardDetails)) {
     return (
       <div>
         <Button className="mr-2" type="primary" onClick={history.goBack}>
@@ -32,13 +31,7 @@ export default function CardPanel(props) {
     );
   }
 
-  const { title, text, params } = props.cardData;
-  const data = props.cardData.data.data;
-  const tailoredCardData = {
-    data: data,
-    chartMetaData: props.cardData.chartMetaData,
-    renderType: params.renderType,
-  };
+  const { title, text, params } = props.cardDetails;
 
   return (
     <div>
@@ -53,11 +46,7 @@ export default function CardPanel(props) {
             dangerouslySetInnerHTML={{ __html: text }}
           />
           <div className={style.chartDiv}>
-            {params.renderType == "table" ? (
-              <TableCard data={data} />
-            ) : (
-              <Chart cardData={tailoredCardData} />
-            )}
+            <DataDisplay params={params} />
           </div>
         </div>
       </div>

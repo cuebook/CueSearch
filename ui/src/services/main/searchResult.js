@@ -3,7 +3,10 @@ import { message } from "antd";
 
 class SearchResultService {
   async getSearchCards(payload) {
-    const response = await apiService.post("cueSearch/getCards/", payload);
+    const response = await apiService.post(
+      "cueSearch/getSearchCards/",
+      payload
+    );
     if (response.success) {
       return response;
     } else {
@@ -12,8 +15,11 @@ class SearchResultService {
     }
   }
 
-  async getSearchCardsData() {
-    const response = await apiService.get("cueSearch/getSearchCardsData/");
+  async getSearchCardData(payload) {
+    const response = await apiService.post(
+      "cueSearch/getSearchCardData/",
+      payload
+    );
     if (response.success) {
       return response;
     } else {

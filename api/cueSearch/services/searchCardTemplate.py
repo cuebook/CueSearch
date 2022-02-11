@@ -18,6 +18,7 @@ from cueSearch.services.utils import (
     addDimensionsInParam,
     makeFilter,
     getOrderFromDataframe,
+    getChartMetaData,
 )
 
 logger = logging.getLogger(__name__)
@@ -71,56 +72,6 @@ class SearchCardTemplateServices:
     #             )
     #         )
     #         return result
-
-    @staticmethod
-    def getSearchCardData():  # searchPayload
-        """
-        Async method to fetch individual search card data
-        :param payload: Dict containing parameters for fetching data
-        """
-        searchPayload = [
-            {
-                "params": {
-                    "datasetId": 1,
-                    "searchResults": [
-                        {
-                            "value": "AP",
-                            "dimension": "DeliveryRegion",
-                            "globalDimensionName": "Data",
-                            "user_entity_identifier": "Data",
-                            "id": 8,
-                            "dataset": "Test data",
-                            "datasetId": 1,
-                            "type": "GLOBALDIMENSION",
-                        }
-                    ],
-                    "filter": "( DeliveryRegion = 'AP' )",
-                    "filterDimensions": ["DeliveryRegion"],
-                    "templateSql": " {% for metric in metrics %} SELECT ({{ timestampColumn }}), SUM({{ metric }}) as {{ metric }} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1 limit 500 +-; {% endfor %}",
-                    "templateTitle": ' {% for metric in metrics %}  <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">Dataset = {{dataset}} , Filter = {{filter}}</span> +-; {% endfor %}',
-                    "templateText": ' {% for metric in metrics %} For <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">{{filter}}</span>  +-; {% endfor %}',
-                    "renderType": "line",
-                    "dataset": "Test data",
-                    "dimensions": ["DeliveryRegion", "Brand", "WarehouseCode"],
-                    "metrics": ["ReturnEntries", "RefundAmount"],
-                    "timestampColumn": "ReturnDate",
-                    "datasetSql": "SELECT DATE_TRUNC('DAY', __time) as ReturnDate,\nDeliveryRegionCode as DeliveryRegion, P_BRANDCODE as Brand, WarehouseCode,\nSUM(\"count\") as ReturnEntries, sum(P_FINALREFUNDAMOUNT) as RefundAmount\nFROM RETURNENTRY\nWHERE __time >= CURRENT_TIMESTAMP - INTERVAL '13' MONTH \nGROUP BY 1, 2, 3, 4\nORDER BY 1",
-                    "granularity": "day",
-                },
-                "title": '   <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">Dataset = Test data , Filter = ( DeliveryRegion = &#x27;AP&#x27; )</span> ',
-                "text": '  For <span style="background:#eeeeee; padding: 0 4px; border-radius: 4px;">( DeliveryRegion = &#x27;AP&#x27; )</span>  ',
-                "sql": "  SELECT (ReturnDate), SUM(RefundAmount) as RefundAmount FROM (SELECT DATE_TRUNC('DAY', __time) as ReturnDate,\nDeliveryRegionCode as DeliveryRegion, P_BRANDCODE as Brand, WarehouseCode,\nSUM(\"count\") as ReturnEntries, sum(P_FINALREFUNDAMOUNT) as RefundAmount\nFROM RETURNENTRY\nWHERE __time >= CURRENT_TIMESTAMP - INTERVAL '13' MONTH \nGROUP BY 1, 2, 3, 4\nORDER BY 1) WHERE ( DeliveryRegion = 'AP' ) GROUP BY 1 limit 500 ",
-            }
-        ]
-        res = ApiResponse("Data not fetched")
-        # searchResults = {key: searchPayload[key] for key in searchPayload.keys()
-        # & {'data'}}
-        for searchItems in searchPayload:
-            result = Datasets.getDatasetData(searchItems)
-            response = result.json()
-            print("-------------Response------------------", response)
-            res.update(True, "Data fetch Successfully", response)
-        return res
 
     @staticmethod
     def ElasticSearchQueryResultsForOnSearchQuery(searchPayload: dict):
@@ -204,15 +155,13 @@ class SearchCardTemplateServices:
                         paramDict
                     )
                     for renderedTemplate in renderedTemplates:
-                        x = {"params": paramDict, **renderedTemplate}
+                        x = {
+                            "params": {**paramDict, "sql": renderedTemplate["sql"]},
+                            **renderedTemplate,
+                        }
                         results.append(x)
-        # dataResults = asyncio.run(SearchCardTemplateServices.getSearchCardData(results))
-        datasetResult = []
-        for i in range(len(results)):
-            results[i]["data"] = datasetResult
 
-        finalResults = [SearchCardTemplateServices.addChartMetaData(x) for x in results]
-        res.update(True, "successfully fetched", finalResults)
+        res.update(True, "successfully fetched", results)
         return res
 
     @staticmethod
@@ -328,6 +277,19 @@ class SearchCardTemplateServices:
                 except Exception as ex:
                     logging.error("Error in fetching search suggestions :%s", str(ex))
         res.update(True, "success", data)
+        return res
+
+    def getSearchCardData(params: dict):
+        """
+        Utility service to fetch data for a payload
+        :param params: Dict containing dataset name, and dataset dimension
+        """
+        res = ApiResponse("Error in fetching data")
+        data = Datasets.getDatasetData(params).data
+        print("data ----- ", data[:15])
+        chartMetaData = getChartMetaData(params, data)
+        finaldata = {"data": data, "chartMetaData": chartMetaData}
+        res.update(True, "Successfully fetched data", finaldata)
         return res
 
 
