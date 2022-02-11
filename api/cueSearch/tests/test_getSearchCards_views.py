@@ -13,13 +13,43 @@ def test_getSearchCard(client, mocker):
     """
     Test case for delete global dimension
     """
+    connection = mixer.blend("dataset.connection")
+
+    testDataset = mixer.blend(
+        "dataset.dataset",
+        name="orders",
+        id=1,
+        dimensions='["Brand", "Color", "State"]',
+        metrics='["Orders", "OrderAmount", "OrderQuantity"]',
+        granularity="day",
+        timestampColumn="TestDate",
+        sql="Select * from testTable",
+    )
+    searchCardTemplateForTable = mixer.blend(
+        "cueSearch.searchCardTemplate",
+        templateName="Test table data",
+        title="Test SQL Card ",
+        bodyText='This table displays raw data for dataset <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{dataset}}</span> with filter <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{filter}}</span> ',
+        supportedVariables="granularity, datasetName, dimension, value",
+        sql="SELECT * FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} limit 500",
+        renderType="table",
+    )
+    searchCardTemplateForChart = mixer.blend(
+        "cueSearch.searchCardTemplate",
+        templateName="Split on Filter Dimension Test chart",
+        title="Test Chart Card ",
+        bodyText='{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults \'dimension\' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} This chart displays filtered values on dimension <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{filterDim}}</span> along with other filters applied i.e. <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{filter|safe}}</span> for metric <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{metricName}}</span> on dataset <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{dataset}}</span> +-; {% endfor %} {% endif %} {% endfor %}',
+        supportedVariables="granularity, datasetName, dimension, value",
+        sql="{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults 'dimension' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} SELECT ({{ timestampColumn }}), {{ filterDim }}, SUM({{ metricName }}) as {{metricName}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1, 2 limit 500 +-; {% endfor %} {% endif %} {% endfor %}",
+        renderType="line",
+    )
+
     # create demo data for global dimension
     mockResponse = mocker.patch(
         "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
         new=mock.MagicMock(autospec=True, return_value=True),
     )
     mockResponse.start()
-    connection = mixer.blend("dataset.connection")
     path = reverse("createDataset")
     data = {
         "name": "demo_dataset",
@@ -81,6 +111,45 @@ def test_getSearchCard(client, mocker):
     assert response.data["success"]
     assert response.status_code == 200
 
+    # Get Search Card(Detailed test case)
+    searchResulst = [
+        {
+            "value": "Adidas",
+            "dimension": "Brand",
+            "globalDimensionName": "Brand",
+            "user_entity_identifier": "Brand",
+            "id": 11,
+            "dataset": "order",
+            "datasetId": 1,
+            "type": "GLOBALDIMENSION",
+        }
+    ]
+    searchPayload = [
+        {
+            "value": "Adidas_Brand",
+            "user_entity_identifier": "Brand",
+            "id": 11,
+            "type": "Brand",
+            "label": "Adidas",
+            "searchType": "GLOBALDIMENSION",
+        }
+    ]
+    mockResponse = mocker.patch(
+        "cueSearch.services.searchCardTemplate.SearchCardTemplateServices.ElasticSearchQueryResultsForOnSearchQuery",
+        new=mock.MagicMock(autospec=True, return_value=searchResulst),
+    )
+    mockResponse.start()
+    path = reverse("getSearchCards")
+    response = client.post(path, searchPayload, content_type="application/json")
+    assert response
+    assert response.json()["data"][0]["params"]["filter"] == "( Brand = 'Adidas' )"
+    assert (
+        response.json()["data"][0]["params"]["sql"]
+        == "SELECT * FROM (Select * from testTable) WHERE ( Brand = 'Adidas' ) limit 500"
+    )
+
+    mockResponse.stop()
+    # Get Search Card Data
     params = {
         "datasetId": 1,
         "searchResults": [
