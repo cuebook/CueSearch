@@ -67,4 +67,4 @@ def test_getSearchCard(client, mocker):
     gd_id = response.data["data"][0]["id"]
 
     # Get Search Card
-    path = reverse("getSearchCards")
+    # path = reverse("getSearchCards")
