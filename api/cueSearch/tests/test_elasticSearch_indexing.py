@@ -1,18 +1,10 @@
-from builtins import breakpoint
-from http import client
-from logging import exception
-import re
-from urllib import response
 import pytest
 from unittest import mock
 from django.urls import reverse
-import unittest
-from django.test import TestCase, Client
-from rest_framework.test import APITestCase, APIClient
 from mixer.backend.django import mixer
 from dataset.models import Dataset
-from cueSearch.elasticSearch import ESQueryingUtils,ESIndexingUtils
-from django.dispatch import receiver
+from cueSearch.elasticSearch import ESQueryingUtils
+from cueSearch.elasticSearch import ESIndexingUtils
 
 
 @pytest.mark.django_db(transaction=True)
@@ -69,34 +61,33 @@ def test_elastic_search_indexing(client,mocker):
     assert response.data["success"] == True
     assert response.status_code == 200
     
-    res = {
-        "success": True, 
-        "data": ["puma", "adidas","HRX"]
-        }
+    # res = {
+    #     "success": True, 
+    #     "data": ["puma", "adidas","HRX"]
+    #     }
+    # mockResponse = mocker.patch(
+    #     "cueSearch.elasticSearch.utils.Utils.getDimensionalValuesForDimension",
+    #     new=mock.MagicMock(autospec=True, return_value=res),
+    # )
+    # mockResponse.start()
+    # ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion()
+    # mockResponse.stop()
+
     mockResponse = mocker.patch(
-        "cueSearch.elasticSearch.utils.Utils.getDimensionalValuesForDimension",
-        new=mock.MagicMock(autospec=True, return_value=res),
+    "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+    new=mock.MagicMock(autospec=True, return_value=True),
     )
     mockResponse.start()
-    ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion()
-    mockResponse.stop()
-
-    query='MH'
+    query='AP'
     result = ESQueryingUtils.findGlobalDimensionResults(
                 query=query
             )
+    mockResponse.stop()
 
-    expectedResult = [
-                { 
-                    'value': 'MH',
-                    'dimension': 'DeliveryRegion', 
-                    'globalDimensionName': 'Data', 
-                    'user_entity_identifier': 'Data', 
-                    'id': 8, 'dataset': 'Test data', 
-                    'datasetId': 1, 
-                    'type': 'GLOBALDIMENSION'
-                }
-            ]
+    expectedResult = [{'value': 'AD', 'dimension': 'DeliveryRegion', 'globalDimensionName': 'Data', 'user_entity_identifier': 'Data', 'id': 8, 'dataset': 'Test data', 'datasetId': 1, 'type': 'GLOBALDIMENSION'}]
+
+    print(result)
+    #breakpoint()
     assert result == expectedResult
 
     
