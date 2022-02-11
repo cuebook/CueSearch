@@ -9,6 +9,11 @@ from mixer.backend.django import mixer
 @pytest.mark.django_db(transaction=True)
 def test_datasets(client, mocker):
     # Get dataset when no entry
+    mockResponse = mocker.patch(
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+        new=mock.MagicMock(autospec=True, return_value=True),
+    )
+    mockResponse.start()
     path = reverse("datasets")
     response = client.get(path)
     assert response.status_code == 200
@@ -94,7 +99,7 @@ def test_datasets(client, mocker):
 
     assert response.status_code == 200
     assert response.data["success"]
-
+    mockResponse.stop()
     # Get datasets
     path = reverse("datasets")
     response = client.get(path)

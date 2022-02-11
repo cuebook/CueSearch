@@ -51,3 +51,4 @@ aiohttp==3.7.4.post0
 analytics-python==1.4.0
 elasticsearch==7.16.2
 elasticsearch-dsl==7.4.0
+Faker==11.3.0
