@@ -75,7 +75,7 @@ def getOrderFromDataframe(dataframe: DataFrame, column: str):
     else:
         order = "O"
     return order
-    
+
 
 def getChartMetaData(params: Dict, data: List) -> Dict:
     """

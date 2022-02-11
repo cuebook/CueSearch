@@ -18,7 +18,7 @@ from cueSearch.services.utils import (
     addDimensionsInParam,
     makeFilter,
     getOrderFromDataframe,
-    getChartMetaData
+    getChartMetaData,
 )
 
 logger = logging.getLogger(__name__)
@@ -160,7 +160,7 @@ class SearchCardTemplateServices:
                             **renderedTemplate,
                         }
                         results.append(x)
-                        
+
         res.update(True, "successfully fetched", results)
         return res
 
