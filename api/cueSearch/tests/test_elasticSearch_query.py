@@ -105,10 +105,12 @@ def test_findGlobalDimensionResultsForSearchSuggestion(client,mocker):
                   query=query
             )
     expectedResult = [
-                {'value': 'AP', 'user_entity_identifier': 'Data', 'id': 8, 'type': 'GLOBALDIMENSION'}, 
-                {'value': 'AD', 'user_entity_identifier': 'Data', 'id': 8, 'type': 'GLOBALDIMENSION'}, 
-                {'value': 'AS', 'user_entity_identifier': 'Data', 'id': 8, 'type': 'GLOBALDIMENSION'},
-                {'value': 'AR', 'user_entity_identifier': 'Data', 'id': 8, 'type': 'GLOBALDIMENSION'}
+            {
+                'value': 'AP',
+                 'user_entity_identifier': 'Data', 
+                 'id': 8, 
+                 'type': 'GLOBALDIMENSION'
+             }
         ]
     assert result == expectedResult
 
@@ -129,13 +131,7 @@ def test_findNonGlobalDimensionResultsForSearchSuggestion(client,mocker):
                   query=query
             )
 
-    expectedResult  = [
-        {'value': 'ADARA', 'user_entity_identifier': 'Test data_Brand', 'id': 'Brand_ADARA_1', 'datasetId': 1, 'globalDimensionId': 'Brand_ADARA_1', 'type': 'DATASETDIMENSION'}, 
-        {'value': 'ADIDAS', 'user_entity_identifier': 'Test data_Brand', 'id': 'Brand_ADIDAS_1', 'datasetId': 1, 'globalDimensionId': 'Brand_ADIDAS_1', 'type': 'DATASETDIMENSION'}, 
-        {'value': 'AND', 'user_entity_identifier': 'Test data_Brand', 'id': 'Brand_AND_1', 'datasetId': 1, 'globalDimensionId': 'Brand_AND_1', 'type': 'DATASETDIMENSION'}, 
-        {'value': 'ALCIS', 'user_entity_identifier': 'Test data_Brand', 'id': 'Brand_ALCIS_1', 'datasetId': 1, 'globalDimensionId': 'Brand_ALCIS_1', 'type': 'DATASETDIMENSION'}, 
-        {'value': 'ARROW', 'user_entity_identifier': 'Test data_Brand', 'id': 'Brand_ARROW_1', 'datasetId': 1, 'globalDimensionId': 'Brand_ARROW_1', 'type': 'DATASETDIMENSION'}
-    ]
+    expectedResult  = [{'value': 'ADARA', 'user_entity_identifier': 'Test data_Brand', 'id': 'Brand_ADARA_1', 'datasetId': 1, 'globalDimensionId': 'Brand_ADARA_1', 'type': 'DATASETDIMENSION'}]
     assert result == expectedResult
 
 @pytest.mark.django_db(transaction=True)
@@ -150,15 +146,6 @@ def test_findNonGlobalDimensionResults(client,mocker):
                 query=query
             )
 
-    expectedResult = [
-            {
-                'value': 'ADARA', 
-                'dimension': 'Brand', 
-                'globalDimensionName': 'Test data_Brand', 
-                'user_entity_identifier': 'Test data_Brand', 
-                'id': 'Brand_ADARA_1', 'dataset': 'Test data', 
-                'datasetId': 1, 'type': 'DATASETDIMENSION'
-            }
-        ]
+    expectedResult = [{'value': 'ADARA', 'dimension': 'Brand', 'globalDimensionName': 'Test data_Brand', 'user_entity_identifier': 'Test data_Brand', 'id': 'Brand_ADARA_1', 'dataset': 'Test data', 'datasetId': 1, 'type': 'DATASETDIMENSION'}]
     assert result == expectedResult
 
