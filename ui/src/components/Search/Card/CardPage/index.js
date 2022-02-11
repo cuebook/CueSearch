@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
+import { useHistory } from "react-router-dom";
 
 import { GlobalContext } from "layouts/GlobalContext";
 
@@ -7,11 +8,14 @@ import { GlobalContext } from "layouts/GlobalContext";
 import CardPanel from "./CardPanel";
 
 export default function CardPage(props) {
-  const { searchCardData, updateSearchCardData } = useContext(GlobalContext);
+  const history = useHistory();
+
+  let params = new URLSearchParams(history.location.search);
+  let searchCardDetails = JSON.parse(params.get("searchCardDetails"));
 
   return (
     <div>
-      <CardPanel cardData={searchCardData} />
+      <CardPanel cardDetails={searchCardDetails} />
     </div>
   );
 }
