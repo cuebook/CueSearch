@@ -97,7 +97,6 @@ def test_elastic_search_indexing(client,mocker):
                     'type': 'GLOBALDIMENSION'
                 }
             ]
-    breakpoint()
     assert result == expectedResult
 
     
