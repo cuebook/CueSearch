@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import style from "./style.module.scss";
 import { useParams, useHistory } from "react-router-dom";
-import Loader from "components/Utils/Loader"
+import Loader from "components/Utils/Loader";
 import {
   Chart,
   Geom,
@@ -43,7 +43,7 @@ class ChartCard extends React.Component {
     let geomElements = null;
     let xAxisLabel = null;
     const height = this.props.isMiniChart ? 120 : 400;
-    const width = this.props.isMiniChart ? 480 : undefined
+    const width = this.props.isMiniChart ? 480 : undefined;
 
     let renderType = this.state.renderType
       ? this.state.renderType
@@ -141,11 +141,13 @@ class ChartCard extends React.Component {
     return (
       <div>
         <div className={style.chartDiv}>
-          {this.props.loadingData ? 
-            <div><Loader height={height} /></div>
-            :
+          {this.props.loadingData ? (
+            <div>
+              <Loader height={height} />
+            </div>
+          ) : (
             this.chart
-          }
+          )}
         </div>
       </div>
     );

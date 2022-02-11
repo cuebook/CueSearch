@@ -3,7 +3,10 @@ import { message } from "antd";
 
 class SearchResultService {
   async getSearchCards(payload) {
-    const response = await apiService.post("cueSearch/getSearchCards/", payload);
+    const response = await apiService.post(
+      "cueSearch/getSearchCards/",
+      payload
+    );
     if (response.success) {
       return response;
     } else {

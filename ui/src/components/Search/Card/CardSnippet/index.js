@@ -13,8 +13,10 @@ export default function CardSnippet(props) {
   const handleCardClick = () => {
     history.push({
       pathname: "/search/card/",
-      search: "?searchCardDetails=" + encodeURIComponent(JSON.stringify(props.cardData))
-    })
+      search:
+        "?searchCardDetails=" +
+        encodeURIComponent(JSON.stringify(props.cardData)),
+    });
   };
 
   const { title, text, params } = props.cardData;
@@ -26,7 +28,7 @@ export default function CardSnippet(props) {
           <TrackVisibility offset={70} once>
             {({ isVisible }) =>
               isVisible ? (
-              <DataDisplay params={params} isSnippet={true}/>
+                <DataDisplay params={params} isSnippet={true} />
               ) : null
             }
           </TrackVisibility>

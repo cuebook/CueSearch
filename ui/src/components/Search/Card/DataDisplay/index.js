@@ -7,45 +7,43 @@ import Chart from "./Chart";
 
 export default function DataDisplay({ params, isSnippet }) {
   const { searchCardData, addSearchCardData } = useContext(GlobalContext);
-  const [ cardData, setCardData ] = useState();
-  const [ loadingData, setLoadingData ] = useState(false);
+  const [cardData, setCardData] = useState();
+  const [loadingData, setLoadingData] = useState(false);
 
   useEffect(() => {
-    if (searchCardData[JSON.stringify(params)]){
-      setCardData(searchCardData[JSON.stringify(params)])
+    if (searchCardData[JSON.stringify(params)]) {
+      setCardData(searchCardData[JSON.stringify(params)]);
     } else {
-      setLoadingData(true)
+      setLoadingData(true);
       getSearchCardData();
     }
   }, []);
-
 
   const getSearchCardData = async () => {
     const response = await searchResultService.getSearchCardData(params);
     if (response.success) {
       setCardData(response.data);
-      addSearchCardData({ [JSON.stringify(params)]: response.data })
+      addSearchCardData({ [JSON.stringify(params)]: response.data });
     }
-    setLoadingData(false)
+    setLoadingData(false);
   };
 
   return (
     <div>
       {params.renderType == "table" ? (
-        <TableCard 
-          cardData={cardData ? cardData.data : null} 
-          loadingData={loadingData} 
-          isSnippet={isSnippet} 
+        <TableCard
+          cardData={cardData ? cardData.data : null}
+          loadingData={loadingData}
+          isSnippet={isSnippet}
         />
       ) : (
         <Chart
-          cardData={cardData} 
+          cardData={cardData}
           loadingData={loadingData}
           isMiniChart={isSnippet}
           renderType={params.renderType}
         />
       )}
-
     </div>
   );
 }

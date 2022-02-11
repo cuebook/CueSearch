@@ -8,7 +8,7 @@ const Loader = ({ spinning = true, height = 180, fullScreen }) => (
       [styles.hidden]: !spinning,
       [styles.fullScreen]: fullScreen,
     })}
-    style = {{ height: height}}
+    style={{ height: height }}
   />
 );
 
