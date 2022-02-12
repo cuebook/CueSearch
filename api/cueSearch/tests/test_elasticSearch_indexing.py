@@ -1,10 +1,12 @@
 import pytest
-from unittest import mock
+from unittest import mock, result
 from django.urls import reverse
 from mixer.backend.django import mixer
 from dataset.models import Dataset
 from cueSearch.elasticSearch import ESQueryingUtils
 from cueSearch.elasticSearch import ESIndexingUtils
+from cueSearch.services import GlobalDimensionServices
+from cueSearch.elasticSearch.utils import Utils
 
 
 @pytest.mark.django_db(transaction=True)
@@ -61,35 +63,110 @@ def test_elastic_search_indexing(client,mocker):
     assert response.data["success"] == True
     assert response.status_code == 200
     
-    # res = {
-    #     "success": True, 
-    #     "data": ["puma", "adidas","HRX"]
-    #     }
-    # mockResponse = mocker.patch(
-    #     "cueSearch.elasticSearch.utils.Utils.getDimensionalValuesForDimension",
-    #     new=mock.MagicMock(autospec=True, return_value=res),
-    # )
-    # mockResponse.start()
-    # ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion()
-    # mockResponse.stop()
+    globalDimsId = GlobalDimensionServices.getGlobalDimensions()
+    globalDimensionId = globalDimsId.data[0]["values"][0]["id"]
+
+    # Publishing global dimension by id
+    path = reverse("pubGlobalDimension")
+    payload = {"id": globalDimensionId, "published": True}
+    response = client.post(path, payload)
+
+    # Testing the indexing of global dimension data for suggestion
+
+    # Creating a index value
+    res = {
+        "success": True, 
+        "data": ['TestData','TestDataOne']
+        }
 
     mockResponse = mocker.patch(
-    "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
-    new=mock.MagicMock(autospec=True, return_value=True),
+        "cueSearch.elasticSearch.utils.Utils.getDimensionalValuesForDimension",
+        new=mock.MagicMock(autospec=True, return_value=res),
     )
-    mockResponse.start()
-    query='AP'
-    result = ESQueryingUtils.findGlobalDimensionResults(
-                query=query
-            )
+    ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion()
     mockResponse.stop()
+    # Deeply testing of global dimension indexing
+    dataIndex = Utils.getDimensionalValuesForDimension(dataset.id,"Brand")
+    assert dataIndex['data'] == ['TestData', 'TestDataOne']
 
-    expectedResult = [{'value': 'AD', 'dimension': 'DeliveryRegion', 'globalDimensionName': 'Data', 'user_entity_identifier': 'Data', 'id': 8, 'dataset': 'Test data', 'datasetId': 1, 'type': 'GLOBALDIMENSION'}]
+    query = "TestData"
+    result = ESQueryingUtils.findGlobalDimensionResultsForSearchSuggestion(
+        query=query
+    )
 
-    print(result)
-    #breakpoint()
+    expectedResult = [
+                        {
+                            'value': 'TestData', 'user_entity_identifier': 'test', 
+                            'id': 1, 
+                            'type': 'GLOBALDIMENSION'
+                        }, 
+                        {
+                            'value': 'TestDataOne', 
+                            'user_entity_identifier': 'test', 
+                            'id': 1,
+                            'type': 'GLOBALDIMENSION'
+                        }
+                    ]
+
     assert result == expectedResult
 
+
+    # Testing the indexing of non global dimension data for suggestion 
+
+    listToIndex =[{'dataset': 'Test data', 'datasetId': 1, 'dimension': 'Brand'}, {'dataset': 'Test data', 'datasetId': 1, 'dimension': 'WarehouseCode'}]
+    res = {
+        "success": True, 
+        "data": listToIndex
+        }
+
+    mockResponse = mocker.patch(
+    "cueSearch.services.globalDimension.GlobalDimensionServices.nonGlobalDimensionForIndexing",
+    new=mock.MagicMock(autospec=True, return_value=res),
+    )
+    mockResponse.start()
+    ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion()
+    mockResponse.stop()
+
+    query = "TestData"
+    result = ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion(
+        'TestData'
+    )
+
+    expectedResult = [
+        {
+            'value': 'TestData', 
+            'user_entity_identifier': 'Test data_Brand', 
+            'id': 'Brand_TestData_1', 
+            'datasetId': 1, 
+            'globalDimensionId': 'Brand_TestData_1', 
+            'type': 'DATASETDIMENSION'
+        }, 
+        {
+            'value': 'TestData', 
+            'user_entity_identifier': 'Test data_WarehouseCode', 
+            'id': 'WarehouseCode_TestData_1', 
+            'datasetId': 1, 
+            'globalDimensionId': 'WarehouseCode_TestData_1', 
+            'type': 'DATASETDIMENSION'
+        }, 
+        {
+            'value': 'TestDataOne', 
+            'user_entity_identifier': 'Test data_Brand', 
+            'id': 'Brand_TestDataOne_1', 
+            'datasetId': 1, 
+            'globalDimensionId': 'Brand_TestDataOne_1', 
+            'type': 'DATASETDIMENSION'
+        }, 
+        {
+            'value': 'TestDataOne', 
+            'user_entity_identifier': 'Test data_WarehouseCode', 
+            'id': 'WarehouseCode_TestDataOne_1', 'datasetId': 1, 
+            'globalDimensionId': 'WarehouseCode_TestDataOne_1',
+            'type': 'DATASETDIMENSION'
+        }
+    ]
+
+    assert result == expectedResult
     
 
 
