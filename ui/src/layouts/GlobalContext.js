@@ -6,7 +6,7 @@ import React, { createContext, useState } from "react";
 // const [databases, setDatabases] = useState([])
 let searchCardData = {}; //stores {params: cardData, params2: cardData2}
 const updateSearchCardData = (x) => (searchCardData = x);
-const addSearchCardData = (x) => (searchCardData = { ...searchCardData, ...x });
+const addSearchCardData = (key, value) => (searchCardData[key]=value);
 
 export const GlobalContext = createContext();
 
