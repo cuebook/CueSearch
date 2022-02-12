@@ -112,7 +112,7 @@ def test_getSearchCard(client, mocker):
     assert response.status_code == 200
 
     # Get Search Card(Detailed test case)
-    searchResulst = [
+    searchResult = [
         {
             "value": "Adidas",
             "dimension": "Brand",
@@ -136,7 +136,7 @@ def test_getSearchCard(client, mocker):
     ]
     mockResponse = mocker.patch(
         "cueSearch.services.searchCardTemplate.SearchCardTemplateServices.ElasticSearchQueryResultsForOnSearchQuery",
-        new=mock.MagicMock(autospec=True, return_value=searchResulst),
+        new=mock.MagicMock(autospec=True, return_value=searchResult),
     )
     mockResponse.start()
     path = reverse("getSearchCards")
