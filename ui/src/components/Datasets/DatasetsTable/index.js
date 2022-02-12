@@ -121,7 +121,7 @@ export default function DatasetsTable(props) {
       >
         <Search
           style={{ margin: "0 0 10px 0", width: 350, float: "left" }}
-          placeholder="Search"
+          placeholder="Search Datasets"
           enterButton="Search"
           onSearch={searchInDatasets}
           className="mr-2"
