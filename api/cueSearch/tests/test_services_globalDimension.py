@@ -5,8 +5,9 @@ from mixer.backend.django import mixer
 from dataset.models import Dataset
 from cueSearch.services import GlobalDimensionServices
 
+
 @pytest.mark.django_db(transaction=True)
-def testGlobalDimension(client,mocker):
+def testGlobalDimension(client, mocker):
     """
     Method to test global dimension services
     """
@@ -56,11 +57,11 @@ def testGlobalDimension(client,mocker):
     path = reverse("globalDimension")
     response = client.get(path)
     result = response.json()
-    expectedResults = globalDimension['dimensionalValues'][0]['dimension']
+    expectedResults = globalDimension["dimensionalValues"][0]["dimension"]
 
     assert response.data["success"]
-    assert result['data'][0]['values'][0]['dimension'] == expectedResults
-    
+    assert result["data"][0]["values"][0]["dimension"] == expectedResults
+
     # Deeply testing of global dimension
     mockResponse.start()
     path = reverse("globalDimensionCreate")
@@ -85,20 +86,20 @@ def testGlobalDimension(client,mocker):
     response = client.post(path, globalDimension, content_type="application/json")
     mockResponse.stop()
     assert response.data["success"] == False
-    assert response.json()['message'] == 'Global Dimension name already exists'
+    assert response.json()["message"] == "Global Dimension name already exists"
 
     # Getting the existing all global dimension id
     mockResponse.start()
     path = reverse("globalDimension")
     response = client.get(path, content_type="application/json")
     mockResponse.stop()
-    assert len(response.json()['data']) == 2
-    assert response.json()['data'][0]['values'][0]['dimension'] == 'Brands'
-    assert response.json()['data'][1]['values'][0]['dimension'] == 'WarehouseCode'
-    assert response.json()['data'][0]['published'] == False
+    assert len(response.json()["data"]) == 2
+    assert response.json()["data"][0]["values"][0]["dimension"] == "Brands"
+    assert response.json()["data"][1]["values"][0]["dimension"] == "WarehouseCode"
+    assert response.json()["data"][0]["published"] == False
 
     # Now publishing the global dimension
-    GlobalDimsId = response.json()['data'][0]['id']
+    GlobalDimsId = response.json()["data"][0]["id"]
     mockResponse.start()
     path = reverse("pubGlobalDimension")
     payload = {"id": GlobalDimsId, "published": True}
@@ -106,14 +107,14 @@ def testGlobalDimension(client,mocker):
     mockResponse.stop()
     assert response.data["success"] == True
 
-    # Checking the published global dimension 
+    # Checking the published global dimension
     mockResponse.start()
     path = reverse("globalDimension")
     response = client.get(path, content_type="application/json")
     mockResponse.stop()
-    assert response.json()['data'][0]['published'] == True
-    assert response.json()['data'][1]['published'] == False
-    
+    assert response.json()["data"][0]["published"] == True
+    assert response.json()["data"][1]["published"] == False
+
     # Deleting the global dimension called Brands
     mockResponse.start()
     path = reverse("global-dimension-delete", kwargs={"id": GlobalDimsId})
@@ -127,103 +128,85 @@ def testGlobalDimension(client,mocker):
     path = reverse("globalDimension")
     response = client.get(path, content_type="application/json")
     mockResponse.stop()
-    assert len(response.json()['data']) == 1
-    assert response.json()['data'][0]['values'][0]['dimension'] == 'WarehouseCode'
-    assert response.json()['data'][0]['published'] == False
-    
+    assert len(response.json()["data"]) == 1
+    assert response.json()["data"][0]["values"][0]["dimension"] == "WarehouseCode"
+    assert response.json()["data"][0]["published"] == False
+
     # Checking the data dimensions
     mockResponse.start()
-    path = reverse('dimension')
+    path = reverse("dimension")
     response = client.get(path, content_type="application/json")
-    assert response.json()['data'][0]['dimension'] == 'Category'
-    assert response.json()['data'][1]['dimension'] == 'Region'
-    assert response.json()['data'][0]['dataset'] == 'demo_dataset'
-    assert response.json()['data'][0]['datasetId'] == dataset.id
+    assert response.json()["data"][0]["dimension"] == "Category"
+    assert response.json()["data"][1]["dimension"] == "Region"
+    assert response.json()["data"][0]["dataset"] == "demo_dataset"
+    assert response.json()["data"][0]["datasetId"] == dataset.id
     assert response.status_code == 200
 
     # Getting global dimension by Id
     mockResponse.start()
     path = reverse("globalDimension")
     GlobalDimsId = client.get(path, content_type="application/json")
-    path = reverse('globalDimensionId',kwargs={"id": GlobalDimsId.json()['data'][0]['id']})
+    path = reverse(
+        "globalDimensionId", kwargs={"id": GlobalDimsId.json()["data"][0]["id"]}
+    )
     response = client.get(path, content_type="application/json")
     assert response.status_code == 200
-    assert response.data['success'] == True
-    assert response.json()['data']['id'] == GlobalDimsId.json()['data'][0]['id']
+    assert response.data["success"] == True
+    assert response.json()["data"]["id"] == GlobalDimsId.json()["data"][0]["id"]
 
     # Checking the exception of getGlobalDimensionById
     mockResponse.start()
     path = reverse("globalDimension")
     GlobalDimsId = 1001
-    path = reverse('globalDimensionId',kwargs={"id": GlobalDimsId})
+    path = reverse("globalDimensionId", kwargs={"id": GlobalDimsId})
     response = client.get(path, content_type="application/json")
     assert response.status_code == 200
-    assert response.data['success'] == False
-    assert response.json()['message'] == 'Error occurs while fetching global dimension by Id'
+    assert response.data["success"] == False
+    assert (
+        response.json()["message"]
+        == "Error occurs while fetching global dimension by Id"
+    )
 
     # Getting the global dimension id for updating
     mockResponse.start()
     path = reverse("globalDimension")
     GlobalDimsId = client.get(path, content_type="application/json")
-    GlobalDimsId = GlobalDimsId.json()['data'][0]['id']
+    GlobalDimsId = GlobalDimsId.json()["data"][0]["id"]
     mockResponse.stop()
-    
+
     # Updating the exsisting global dimension Id
     mockResponse.start()
     path = reverse("updateGlobalDimension", kwargs={"id": GlobalDimsId})
-    payload = {
-                "name": "updatedTest",
-                "dimensionalValues": [],
-                "published": True
-              }
+    payload = {"name": "updatedTest", "dimensionalValues": [], "published": True}
     response = client.post(path, payload, content_type="application/json")
     mockResponse.stop()
     assert response.data["success"] == True
     assert response.status_code == 200
-    assert response.json()['message'] == 'Global Dimension updated successfully'
+    assert response.json()["message"] == "Global Dimension updated successfully"
 
     # Getting the updated global dimension
     mockResponse.start()
     path = reverse("globalDimension")
     response = client.get(path, content_type="application/json")
     mockResponse.stop()
-    assert response.json()['data'][0]['values'] == []
-    assert response.json()['data'][0]['published'] == True
-
+    assert response.json()["data"][0]["values"] == []
+    assert response.json()["data"][0]["published"] == True
 
     # Testing the api of non global dimension for indexing
     mockResponse.start()
     result = GlobalDimensionServices.nonGlobalDimensionForIndexing()
     expectedResults = {
-                        'success': True, 
-                        'data': [
-                            {
-                                'dataset': 'demo_dataset', 
-                                'datasetId': dataset.id, 
-                                'dimension': 'Category'
-                                }, 
-                            {
-                                'dataset': 'demo_dataset', 
-                                'datasetId': dataset.id, 
-                                'dimension': 'Region'
-                            }
-                                ]
-                      }
-    
+        "success": True,
+        "data": [
+            {
+                "dataset": "demo_dataset",
+                "datasetId": dataset.id,
+                "dimension": "Category",
+            },
+            {"dataset": "demo_dataset", "datasetId": dataset.id, "dimension": "Region"},
+        ],
+    }
+
     assert result == expectedResults
-    assert result['data'][0]['dataset'] == 'demo_dataset'
-    assert result['data'][0]['datasetId'] == dataset.id
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    assert result["data"][0]["dataset"] == "demo_dataset"
+    assert result["data"][0]["datasetId"] == dataset.id
