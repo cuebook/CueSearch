@@ -191,29 +191,6 @@ def testGlobalDimension(client,mocker):
     assert response.json()['data'][0]['published'] == True
 
 
-    # Testing the api of non global dimension for indexing
-    mockResponse.start()
-    result = GlobalDimensionServices.nonGlobalDimensionForIndexing()
-    expectedResults = {
-                        'success': True, 
-                        'data': [
-                            {
-                                'dataset': 'demo_dataset', 
-                                'datasetId': 1, 
-                                'dimension': 'Category'
-                                }, 
-                            {
-                                'dataset': 'demo_dataset', 
-                                'datasetId': 1, 
-                                'dimension': 'Region'
-                            }
-                                ]
-                      }
-    
-    assert result == expectedResults
-    assert result['data'][0]['dataset'] == 'demo_dataset'
-    assert result['data'][0]['datasetId'] == dataset.id
-
 
 
 
