@@ -8,7 +8,7 @@ from cueSearch.services import GlobalDimensionServices
 @pytest.mark.django_db(transaction=True)
 def testGlobalDimension(client,mocker):
     """
-    Method to test global dimension
+    Method to test global dimension services
     """
     # creating a demo data
     mockResponse = mocker.patch(
