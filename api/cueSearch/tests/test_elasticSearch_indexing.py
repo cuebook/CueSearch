@@ -154,7 +154,88 @@ def test_elastic_search_indexing(client, mocker):
     ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
 
     ###################################################################### Deletion complete for global dimension search suggestion index ################################################
-    # Testing the indexing of non global dimension data for suggestion
+
+    ##################### Global dimension data index ######################
+    # Creating a index value
+    res = {"success": True, "data": ["TestData", "TestDataOne"]}
+
+    mockResponse = mocker.patch(
+        "cueSearch.elasticSearch.utils.Utils.getDimensionalValuesForDimension",
+        new=mock.MagicMock(autospec=True, return_value=res),
+    )
+    ESIndexingUtils.indexGlobalDimensionsData()
+    mockResponse.stop()
+    result = ESQueryingUtils.findGlobalDimensionResults(query=query)
+    expectedResults = [
+        {
+            "value": "TestData",
+            "dimension": "WarehouseCode",
+            "globalDimensionName": "test",
+            "user_entity_identifier": "test",
+            "id": 6,
+            "dataset": "orders",
+            "datasetId": 1,
+            "type": "GLOBALDIMENSION",
+        }
+    ]
+    assert result == expectedResults
+
+    ################################ Global dimension data index #################
+    ######################### Deletion of Global dimension index name ##############
+    indexDefinition = {
+        "settings": {
+            "analysis": {
+                "analyzer": {
+                    "my_analyzer": {
+                        "tokenizer": "my_tokenizer",
+                        "filter": ["lowercase"],
+                    }
+                },
+                "default_search": {"type": "my_analyzer"},
+                "tokenizer": {
+                    "my_tokenizer": {
+                        "type": "edge_ngram",
+                        "min_gram": 1,
+                        "max_gram": 10,
+                        "token_chars": ["letter", "digit"],
+                    }
+                },
+            }
+        },
+        "mappings": {
+            "properties": {
+                "globalDimensionId": {"type": "integer"},
+                "globalDimensionDisplayValue": {"type": "text"},
+                "globalDimensionValue": {
+                    "type": "text",
+                    "search_analyzer": "my_analyzer",
+                    "analyzer": "my_analyzer",
+                    "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
+                },
+                "globalDimensionName": {
+                    "type": "text",
+                    "search_analyzer": "my_analyzer",
+                    "analyzer": "my_analyzer",
+                    "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
+                },
+                "dimension": {
+                    "type": "text",
+                    "search_analyzer": "my_analyzer",
+                    "analyzer": "my_analyzer",
+                    "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
+                },
+                "dataset": {"type": "text"},
+                "datasetId": {"type": "integer"},
+            }
+        },
+    }
+
+    indexName = ESIndexingUtils.GLOBAL_DIMENSIONS_INDEX_DATA
+
+    aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
+    ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
+
+    ##################################### Deletion completed ########################################
 
     listToIndex = [
         {"dataset": "Test data", "datasetId": 1, "dimension": "Brand"},
@@ -288,5 +369,6 @@ def test_elastic_search_indexing(client, mocker):
     indexName = ESIndexingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA
 
     aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
+    ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
 
     ######################################################### Deletion completed for Auto Global Dimension Index #########################################
