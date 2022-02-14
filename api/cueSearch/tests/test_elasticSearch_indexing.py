@@ -14,7 +14,7 @@ def test_elastic_search_indexing(client, mocker):
     """
     Method to create test dataset
     """
-    ESIndexingUtils.deleteAllIndexed()
+    # ESIndexingUtils.deleteAllIndexed()
 
     connection = mixer.blend("dataset.connection")
     testDataset = mixer.blend(
@@ -114,6 +114,67 @@ def test_elastic_search_indexing(client, mocker):
 
     assert result == expectedResult
 
+
+@pytest.mark.django_db(transaction=True)
+def testIndexGlobalDimensinData(client, mocker):
+    """Method to test index global dimension data"""
+
+    connection = mixer.blend("dataset.connection")
+    testDataset = mixer.blend(
+        "dataset.dataset",
+        name="orders",
+        id=1,
+        dimensions='["Brand", "Color", "State"]',
+        metrics='["Orders", "OrderAmount", "OrderQuantity"]',
+        granularity="day",
+        timestampColumn="TestDate",
+        sql="Select * from testTable",
+    )
+    mockResponse = mocker.patch(
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+        new=mock.MagicMock(autospec=True, return_value=True),
+    )
+    mockResponse.start()
+    path = reverse("createDataset")
+    data = {
+        "name": "demo_dataset",
+        "sql": "SELECT * from TEST_TABLE",
+        "connectionId": connection.id,
+        "metrics": ["Amount", "Quantity"],
+        "dimensions": ["Category", "Region"],
+        "timestamp": "CreatedAt",
+        "granularity": "day",
+        "isNonRollup": False,
+    }
+    response = client.post(path, data=data, content_type="application/json")
+
+    # create dimension for testing
+    dataset = Dataset.objects.get(id=1)
+    mockResponse.start()
+    path = reverse("globalDimensionCreate")
+    gd_data = {
+        "name": "test",
+        "dimensionalValues": [
+            {
+                "datasetId": dataset.id,
+                "dataset": "Returns",
+                "dimension": "WarehouseCode",
+            }
+        ],
+    }
+    response = client.post(path, gd_data, content_type="application/json")
+    assert response.data["success"] == True
+    assert response.status_code == 200
+
+    globalDimsId = GlobalDimensionServices.getGlobalDimensions()
+    globalDimensionId = globalDimsId.data[0]["values"][0]["id"]
+
+    # Publishing global dimension by id
+    path = reverse("pubGlobalDimension")
+    payload = {"id": globalDimensionId, "published": True}
+    response = client.post(path, payload)
+    mockResponse.stop()
+
     ##################### Global dimension data index ######################
     # Creating a index value
     res = {"success": True, "data": ["TestData", "TestDataOne"]}
@@ -124,6 +185,7 @@ def test_elastic_search_indexing(client, mocker):
     )
     ESIndexingUtils.indexGlobalDimensionsData()
     mockResponse.stop()
+    query = "TestData"
     result = ESQueryingUtils.findGlobalDimensionResults(query=query)
     count = 0
     while not result:
@@ -147,6 +209,66 @@ def test_elastic_search_indexing(client, mocker):
         }
     ]
     assert result == expectedResults
+
+
+@pytest.mark.django_db(transaction=True)
+def testNonGlobalDimensionDataIndex(client, mocker):
+    """Method test"""
+    connection = mixer.blend("dataset.connection")
+    testDataset = mixer.blend(
+        "dataset.dataset",
+        name="orders",
+        id=1,
+        dimensions='["Brand", "Color", "State"]',
+        metrics='["Orders", "OrderAmount", "OrderQuantity"]',
+        granularity="day",
+        timestampColumn="TestDate",
+        sql="Select * from testTable",
+    )
+    mockResponse = mocker.patch(
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+        new=mock.MagicMock(autospec=True, return_value=True),
+    )
+    mockResponse.start()
+    path = reverse("createDataset")
+    data = {
+        "name": "demo_dataset",
+        "sql": "SELECT * from TEST_TABLE",
+        "connectionId": connection.id,
+        "metrics": ["Amount", "Quantity"],
+        "dimensions": ["Category", "Region"],
+        "timestamp": "CreatedAt",
+        "granularity": "day",
+        "isNonRollup": False,
+    }
+    response = client.post(path, data=data, content_type="application/json")
+
+    # create dimension for testing
+    dataset = Dataset.objects.get(id=1)
+    mockResponse.start()
+    path = reverse("globalDimensionCreate")
+    gd_data = {
+        "name": "test",
+        "dimensionalValues": [
+            {
+                "datasetId": dataset.id,
+                "dataset": "Returns",
+                "dimension": "WarehouseCode",
+            }
+        ],
+    }
+    response = client.post(path, gd_data, content_type="application/json")
+    assert response.data["success"] == True
+    assert response.status_code == 200
+
+    globalDimsId = GlobalDimensionServices.getGlobalDimensions()
+    globalDimensionId = globalDimsId.data[0]["values"][0]["id"]
+
+    # Publishing global dimension by id
+    path = reverse("pubGlobalDimension")
+    payload = {"id": globalDimensionId, "published": True}
+    response = client.post(path, payload)
+    mockResponse.stop()
 
     ################################ Global dimension data index #################
 
@@ -184,7 +306,7 @@ def test_elastic_search_indexing(client, mocker):
             "value": "TestData",
             "user_entity_identifier": "Test data_Brand",
             "id": "Brand_TestData_1",
-            "datasetId": 1,
+            "datasetId": testDataset.id,
             "globalDimensionId": "Brand_TestData_1",
             "type": "DATASETDIMENSION",
         },
@@ -192,7 +314,7 @@ def test_elastic_search_indexing(client, mocker):
             "value": "TestData",
             "user_entity_identifier": "Test data_WarehouseCode",
             "id": "WarehouseCode_TestData_1",
-            "datasetId": 1,
+            "datasetId": testDataset.id,
             "globalDimensionId": "WarehouseCode_TestData_1",
             "type": "DATASETDIMENSION",
         },
@@ -200,7 +322,7 @@ def test_elastic_search_indexing(client, mocker):
             "value": "TestDataOne",
             "user_entity_identifier": "Test data_Brand",
             "id": "Brand_TestDataOne_1",
-            "datasetId": 1,
+            "datasetId": testDataset.id,
             "globalDimensionId": "Brand_TestDataOne_1",
             "type": "DATASETDIMENSION",
         },
@@ -208,7 +330,7 @@ def test_elastic_search_indexing(client, mocker):
             "value": "TestDataOne",
             "user_entity_identifier": "Test data_WarehouseCode",
             "id": "WarehouseCode_TestDataOne_1",
-            "datasetId": 1,
+            "datasetId": testDataset.id,
             "globalDimensionId": "WarehouseCode_TestDataOne_1",
             "type": "DATASETDIMENSION",
         },
@@ -223,7 +345,7 @@ def test_elastic_search_indexing(client, mocker):
             "user_entity_identifier": "Test data_Brand",
             "id": "Brand_TestData_1",
             "dataset": "Test data",
-            "datasetId": 1,
+            "datasetId": testDataset.id,
             "type": "DATASETDIMENSION",
         },
         {
@@ -233,7 +355,7 @@ def test_elastic_search_indexing(client, mocker):
             "user_entity_identifier": "Test data_WarehouseCode",
             "id": "WarehouseCode_TestData_1",
             "dataset": "Test data",
-            "datasetId": 1,
+            "datasetId": testDataset.id,
             "type": "DATASETDIMENSION",
         },
     ]
@@ -250,7 +372,6 @@ def test_elastic_search_indexing(client, mocker):
     assert result == expectedResults
 
     ################################ Delete all indexes ##############
-    ESIndexingUtils.deleteAllIndexed()
 
 
 def testRunAllIndexing(client, mocker):
