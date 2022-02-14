@@ -87,10 +87,16 @@ def test_elastic_search_indexing(client, mocker):
 
     query = "TestData"
     result = ESQueryingUtils.findGlobalDimensionResultsForSearchSuggestion(query=query)
-    while result == []:
+    count = 0
+    while not result:
+        count += 1
+
         result = ESQueryingUtils.findGlobalDimensionResultsForSearchSuggestion(
             query=query
         )
+        if count == 10:
+            result = []
+            return result
     expectedResult = [
         {
             "value": "TestData",
@@ -119,8 +125,14 @@ def test_elastic_search_indexing(client, mocker):
     ESIndexingUtils.indexGlobalDimensionsData()
     mockResponse.stop()
     result = ESQueryingUtils.findGlobalDimensionResults(query=query)
-    while result == []:
+    count = 0
+    while not result:
+        count += 1
         result = ESQueryingUtils.findGlobalDimensionResults(query=query)
+
+        if count == 10:
+            result = []
+            return result
 
     expectedResults = [
         {
@@ -156,10 +168,16 @@ def test_elastic_search_indexing(client, mocker):
     result = ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion(
         query=query
     )
-    while result == []:
+    count = 0
+    while not result:
+        count += 1
         result = ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion(
             query=query
         )
+
+        if count == 10:
+            result = []
+            return result
 
     expectedResult = [
         {
@@ -220,8 +238,14 @@ def test_elastic_search_indexing(client, mocker):
         },
     ]
     result = ESQueryingUtils.findNonGlobalDimensionResults(query=query)
-    while result == []:
+    count = 0
+    while not result:
+        count += 1
         result = ESQueryingUtils.findNonGlobalDimensionResults(query=query)
+
+        if count == 10:
+            result = []
+            return result
 
     assert result == expectedResults
 
