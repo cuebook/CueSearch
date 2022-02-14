@@ -156,8 +156,6 @@ class ESIndexingUtils:
         The child thread assumes an index existing with a predefined unaltered indexDefinition
         """
         logging.info("Indexing starts on global dimension action")
-        cardIndexer = threading.Thread(target=ESIndexingUtils.indexGlobalDimensionName)
-        cardIndexer.start()
         cardIndexer1 = threading.Thread(
             target=ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion
         )

@@ -251,3 +251,28 @@ def test_elastic_search_indexing(client, mocker):
 
     ################################ Delete all indexes ##############
     ESIndexingUtils.deleteAllIndexed()
+
+
+def testRunAllIndexing(client, mocker):
+
+    mockResponse = mocker.patch(
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion",
+        new=mock.MagicMock(autospec=True, return_value=True),
+    )
+    mockResponse.start()
+    mockResponse1 = mocker.patch(
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.indexGlobalDimensionsData",
+        new=mock.MagicMock(autospec=True, return_value=True),
+    )
+    mockResponse1.start()
+    mockResponse2 = mocker.patch(
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion",
+        new=mock.MagicMock(autospec=True, return_value=True),
+    )
+    mockResponse2.start()
+
+    ESIndexingUtils.runAllIndexDimension()
+
+    mockResponse.stop()
+    mockResponse1.stop()
+    mockResponse2.stop()
