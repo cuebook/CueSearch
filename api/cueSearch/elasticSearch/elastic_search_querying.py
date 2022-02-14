@@ -166,49 +166,49 @@ class ESQueryingUtils:
         logging.debug("User queries: %s", output)
         return output
 
-    @staticmethod
-    def findGlobalDimensionNames(
-        query: str, datasource: str = None, offset: int = 0, limit: int = 5
-    ):
-        """
-        Method to index the global dimension names for search.
-        For e.g. G_City, G_Product, etc.
-        To be used in search for e.g. - G_City = Mumbai, G_Product = Nike
-        :param query: str
-        :param datasource: name of cube, will match values associated with this cube
-        :param offset: Offset for the query
-        :param limit: Number of results required
-        :return List[ESQueryResponse]
-        """
-        logging.info("Querying the global dimensions names index")
-        client = ESQueryingUtils._getESClient()
+    # @staticmethod
+    # def findGlobalDimensionNames(
+    #     query: str, datasource: str = None, offset: int = 0, limit: int = 5
+    # ):
+    #     """
+    #     Method to index the global dimension names for search.
+    #     For e.g. G_City, G_Product, etc.
+    #     To be used in search for e.g. - G_City = Mumbai, G_Product = Nike
+    #     :param query: str
+    #     :param datasource: name of cube, will match values associated with this cube
+    #     :param offset: Offset for the query
+    #     :param limit: Number of results required
+    #     :return List[ESQueryResponse]
+    #     """
+    #     logging.info("Querying the global dimensions names index")
+    #     client = ESQueryingUtils._getESClient()
 
-        searchQuery = (
-            Search(index=ESQueryingUtils.GLOBAL_DIMENSIONS_NAMES_INDEX_NAME)
-            .using(client)
-            .query("multi_match", query=query, fields=["globalDimensionName"])
-        )
+    #     searchQuery = (
+    #         Search(index=ESQueryingUtils.GLOBAL_DIMENSIONS_NAMES_INDEX_NAME)
+    #         .using(client)
+    #         .query("multi_match", query=query, fields=["globalDimensionName"])
+    #     )
 
-        if datasource:
-            searchQuery = searchQuery.filter("match", cubes=datasource)
+    #     if datasource:
+    #         searchQuery = searchQuery.filter("match", cubes=datasource)
 
-        searchQuery = searchQuery[offset : offset + limit]
+    #     searchQuery = searchQuery[offset : offset + limit]
 
-        logging.info("Calling Elasticsearch with the query")
-        response = searchQuery.execute()
+    #     logging.info("Calling Elasticsearch with the query")
+    #     response = searchQuery.execute()
 
-        output = []
-        for hit in response:
-            obj = {
-                "value": hit.globalDimensionName,
-                "user_entity_identifier": "DIMENSION",
-                "id": hit.globalDimensionId,
-                "type": "DIMENSION",
-            }
-            output.append(obj)
+    #     output = []
+    #     for hit in response:
+    #         obj = {
+    #             "value": hit.globalDimensionName,
+    #             "user_entity_identifier": "DIMENSION",
+    #             "id": hit.globalDimensionId,
+    #             "type": "DIMENSION",
+    #         }
+    #         output.append(obj)
 
-        logging.debug("Global dimensions: %s", output)
-        return output
+    #     logging.debug("Global dimensions: %s", output)
+    #     return output
 
     # @staticmethod
     # def findQueries(query: str):

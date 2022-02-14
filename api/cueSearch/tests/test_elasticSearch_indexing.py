@@ -14,6 +14,8 @@ def test_elastic_search_indexing(client, mocker):
     """
     Method to create test dataset
     """
+    ESIndexingUtils.deleteAllIndexed()
+
     connection = mixer.blend("dataset.connection")
     testDataset = mixer.blend(
         "dataset.dataset",
@@ -42,10 +44,9 @@ def test_elastic_search_indexing(client, mocker):
         "isNonRollup": False,
     }
     response = client.post(path, data=data, content_type="application/json")
-    mockResponse.stop()
 
     # create dimension for testing
-    dataset = Dataset.objects.all()[0]
+    dataset = Dataset.objects.get(id=1)
     mockResponse.start()
     path = reverse("globalDimensionCreate")
     gd_data = {
@@ -59,7 +60,6 @@ def test_elastic_search_indexing(client, mocker):
         ],
     }
     response = client.post(path, gd_data, content_type="application/json")
-    mockResponse.stop()
     assert response.data["success"] == True
     assert response.status_code == 200
 
@@ -70,8 +70,7 @@ def test_elastic_search_indexing(client, mocker):
     path = reverse("pubGlobalDimension")
     payload = {"id": globalDimensionId, "published": True}
     response = client.post(path, payload)
-
-    # Testing the indexing of global dimension data for suggestion
+    mockResponse.stop()
 
     # Creating a index value
     res = {"success": True, "data": ["TestData", "TestDataOne"]}
@@ -88,6 +87,10 @@ def test_elastic_search_indexing(client, mocker):
 
     query = "TestData"
     result = ESQueryingUtils.findGlobalDimensionResultsForSearchSuggestion(query=query)
+    while result == []:
+        result = ESQueryingUtils.findGlobalDimensionResultsForSearchSuggestion(
+            query=query
+        )
     expectedResult = [
         {
             "value": "TestData",
@@ -105,56 +108,6 @@ def test_elastic_search_indexing(client, mocker):
 
     assert result == expectedResult
 
-    ######################################################### Deletion of Indexed search suggestion data ###############################################
-    indexDefinition = {
-        "settings": {
-            "analysis": {
-                "analyzer": {
-                    "my_analyzer": {
-                        "tokenizer": "my_tokenizer",
-                        "filter": ["lowercase"],
-                    }
-                },
-                "default_search": {"type": "my_analyzer"},
-                "tokenizer": {
-                    "my_tokenizer": {
-                        "type": "edge_ngram",
-                        "min_gram": 1,
-                        "max_gram": 10,
-                        "token_chars": ["letter", "digit"],
-                    }
-                },
-            }
-        },
-        "mappings": {
-            "properties": {
-                "globalDimensionId": {"type": "integer"},
-                "globalDimensionDisplayValue": {"type": "text"},
-                "globalDimensionValue": {
-                    "type": "text",
-                    "search_analyzer": "my_analyzer",
-                    "analyzer": "my_analyzer",
-                    "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
-                },
-                "globalDimensionName": {
-                    "type": "text",
-                    "search_analyzer": "my_analyzer",
-                    "analyzer": "my_analyzer",
-                    "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
-                },
-                "dataset": {"type": "text"},
-                "datasetId": {"type": "integer"},
-            }
-        },
-    }
-
-    indexName = ESIndexingUtils.GLOBAL_DIMENSIONS_INDEX_SEARCH_SUGGESTION_DATA
-
-    aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
-    ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
-
-    ###################################################################### Deletion complete for global dimension search suggestion index ################################################
-
     ##################### Global dimension data index ######################
     # Creating a index value
     res = {"success": True, "data": ["TestData", "TestDataOne"]}
@@ -166,6 +119,9 @@ def test_elastic_search_indexing(client, mocker):
     ESIndexingUtils.indexGlobalDimensionsData()
     mockResponse.stop()
     result = ESQueryingUtils.findGlobalDimensionResults(query=query)
+    while result == []:
+        result = ESQueryingUtils.findGlobalDimensionResults(query=query)
+
     expectedResults = [
         {
             "value": "TestData",
@@ -181,61 +137,6 @@ def test_elastic_search_indexing(client, mocker):
     assert result == expectedResults
 
     ################################ Global dimension data index #################
-    ######################### Deletion of Global dimension index name ##############
-    indexDefinition = {
-        "settings": {
-            "analysis": {
-                "analyzer": {
-                    "my_analyzer": {
-                        "tokenizer": "my_tokenizer",
-                        "filter": ["lowercase"],
-                    }
-                },
-                "default_search": {"type": "my_analyzer"},
-                "tokenizer": {
-                    "my_tokenizer": {
-                        "type": "edge_ngram",
-                        "min_gram": 1,
-                        "max_gram": 10,
-                        "token_chars": ["letter", "digit"],
-                    }
-                },
-            }
-        },
-        "mappings": {
-            "properties": {
-                "globalDimensionId": {"type": "integer"},
-                "globalDimensionDisplayValue": {"type": "text"},
-                "globalDimensionValue": {
-                    "type": "text",
-                    "search_analyzer": "my_analyzer",
-                    "analyzer": "my_analyzer",
-                    "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
-                },
-                "globalDimensionName": {
-                    "type": "text",
-                    "search_analyzer": "my_analyzer",
-                    "analyzer": "my_analyzer",
-                    "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
-                },
-                "dimension": {
-                    "type": "text",
-                    "search_analyzer": "my_analyzer",
-                    "analyzer": "my_analyzer",
-                    "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
-                },
-                "dataset": {"type": "text"},
-                "datasetId": {"type": "integer"},
-            }
-        },
-    }
-
-    indexName = ESIndexingUtils.GLOBAL_DIMENSIONS_INDEX_DATA
-
-    aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
-    ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
-
-    ##################################### Deletion completed ########################################
 
     listToIndex = [
         {"dataset": "Test data", "datasetId": 1, "dimension": "Brand"},
@@ -255,6 +156,10 @@ def test_elastic_search_indexing(client, mocker):
     result = ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion(
         query=query
     )
+    while result == []:
+        result = ESQueryingUtils.findNonGlobalDimensionResultsForSearchSuggestion(
+            query=query
+        )
 
     expectedResult = [
         {
@@ -315,60 +220,10 @@ def test_elastic_search_indexing(client, mocker):
         },
     ]
     result = ESQueryingUtils.findNonGlobalDimensionResults(query=query)
+    while result == []:
+        result = ESQueryingUtils.findNonGlobalDimensionResults(query=query)
+
     assert result == expectedResults
 
-    ####################################################### Deletion of Non global dimension search suggestion ######################################
-    indexDefinition = {
-        "settings": {
-            "analysis": {
-                "analyzer": {
-                    "my_analyzer": {
-                        "tokenizer": "my_tokenizer",
-                        "filter": ["lowercase"],
-                    }
-                },
-                "default_search": {"type": "my_analyzer"},
-                "tokenizer": {
-                    "my_tokenizer": {
-                        "type": "edge_ngram",
-                        "min_gram": 1,
-                        "max_gram": 10,
-                        "token_chars": ["letter", "digit"],
-                    }
-                },
-            }
-        },
-        "mappings": {
-            "properties": {
-                "globalDimensionId": {"type": "text"},
-                "globalDimensionDisplayValue": {"type": "text"},
-                "globalDimensionValue": {
-                    "type": "text",
-                    "search_analyzer": "my_analyzer",
-                    "analyzer": "my_analyzer",
-                    "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
-                },
-                "globalDimensionName": {
-                    "type": "text",
-                    "search_analyzer": "my_analyzer",
-                    "analyzer": "my_analyzer",
-                    "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
-                },
-                "dimension": {
-                    "type": "text",
-                    "search_analyzer": "my_analyzer",
-                    "analyzer": "my_analyzer",
-                    "fields": {"ngram": {"type": "text", "analyzer": "my_analyzer"}},
-                },
-                "dataset": {"type": "text"},
-                "datasetId": {"type": "integer"},
-            }
-        },
-    }
-
-    indexName = ESIndexingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA
-
-    aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
-    ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
-
-    ######################################################### Deletion completed for Auto Global Dimension Index #########################################
+    ################################ Delete all indexes ##############
+    ESIndexingUtils.deleteAllIndexed()
