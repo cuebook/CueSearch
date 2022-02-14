@@ -115,7 +115,7 @@ class ESIndexingUtils:
                 esClient.indices.delete(index=key, ignore=[400, 404])
 
     @staticmethod
-    def deleteAllIndexed():
+    def deleteAllIndex():
         logging.info("Deleting all indexes")
         esClient = ESIndexingUtils._getESClient()
 

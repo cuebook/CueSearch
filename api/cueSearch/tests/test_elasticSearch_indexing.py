@@ -14,8 +14,7 @@ def test_elastic_search_indexing(client, mocker):
     """
     Method to create test dataset
     """
-    # ESIndexingUtils.deleteAllIndexed()
-
+    ESIndexingUtils.deleteAllIndex()
     connection = mixer.blend("dataset.connection")
     testDataset = mixer.blend(
         "dataset.dataset",
@@ -118,7 +117,7 @@ def test_elastic_search_indexing(client, mocker):
 @pytest.mark.django_db(transaction=True)
 def testIndexGlobalDimensinData(client, mocker):
     """Method to test index global dimension data"""
-
+    ESIndexingUtils.deleteAllIndex()
     connection = mixer.blend("dataset.connection")
     testDataset = mixer.blend(
         "dataset.dataset",
@@ -213,7 +212,9 @@ def testIndexGlobalDimensinData(client, mocker):
 
 @pytest.mark.django_db(transaction=True)
 def testNonGlobalDimensionDataIndex(client, mocker):
-    """Method test"""
+    """Method to test non global dimension index"""
+    ESIndexingUtils.deleteAllIndex()
+
     connection = mixer.blend("dataset.connection")
     testDataset = mixer.blend(
         "dataset.dataset",
@@ -370,7 +371,6 @@ def testNonGlobalDimensionDataIndex(client, mocker):
             return result
 
     assert result == expectedResults
-
     ################################ Delete all indexes ##############
 
 
