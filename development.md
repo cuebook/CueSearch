@@ -1,6 +1,6 @@
 ---
 description: >-
-  If you plan to work on CueObserve code and make changes, this documentation
+  If you plan to work on CueSearch code and make changes, this documentation
   will give you a high level overview of the components used and how to modify
   them.
 ---
@@ -9,22 +9,22 @@ description: >-
 
 ### Overview
 
-CueObserve has multi-service architecture, with services as mentioned:
+CueSearch has multi-service architecture, with services as mentioned:
 
 1. `Frontend` single-page application written on [ReactJS](https://reactjs.org). It's code can be found in `ui` folder and runs on [http://localhost:3000/](https://reactjs.org).
 2. `API` is based on [Django](https://www.djangoproject.com) (python framework) & uses REST API. It is the main service, responsible for connections, authentication and anomaly.&#x20;
-3. `Alerts` micro-service, currently responsible for sending alerting/notifications only to slack. It's code is in `alerts-api` folder and runs on [localhost:8100](http://localhost:8100).
-4. [Celery](https://docs.celeryproject.org) to execute the tasks asynchronously. Tasks like anomaly detection are handled by Celery.
+3. [ElasticSearch](https://www.elastic.co/elasticsearch) for giving search suggestions.
+4. [Celery](https://docs.celeryproject.org) to execute the tasks asynchronously. Tasks like hourly indexing are handled by Celery.
 5. [Celery beat](https://docs.celeryproject.org/en/stable/userguide/periodic-tasks.html) scheduler to trigger the scheduled tasks.
 6. [Redis](https://redis.io/documentation) to handle the task queue of Celery.
 
 ### Getting code & starting development servers
 
-Get the code by cloning our open source [github repo](https://github.com/cuebook/cueobserve)
+Get the code by cloning our open source [github repo](https://github.com/cuebook/CueSearch)
 
 ```
-git clone https://github.com/cuebook/CueObserve.git
-cd CueObserve
+https://github.com/cuebook/CueSearch.git
+cd CueSearch
 docker-compose -f docker-compose-dev.yml --env-file .env.dev up --build 
 ```
 
@@ -39,31 +39,41 @@ The code for the backend is in `/api` directory. As mentioned in the overview it
 Configure environment variables as you need for the backend server :
 
 ```bash
-export ENVIRONMENT=dev
+ENVIRONMENT=dev
 
-## DB SETTINGS 
-export POSTGRES_DB_HOST="localhost"
-export POSTGRES_DB_USERNAME="postgres"
-export POSTGRES_DB_PASSWORD="postgres"
-export POSTGRES_DB_SCHEMA="cue_observe"
-export POSTGRES_DB_PORT=5432
+NODE_ENV=development
+CHOKIDAR_USEPOLLING=true
+
+API_URL=http://localhost:8000
+REDIS_BROKER_URL=redis://localhost:6379/0
+CELERY_RESULT_BACKEND=redis
+NGINX_API_URL=http://localhost:8000
+NGINX_UI_URL=http://localhost:3030
+
+## Central DB SETTINGS
+#POSTGRES_DB_HOST=localhost
+#POSTGRES_DB_USERNAME=postgres
+#POSTGRES_DB_PASSWORD=postgres
+#POSTGRES_DB_SCHEMA=cuesearch
+#POSTGRES_DB_PORT=5432
 
 ## SUPERUSER'S VARIABLE
-export DJANGO_SUPERUSER_USERNAME="User"
-export DJANGO_SUPERUSER_PASSWORD="admin"
-export DJANGO_SUPERUSER_EMAIL="admin@domain.com"
+DJANGO_SUPERUSER_USERNAME=User
+DJANGO_SUPERUSER_PASSWORD=admin
+DJANGO_SUPERUSER_EMAIL=admin@domain.com
 
 ## AUTHENTICATION
-export `=False 
+IS_AUTHENTICATION_REQUIRED=False
+
 ```
 
-Change the values based on your running PostgreSQL instance. If you do not wish to use PostgreSQL as your database for development, comment lines 4-8 and CueObserve will create a SQLite database file at the location `api/db/db.sqlite3`.&#x20;
+Change the values based on your running PostgreSQL instance. If you do not wish to use PostgreSQL as your database for development, comment lines 4-8 and CueSearch will create a SQLite database file at the location `api/db/db.sqlite3`.&#x20;
 
 The backend server can be accessed on [http://localhost:8000/](https://www.djangoproject.com).&#x20;
 
 #### Celery Development&#x20;
 
-CueObserve uses Celery for executing asynchronous tasks like anomaly detection. There are three components needed to run an asynchronous task, i.e. Redis, Celery and Celery Beat. Redis is used as the message queue by Celery, so before starting Celery services, Redis server should be running. Celery Beat is used as the scheduler and is responsible to trigger the scheduled tasks. Celery workers are used to execute the tasks.&#x20;
+CueSearch uses Celery for executing asynchronous tasks like anomaly detection. There are three components needed to run an asynchronous task, i.e. Redis, Celery and Celery Beat. Redis is used as the message queue by Celery, so before starting Celery services, Redis server should be running. Celery Beat is used as the scheduler and is responsible to trigger the scheduled tasks. Celery workers are used to execute the tasks.
 
 ### Testing
 
