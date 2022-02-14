@@ -47,7 +47,6 @@ def testGlobalDimension(client, mocker):
             }
         ],
     }
-
     response = client.post(path, globalDimension, content_type="application/json")
     mockResponse.stop()
     assert response.data["success"]
@@ -114,6 +113,25 @@ def testGlobalDimension(client, mocker):
     mockResponse.stop()
     assert response.json()["data"][0]["published"] == True
     assert response.json()["data"][1]["published"] == False
+
+    # checking the publishing api exception without id error
+    mockResponse.start()
+    path = reverse("pubGlobalDimension")
+    payload = {"id": [], "published": True}
+    response = client.post(path, payload, content_type="application/json")
+    mockResponse.stop()
+    assert response.data["success"] == False
+    assert response.json()['message'] == 'Id is mandatory'
+
+    # checking the publishing api exception with id error
+    mockResponse.start()
+    path = reverse("pubGlobalDimension")
+    payload = {"id": 277, "published": True}
+    response = client.post(path, payload, content_type="application/json")
+    mockResponse.stop()
+    assert response.data["success"] == False
+    assert response.json()['message'] == 'Error occured while updating global dimension'
+
 
     # Deleting the global dimension called Brands
     mockResponse.start()
