@@ -23,7 +23,7 @@ export default function DataDisplay({ params, isSnippet }) {
     const response = await searchResultService.getSearchCardData(params);
     if (response.success) {
       setCardData(response.data);
-      addSearchCardData({ [JSON.stringify(params)]: response.data });
+      addSearchCardData([JSON.stringify(params)], response.data);
     }
     setLoadingData(false);
   };
