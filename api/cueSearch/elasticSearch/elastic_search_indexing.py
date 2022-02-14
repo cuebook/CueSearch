@@ -269,73 +269,73 @@ class ESIndexingUtils:
             logging.error("Error in fetching global dimensions.")
             raise RuntimeError("Error in fetching global dimensions")
 
-    @staticmethod
-    def fetchMeasureForIndexing():
-        logging.info("Method to index cube measures")
-        response = Utils.getMetricsFromCueObserve()
-        data = []
-        if response.get("success", False):
-            logging.info("Get measure data for indexing")
-            data = response.get("data", [])
-        else:
-            logging.error("Did not get Measure for Indexing")
-            return
-        measureToBeIndex = []
-        for res in data:
-            dataset = res["dataset"]
-            for measure in res.get("metrics", []):
+    # @staticmethod
+    # def fetchMeasureForIndexing():
+    #     logging.info("Method to index cube measures")
+    #     response = Utils.getMetricsFromCueObserve()
+    #     data = []
+    #     if response.get("success", False):
+    #         logging.info("Get measure data for indexing")
+    #         data = response.get("data", [])
+    #     else:
+    #         logging.error("Did not get Measure for Indexing")
+    #         return
+    #     measureToBeIndex = []
+    #     for res in data:
+    #         dataset = res["dataset"]
+    #         for measure in res.get("metrics", []):
 
-                measureToBeIndex.append(
-                    {
-                        "dataset": dataset,
-                        "measure": measure,
-                    }
-                )
-        logging.info("Sending the dataset measures for indexing")
-        logging.debug("List to be indexed: %s", measureToBeIndex)
-        ESIndexingUtils.indexMeasures(measureToBeIndex)
+    #             measureToBeIndex.append(
+    #                 {
+    #                     "dataset": dataset,
+    #                     "measure": measure,
+    #                 }
+    #             )
+    #     logging.info("Sending the dataset measures for indexing")
+    #     logging.debug("List to be indexed: %s", measureToBeIndex)
+    #     ESIndexingUtils.indexMeasures(measureToBeIndex)
 
-    @staticmethod
-    def indexMeasures(documentsToIndex: List[Dict]):
-        """
-        Method to index the queries data
-        :param documentsToIndex List of Queries metadata that needs to be indexed
-        """
-        logging.info("Starting indexing of measures and the associated metadata")
+    # @staticmethod
+    # def indexMeasures(documentsToIndex: List[Dict]):
+    #     """
+    #     Method to index the queries data
+    #     :param documentsToIndex List of Queries metadata that needs to be indexed
+    #     """
+    #     logging.info("Starting indexing of measures and the associated metadata")
 
-        indexDefinition = {
-            "settings": {
-                "analysis": {
-                    "analyzer": {
-                        "my_analyzer": {
-                            "tokenizer": "my_tokenizer",
-                            "filter": ["lowercase"],
-                        }
-                    },
-                    "default_search": {"type": "my_analyzer"},
-                    "tokenizer": {
-                        "my_tokenizer": {
-                            "type": "edge_ngram",
-                            "min_gram": 1,
-                            "max_gram": 10,
-                            "token_chars": ["letter", "digit"],
-                        }
-                    },
-                }
-            },
-            "mappings": {
-                "properties": {
-                    "measure": {"type": "text"},
-                    "dataset": {"type": "text"},
-                }
-            },
-        }
+    #     indexDefinition = {
+    #         "settings": {
+    #             "analysis": {
+    #                 "analyzer": {
+    #                     "my_analyzer": {
+    #                         "tokenizer": "my_tokenizer",
+    #                         "filter": ["lowercase"],
+    #                     }
+    #                 },
+    #                 "default_search": {"type": "my_analyzer"},
+    #                 "tokenizer": {
+    #                     "my_tokenizer": {
+    #                         "type": "edge_ngram",
+    #                         "min_gram": 1,
+    #                         "max_gram": 10,
+    #                         "token_chars": ["letter", "digit"],
+    #                     }
+    #                 },
+    #             }
+    #         },
+    #         "mappings": {
+    #             "properties": {
+    #                 "measure": {"type": "text"},
+    #                 "dataset": {"type": "text"},
+    #             }
+    #         },
+    #     }
 
-        ESIndexingUtils._createIndex(
-            documentsToIndex=documentsToIndex,
-            indexName=ESIndexingUtils.DATASET_MEASURES_INDEX_NAME,
-            indexDefinition=indexDefinition,
-        )
+    #     ESIndexingUtils._createIndex(
+    #         documentsToIndex=documentsToIndex,
+    #         indexName=ESIndexingUtils.DATASET_MEASURES_INDEX_NAME,
+    #         indexDefinition=indexDefinition,
+    #     )
 
     @staticmethod
     def fetchGlobalDimensionsValueForIndexing(globalDimensionGroup):

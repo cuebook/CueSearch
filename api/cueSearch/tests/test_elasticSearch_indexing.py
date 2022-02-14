@@ -172,9 +172,9 @@ def test_elastic_search_indexing(client, mocker):
             "dimension": "WarehouseCode",
             "globalDimensionName": "test",
             "user_entity_identifier": "test",
-            "id": 6,
+            "id": globalDimensionId,
             "dataset": "orders",
-            "datasetId": 1,
+            "datasetId": testDataset.id,
             "type": "GLOBALDIMENSION",
         }
     ]

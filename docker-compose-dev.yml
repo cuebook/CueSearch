@@ -53,11 +53,11 @@ services:
     image: redis
     network_mode: "host"
 
-  cue-search-es:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.2
-    environment:
-      - "discovery.type=single-node"
-    network_mode: "host"
+  # cue-search-es:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.5.2
+  #   environment:
+  #     - "discovery.type=single-node"
+  #   network_mode: "host"
     # ports:
     #   - 9200:9200
 

@@ -210,38 +210,38 @@ class ESQueryingUtils:
         logging.debug("Global dimensions: %s", output)
         return output
 
-    @staticmethod
-    def findQueries(query: str):
-        """
-        Method to run the search query on the queries Index
-        :param query str
-        :return List[ESQueryResponse]
-        """
-        logging.info("Querying the Queries Index")
-        client = ESQueryingUtils._getESClient()
+    # @staticmethod
+    # def findQueries(query: str):
+    #     """
+    #     Method to run the search query on the queries Index
+    #     :param query str
+    #     :return List[ESQueryResponse]
+    #     """
+    #     logging.info("Querying the Queries Index")
+    #     client = ESQueryingUtils._getESClient()
 
-        searchQuery = (
-            Search(index=ESQueryingUtils.GLOBAL_DIMENSIONS_INDEX_DATA)
-            .using(client)
-            .query("multi_match", query=query, fields=["globalDimensionName"])
-        )
+    #     searchQuery = (
+    #         Search(index=ESQueryingUtils.GLOBAL_DIMENSIONS_INDEX_DATA)
+    #         .using(client)
+    #         .query("multi_match", query=query, fields=["globalDimensionName"])
+    #     )
 
-        logging.info("Calling Elasticsearch with the query")
-        response = searchQuery.execute()
+    #     logging.info("Calling Elasticsearch with the query")
+    #     response = searchQuery.execute()
 
-        output = []
-        for hit in response:
-            obj = {
-                "value": hit.globalDimensionDisplayValue,
-                "user_entity_identifier": hit.globalDimensionName,
-                "id": hit.globalDimensionId,
-                "type": "DIMENSION",
-                "dataset": hit.dataset,
-            }
-            output.append(obj)
+    #     output = []
+    #     for hit in response:
+    #         obj = {
+    #             "value": hit.globalDimensionDisplayValue,
+    #             "user_entity_identifier": hit.globalDimensionName,
+    #             "id": hit.globalDimensionId,
+    #             "type": "DIMENSION",
+    #             "dataset": hit.dataset,
+    #         }
+    #         output.append(obj)
 
-        logging.debug("Queries: %s", output)
-        return output
+    #     logging.debug("Queries: %s", output)
+    #     return output
 
     ####################### Used for searchSuggestion query ########################
 
