@@ -1,10 +1,10 @@
-import pandas as pd
 import pytest
+import pandas as pd
 from unittest import mock
+from mixer.backend.django import mixer
 from django.urls import reverse
 from dataset.models import Dataset
 from cueSearch.elasticSearch import Utils
-from mixer.backend.django import mixer
 
 
 @pytest.mark.django_db(transaction=True)
