@@ -1,12 +1,9 @@
-import asyncio
 import logging
 import json
-from typing import List, Dict
+import aiohttp
+from typing import Dict
 from itertools import groupby
 import concurrent.futures
-from asgiref.sync import async_to_sync, sync_to_async
-from django.http import response
-import aiohttp
 from utils.apiResponse import ApiResponse
 from django.template import Template, Context
 from cueSearch.serializers import SearchCardTemplateSerializer
@@ -261,13 +258,6 @@ class SearchCardTemplateServices:
                     datasource=None,
                     offset=0,
                     limit=8,
-                ),
-                executor.submit(
-                    ESQueryingUtils.findGlobalDimensionNames,
-                    query=query,
-                    datasource=None,
-                    offset=0,
-                    limit=4,
                 ),
             ]
 

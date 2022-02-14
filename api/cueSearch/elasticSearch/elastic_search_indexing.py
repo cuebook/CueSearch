@@ -149,39 +149,6 @@ class ESIndexingUtils:
 
         ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
 
-    # @staticmethod
-    # def fetchGlobalDimensionsForIndexing(globalDimensionGroup):
-    #     """
-    #     Method to fetch the global dimensions and the dimension values.
-    #     :return List of Documents to be indexed
-    #     """
-    #     indexingDocuments = []
-    #     logging.info("global dimension group in fetch %s", globalDimensionGroup)
-    #     globalDimensionName = globalDimensionGroup["name"]
-    #     logging.debug("Starting fetch for global dimension: %s", globalDimensionName)
-    #     globalDimensionId = globalDimensionGroup["id"]
-    #     dimensionValues = globalDimensionGroup["values"]  # dimensional values
-
-    #     logging.info(
-    #         "Merging dimensions Value percentile with mulitple values in list of dimensionValues"
-    #     )
-    #     for values in dimensionValues:
-
-    #         displayValue = values["dimension"]
-    #         dataset = values["dataset"]
-
-    #         elasticsearchUniqueId = str(globalDimensionId)
-
-    #         document = {
-    #             "_id": elasticsearchUniqueId,
-    #             "globalDimensionName": str(globalDimensionName),
-    #             "globalDimensionId": globalDimensionId,
-    #         }
-    #         indexingDocuments.append(document)
-    #         logging.debug("Document to index: %s", document)
-
-    #     return indexingDocuments
-
     @staticmethod
     def runAllIndexDimension():
         """
@@ -204,82 +171,6 @@ class ESIndexingUtils:
         )
         cardIndexer3.start()
         logging.info("Indexing completed !! ")
-
-    # @staticmethod
-    # def indexGlobalDimensionName(joblogger=None):
-    #     """
-    #     Method to index global dimensions data
-    #     """
-    #     logging.info(
-    #         "*************************** Indexing starts for GlobalDimensionName *****************************"
-    #     )
-    #     response = Utils.getGlobalDimensionForIndex()
-    #     if response["success"]:
-    #         globalDimensions = response.get("data", [])
-    #         logging.debug("Global dimensions: %s", globalDimensions)
-
-    #         indexDefinition = {
-    #             "settings": {
-    #                 "analysis": {
-    #                     "analyzer": {
-    #                         "my_analyzer": {
-    #                             "tokenizer": "my_tokenizer",
-    #                             "filter": ["lowercase"],
-    #                         }
-    #                     },
-    #                     "default_search": {"type": "my_analyzer"},
-    #                     "tokenizer": {
-    #                         "my_tokenizer": {
-    #                             "type": "edge_ngram",
-    #                             "min_gram": 1,
-    #                             "max_gram": 10,
-    #                             "token_chars": ["letter", "digit"],
-    #                         }
-    #                     },
-    #                 }
-    #             },
-    #             "mappings": {
-    #                 "properties": {
-    #                     "globalDimensionId": {"type": "integer"},
-    #                     "globalDimensionName": {
-    #                         "type": "text",
-    #                         "search_analyzer": "my_analyzer",
-    #                         "analyzer": "my_analyzer",
-    #                         "fields": {
-    #                             "ngram": {"type": "text", "analyzer": "my_analyzer"}
-    #                         },
-    #                     },
-    #                 }
-    #             },
-    #         }
-
-    #         indexName = ESIndexingUtils.GLOBAL_DIMENSIONS_NAMES_INDEX_NAME
-
-    #         aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
-    #         logging.info("IndexName %s", indexName)
-    #         logging.info("aliasIndex %s", aliasIndex)
-    #         for globalDimensionGroup in globalDimensions:
-    #             logging.info("globaldimensionGroup %s", globalDimensionGroup)
-    #             # globalDimensionGroup is an array
-    #             try:
-    #                 documentsToIndex = ESIndexingUtils.fetchGlobalDimensionsForIndexing(
-    #                     globalDimensionGroup
-    #                 )
-
-    #                 ESIndexingUtils.ingestIndex(documentsToIndex, aliasIndex)
-    #             except (Exception) as error:
-    #                 logging.error(str(error))
-
-    #                 pass
-
-    #         ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
-    #         logging.info(
-    #             "***************************** Indexing completed for GlobalDimensionName ***************************"
-    #         )
-
-    #     else:
-    #         logging.error("Error in fetching global dimensions.")
-    #         raise RuntimeError("Error in fetching global dimensions")
 
     @staticmethod
     def fetchGlobalDimensionsValueForIndexing(globalDimensionGroup):
