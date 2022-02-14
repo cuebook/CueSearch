@@ -4,8 +4,8 @@
 
 ```
 mkdir -p ~/cuebook
-wget https://raw.githubusercontent.com/cuebook/CueObserve/latest_release/docker-compose-prod.yml -q -O ~/cuebook/docker-compose-prod.yml
-wget https://raw.githubusercontent.com/cuebook/CueObserve/latest_release/.env -q -O ~/cuebook/.env
+wget https://raw.githubusercontent.com/cuebook/CueSearch/main/docker-compose-prod.yml -q -O ~/cuebook/docker-compose-prod.yml
+wget https://raw.githubusercontent.com/cuebook/CueSearch/main/.env -q -O ~/cuebook/.env
 cd ~/cuebook
 ```
 
@@ -13,24 +13,31 @@ cd ~/cuebook
 docker-compose -f docker-compose-prod.yml --env-file .env up -d
 ```
 
-Now visit [localhost:3000](http://localhost:3000) in your browser.&#x20;
+
 
 ## Add Connection
 
 Go to the Connections screen to create a connection.
 
-![](<.gitbook/assets/AddConnection (1).png>)
+![](.gitbook/assets/Add\_connection.png)
 
 ## Add Dataset
 
 Next, create a dataset using your connection. See [Datasets](datasets.md) for details.
 
-## Define and Run Anomaly job
+## Card Template
 
-Create an anomaly detection job on your dataset. See [Anomaly Definitions](anomaly-definitions.md) for details.
+To add, update or delete a template visit [Card Templates](card-templates.md) section.
 
-Once you have created an anomaly job, click on the \`Run\` icon button to trigger the anomaly job. It might take a few seconds for the job to execute.
+## Indexing
 
-![](.gitbook/assets/AnomalyDefinitions.png)
+* Hourly indexing job is running every hour.
+* For instant indexing run via api  [http://localhost:3000/api/cueSearch/runIndexing/](http://localhost:3000/api/cueSearch/runIndexing/).
+* Action with global dimension starts indexing job.
 
-Once the job is successful, go to the Anomalies screen to view your anomalies.
+## Search Results
+
+Write filter in search bar and then select from dropdown and press search icon.
+
+![Search Result](.gitbook/assets/Search\_results.png)
+
