@@ -1,7 +1,6 @@
 import logging
 from celery import shared_task
 from cueSearch.elasticSearch import ESIndexingUtils
-import logging
 
 
 @shared_task
