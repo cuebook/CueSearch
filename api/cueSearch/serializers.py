@@ -86,6 +86,6 @@ class SearchCardTemplateSerializer(serializers.ModelSerializer):
             "templateName",
             "title",
             "bodyText",
-            "supportedVariables",
             "sql",
+            "published",
         ]

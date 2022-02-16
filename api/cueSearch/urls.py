@@ -42,4 +42,7 @@ urlpatterns = [
         name="getSearchSuggestionsView",
     ),
     path("runIndexing/", views.elasticSearchIndexingView, name="runIndexing"),
+    # Custom Card Templates
+    path("createTemplates/",views.createCardTemplates, name="createCardTemplates"),
+    path("getTemplates/",views.getTemplates, name="getTemplates"),
 ]
