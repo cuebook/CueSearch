@@ -39,6 +39,12 @@ export default function Sidebar(props) {
       path: "/search/global-dimension",
       icon: "fa-cube",
     },
+
+    {
+      label: "Card Templates",
+      path: "/search/templates",
+      icon: "fa-cube",
+    },
   ];
 
   let menuElements = [];
