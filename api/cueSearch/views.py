@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import HttpRequest
-from api.cueSearch.models import SearchCardTemplate
+from cueSearch.models import SearchCardTemplate
 from cueSearch.services import GlobalDimensionServices, SearchCardTemplateServices
 from cueSearch.elasticSearch import ESIndexingUtils
 from utils.apiResponse import ApiResponse
@@ -127,4 +127,3 @@ def getTemplates(request: HttpRequest) -> Response:
     """Method to get card template"""
     res = CardTemplates.getCardTemplates()
     return Response(res.json())
-

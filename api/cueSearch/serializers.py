@@ -88,4 +88,5 @@ class SearchCardTemplateSerializer(serializers.ModelSerializer):
             "bodyText",
             "sql",
             "published",
+            "renderType",
         ]

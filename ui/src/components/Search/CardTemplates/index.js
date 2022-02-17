@@ -9,7 +9,10 @@ import {
     Tooltip,
 } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import cardTemplateService from "services/main/cardTemplate";
+
 import style from "./style.module.scss";
+import AddCardTemplates from "./AddCardTemplates";
 
 const { Search } = Input;
 const ButtonGroup = Button.Group;
@@ -23,31 +26,75 @@ export default function CardTemplatesTable(props) {
     useEffect(() => {
         if (!templates) {
             console.log("something working")
+            getTemplates()
         }
     }, []);
+    const renderTypeMap = {
+        "table": "Table",
+        "line": "Line"
+    };
+    const getTemplates = async () => {
+        const response = await cardTemplateService.getCardTemplates()
+        setTemplates(response)
+        console.log("response", response)
+    }
 
-    console.log("something working")
+
+    const closeAddDrawer = () => {
+        setIsAddDrawerVisible(false);
+        setIsEditDrawerVisible(false);
+    };
+    const openAddCardTemplate = () => {
+        setIsAddDrawerVisible(true);
+    };
+    const onAddCardTemplateSuccess = () => {
+        // getData();
+        setIsAddDrawerVisible(false);
+    };
     const columns = [
         {
             title: "Publish",
             dataIndex: "published",
-            width: "10%",
-            // key: (arr) => "od",
-            // sorter: (a, b) => b.published - a.published,
+            width: "8%",
+            key: (arr) => arr.id,
+            sorter: (a, b) => b.published - a.published,
             render: (text, entity) => {
                 return (
                     <Switch
-                        checked={true}
+                        checked={entity.published}
                     // onChange={() => togglePublishState(entity.published, entity.id)}
                     />
                 );
             },
         },
         {
+
+            title: "Template Name",
+            dataIndex: "templateName",
+            // width: "10%",
+        },
+
+        {
+
+            title: "Render Type",
+            dataIndex: "renderType",
+            render: (text, record) => {
+                return (
+                    <div>
+                        {renderTypeMap[text]}
+                    </div>
+                )
+            }
+            // width: "10%",
+        },
+
+        {
             title: "",
             dataIndex: "action",
             key: "actions",
             className: "text-right",
+            width: "8%",
+
             render: (text, record) => (
                 <div className={style.actions}>
                     <Tooltip title={"Edit Templates"}>
@@ -56,7 +103,7 @@ export default function CardTemplatesTable(props) {
                     </Tooltip>
 
                     <Popconfirm
-                        title={"Are you sure to delete " + "name" + " ?"}
+                        title={"Are you sure to delete " + record.templateName + " ?"}
                         // onConfirm={(e) => deleteGlobalDimension(record)}
                         okText="Yes"
                         cancelText="No"
@@ -75,7 +122,7 @@ export default function CardTemplatesTable(props) {
             <div
                 className={`d-flex flex-column justify-content-center text-right mb-2`}
             >
-                <Button type="primary">
+                <Button onClick={openAddCardTemplate} type="primary">
                     Add Templates
                 </Button>
 
@@ -84,29 +131,28 @@ export default function CardTemplatesTable(props) {
                 rowKey={"id"}
                 scroll={{ x: "100%" }}
                 columns={columns}
-                dataSource={[]}
+                dataSource={templates}
                 size={"small"}
                 pagination={false}
             />
             <Drawer
                 title={"Add Templates"}
-                width={720}
-            // onClose={closeAddDrawer}
-            // visible={isAddDrawerVisible}
+                width={1000}
+                onClose={closeAddDrawer}
+                visible={isAddDrawerVisible}
             >
-                {/* {isAddDrawerVisible ? (
-                    <AddGlobalDimension
-                        onAddGlobalDimensionSuccess={onAddGlobalDimensionSuccess}
-                        linkedDimension={linkedDimensionArray}
+                {isAddDrawerVisible ? (
+                    <AddCardTemplates
+                        onAddCardTemplateSuccess={onAddCardTemplateSuccess}
                     />
-                ) : null} */}
+                ) : null}
             </Drawer>
 
             <Drawer
                 title={"Edit Templates"}
-                width={720}
-            // onClose={closeAddDrawer}
-            // visible={isEditDrawerVisible}
+                width={1000}
+                onClose={closeAddDrawer}
+                visible={isEditDrawerVisible}
             >
                 {/* {isEditDrawerVisible ? (
                     <EditGlobalDimension

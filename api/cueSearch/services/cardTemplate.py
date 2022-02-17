@@ -9,34 +9,34 @@ from dataset.services import Datasets
 
 
 class CardTemplates:
-    '''
+    """
     Service to create, read, update & delete operation on Search card template
-    '''
+    """
+
     @staticmethod
     def createSearchCardTemplate(payload: dict):
-        '''
+        """
         Create search card template
-        '''
+        """
         try:
-            res = ApiResponse('Error occur while creating search card template')
-            renderType = "table"
-            templateName = payload['templateName']
-            title = payload['title']
-            bodyText = payload['bodyText']
-            sql = payload['sql']
-            published = True
+            res = ApiResponse("Error occur while creating search card template")
+            renderType = payload["renderType"]
+            templateName = payload["templateName"]
+            title = payload["title"]
+            bodyText = payload["bodyText"]
+            sql = payload["sql"]
+            # published = True
 
-            data = SearchCardTemplate(
+            cardTemplateObj = SearchCardTemplate.objects.create(
                 templateName=templateName,
-                title = title,
-                bodyText = bodyText,
-                sql = sql,
-                renderType = renderType
-                )
-            data.save()
-            res.update(True,"Search card template created successfully",data)
+                title=title,
+                bodyText=bodyText,
+                sql=sql,
+                renderType=renderType,
+            )
+            res.update(True, "Search card template created successfully")
         except Exception as ex:
-            res.update('Exception occured while creating templates')
+            res.update(False, "Exception occured while creating templates")
         return res
 
     @staticmethod
@@ -59,24 +59,24 @@ class CardTemplates:
             res = ApiResponse()
 
             renderType = "table"
-            templateName = payload['templateName']
-            title = payload['title']
-            bodyText = payload['bodyText']
-            sql = payload['sql']
+            templateName = payload["templateName"]
+            title = payload["title"]
+            bodyText = payload["bodyText"]
+            sql = payload["sql"]
             published = True
 
             targetTemplate = SearchCardTemplate.objects.get(id=id)
             newId = targetTemplate.id
             targetTemplate.delete()
             updatedTemplate = SearchCardTemplate(
-                    id=newId,
-                    templateName=templateName,
-                    title = title,
-                    bodyText = bodyText,
-                    sql = sql,
-                    renderType = renderType,
-                    published = published
-                )
+                id=newId,
+                templateName=templateName,
+                title=title,
+                bodyText=bodyText,
+                sql=sql,
+                renderType=renderType,
+                published=published,
+            )
             updatedTemplate.save()
 
         except Exception as ex:
