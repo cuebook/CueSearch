@@ -40,7 +40,7 @@ class CardTemplates:
         return res
 
     @staticmethod
-    def getCardTemplates():
+    def getcardTemplate():
         """
         Service to fetch all card templates
         """
