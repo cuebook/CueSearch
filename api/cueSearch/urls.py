@@ -32,7 +32,7 @@ urlpatterns = [
         views.updateGlobalDimension,
         name="updateGlobalDimension",
     ),
-    # Card Templates
+    # Search Card Templates
     path("cardTemplates/", views.getCardTemplates, name="getCardTemplate"),
     path("getSearchCards/", views.getSearchCards, name="getSearchCards"),
     path("getSearchCardData/", views.getSearchCardData, name="getSearchCardData"),
@@ -42,7 +42,8 @@ urlpatterns = [
         name="getSearchSuggestionsView",
     ),
     path("runIndexing/", views.elasticSearchIndexingView, name="runIndexing"),
-    # Custom Card Templates
+    # Card Templates
     path("createTemplates/",views.createCardTemplates, name="createCardTemplates"),
     path("getTemplates/",views.getTemplates, name="getTemplates"),
+    path("card-template/publish/",views.pubCardTemplate, name="pubCardTemplates"),
 ]

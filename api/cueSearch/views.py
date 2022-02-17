@@ -3,7 +3,6 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import HttpRequest
-from api.cueSearch.models import SearchCardTemplate
 from cueSearch.services import GlobalDimensionServices, SearchCardTemplateServices
 from cueSearch.elasticSearch import ESIndexingUtils
 from utils.apiResponse import ApiResponse
@@ -118,13 +117,19 @@ def elasticSearchIndexingView(request: HttpRequest) -> Response:
 def createCardTemplates(request: HttpRequest) -> Response:
     """Method to create card template"""
     payload = request.data
-    res = CardTemplates.createSearchCardTemplate(payload)
+    res = CardTemplates.createCardTemplate(payload)
     return Response(res.json())
 
 
 @api_view(["GET"])
 def getTemplates(request: HttpRequest) -> Response:
     """Method to get card template"""
-    res = CardTemplates.getCardTemplates()
+    res = CardTemplates.getcardTemplate()
     return Response(res.json())
 
+@api_view(["POST"])
+def pubCardTemplate(request: HttpRequest) -> Response:
+    """Method to create card template"""
+    payload = request.data
+    res = CardTemplates.publishedCardTemplate(payload)
+    return Response(res.json())
