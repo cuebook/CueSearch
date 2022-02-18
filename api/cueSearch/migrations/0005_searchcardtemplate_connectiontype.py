@@ -7,14 +7,19 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dataset', '0001_initial'),
-        ('cueSearch', '0004_auto_20220217_0217'),
+        ("dataset", "0001_initial"),
+        ("cueSearch", "0004_auto_20220217_0217"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='searchcardtemplate',
-            name='connectionType',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='dataset.connectiontype'),
+            model_name="searchcardtemplate",
+            name="connectionType",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="dataset.connectiontype",
+            ),
         ),
     ]
