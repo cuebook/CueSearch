@@ -110,7 +110,7 @@ class SearchCardTemplateServices:
         return searchResults
 
     @staticmethod
-    def getSearchCards(searchPayload: List[SearchCardsPayload]):    # define its type in separate file
+    def getSearchCards(searchPayload: List[SearchCardsPayload]):
         """
         Service to fetch and create search cards on the fly
         :param searchPayload: Dict containing the search payload
@@ -130,7 +130,7 @@ class SearchCardTemplateServices:
         results = []
         for searchTemplate in searchTemplates:
             for result in groupedResults:
-                for datasetId, datasetSearchResult in result.items():       # define type of datasetSearchResult in a file 
+                for datasetId, datasetSearchResult in result.items(): 
                     dataset = Dataset.objects.get(id=int(datasetId))
                     paramDict = {}
                     paramDict["datasetId"] = int(datasetId)
