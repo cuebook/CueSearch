@@ -144,7 +144,7 @@ def getTemplatesById(request: HttpRequest, id) -> Response:
     return Response(res.json())
 
 
-@api_view(["GET"])
+@api_view(["DELETE"])
 def deleteCardTemplate(request: HttpRequest, id) -> Response:
     """Method to get card template"""
     res = CardTemplates.deleteCardTemplate(id=id)

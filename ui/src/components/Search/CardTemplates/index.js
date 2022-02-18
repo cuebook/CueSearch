@@ -37,8 +37,18 @@ export default function CardTemplatesTable(props) {
         const response = await cardTemplateService.getCardTemplates()
         setTemplates(response)
     }
-
-
+    const deleteCardTemplate = async (record) => {
+        let id = record["id"]
+        const response = await cardTemplateService.deleteCardTemplate(id)
+        getTemplates()
+    }
+    const togglePublishState = async (value, id) => {
+        let payload = {}
+        payload["id"] = id
+        payload["published"] = !value
+        const response = await cardTemplateService.publishCardTemplates(payload)
+        getTemplates()
+    }
     const closeAddDrawer = () => {
         setIsAddDrawerVisible(false);
         setIsEditDrawerVisible(false);
@@ -47,17 +57,16 @@ export default function CardTemplatesTable(props) {
         setIsAddDrawerVisible(true);
     };
     const onAddCardTemplateSuccess = () => {
-        // getData();
+        getTemplates()
         setIsAddDrawerVisible(false);
     };
 
     const onEditCardTemplateSuccess = () => {
-        // getData();
+        getTemplates()
         setIsEditDrawerVisible(false);
     };
 
     const onClickEdit = (val) => {
-        console.log("onclickedit", val)
         setIsEditDrawerVisible(true);
         setEditCardTemplate(val);
     };
@@ -74,7 +83,7 @@ export default function CardTemplatesTable(props) {
                 return (
                     <Switch
                         checked={entity.published}
-                    // onChange={() => togglePublishState(entity.published, entity.id)}
+                        onChange={() => togglePublishState(entity.published, entity.id)}
                     />
                 );
             },
@@ -114,8 +123,8 @@ export default function CardTemplatesTable(props) {
                     </Tooltip>
 
                     <Popconfirm
-                        title={"Are you sure to delete " + record.templateName + " ?"}
-                        // onConfirm={(e) => deleteGlobalDimension(record)}
+                        title={"Are you sure to delete template" + record.templateName + " ?"}
+                        onConfirm={(e) => deleteCardTemplate(record)}
                         okText="Yes"
                         cancelText="No"
                     >

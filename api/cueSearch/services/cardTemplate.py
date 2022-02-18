@@ -45,7 +45,7 @@ class CardTemplates:
         """
         res = ApiResponse("Error in fetching card templates")
         try:
-            templates = SearchCardTemplate.objects.all()
+            templates = SearchCardTemplate.objects.all().order_by("-id")
             data = SearchCardTemplateSerializer(templates, many=True).data
             res.update(True, "Fetched card templates", data)
 
@@ -82,6 +82,7 @@ class CardTemplates:
     @staticmethod
     def publishedCardTemplate(payload):
         try:
+            print("payload", payload)
             res = ApiResponse()
             published = payload.get("published", False)
             id = payload.get("id", None)

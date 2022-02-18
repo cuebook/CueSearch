@@ -28,6 +28,24 @@ class CardTemplateServices {
             return response
         }
     }
+    async publishCardTemplates(payload) {
+        const response = await apiService.post("cueSearch/card-templates/publish/", payload);
+        if (response.success) {
+            return response
+        }
+        else {
+            return response
+        }
+    }
+    async deleteCardTemplate(id) {
+        const response = await apiService.delete("cueSearch/card-templates/delete/" + id);
+        if (response.success) {
+            return response
+        }
+        else {
+            return response
+        }
+    }
 
 
 
