@@ -1,5 +1,4 @@
 import logging
-from typing import Dict
 from utils.apiResponse import ApiResponse
 from cueSearch.serializers import SearchCardTemplateSerializer
 from cueSearch.models import SearchCardTemplate
@@ -52,7 +51,7 @@ class CardTemplates:
             res.update(False, "Error while fetching card templates")
         return res
 
-    def updateCardTemplate(id, payload):
+    def updateCardTemplate(id: int, payload: dict):
         try:
             res = ApiResponse("Error while updating card template")
 
@@ -79,9 +78,8 @@ class CardTemplates:
         return res
 
     @staticmethod
-    def publishedCardTemplate(payload):
+    def publishedCardTemplate(payload: dict):
         try:
-            print("payload", payload)
             res = ApiResponse()
             published = payload.get("published", False)
             id = payload.get("id", None)
@@ -95,7 +93,7 @@ class CardTemplates:
             res.update(False, "Error occured while publishing Card Template")
         return res
 
-    def deleteCardTemplate(id):
+    def deleteCardTemplate(id: int):
         """Method to delete card template"""
         res = ApiResponse()
         try:
@@ -108,7 +106,7 @@ class CardTemplates:
         return res
 
     @staticmethod
-    def getCardTemplateById(id):
+    def getCardTemplateById(id: int):
         """Method to fetch card templates by Id"""
         res = ApiResponse("Error in fetching card templates")
         try:
