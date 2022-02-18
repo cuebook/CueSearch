@@ -3,7 +3,6 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import HttpRequest
-from cueSearch.models import SearchCardTemplate
 from cueSearch.services import GlobalDimensionServices, SearchCardTemplateServices
 from cueSearch.elasticSearch import ESIndexingUtils
 from utils.apiResponse import ApiResponse
@@ -140,14 +139,14 @@ def updateCardTemplate(request: HttpRequest, id) -> Response:
 @api_view(["GET"])
 def getTemplatesById(request: HttpRequest, id) -> Response:
     """Method to get card template"""
-    res = CardTemplates.getCardTemplateById(id=id)
+    res = CardTemplates.getCardTemplateById(id)
     return Response(res.json())
 
 
 @api_view(["DELETE"])
 def deleteCardTemplate(request: HttpRequest, id) -> Response:
     """Method to get card template"""
-    res = CardTemplates.deleteCardTemplate(id=id)
+    res = CardTemplates.deleteCardTemplate(id)
     return Response(res.json())
 
 

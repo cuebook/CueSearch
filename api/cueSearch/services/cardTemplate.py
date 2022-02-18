@@ -51,7 +51,7 @@ class CardTemplates:
             res.update(False, "Error while fetching card templates")
         return res
 
-    def updateCardTemplate(id: int, payload: dict):
+    def updateCardTemplate(templateId: int, payload: dict):
         """Method to update card template"""
         try:
             res = ApiResponse("Error while updating card template")
@@ -61,7 +61,7 @@ class CardTemplates:
             bodyText = payload.get("bodyText", "")
             sql = payload.get("sql", "")
             published = payload.get("published", False)
-            templateObj = SearchCardTemplate.objects.get(id=id)
+            templateObj = SearchCardTemplate.objects.get(id=templateId)
             templateObj.published = published
             templateObj.sql = sql
             templateObj.bodyText = bodyText
@@ -81,9 +81,9 @@ class CardTemplates:
         try:
             res = ApiResponse()
             published = payload.get("published", False)
-            id = payload.get("id", None)
-            if id:
-                templates = SearchCardTemplate.objects.get(id=id)
+            templateId = payload.get("id", None)
+            if templateId:
+                templates = SearchCardTemplate.objects.get(id=templateId)
                 templates.published = published
                 templates.save()
                 res.update(True, "Card Template published successfully")
@@ -92,11 +92,11 @@ class CardTemplates:
             res.update(False, "Error occured while publishing Card Template")
         return res
 
-    def deleteCardTemplate(id: int):
+    def deleteCardTemplate(templateId: int):
         """Method to delete card template"""
         res = ApiResponse()
         try:
-            instance = SearchCardTemplate.objects.get(id=id)
+            instance = SearchCardTemplate.objects.get(id=templateId)
             instance.delete()
             res.update(True, "Card template deleted successfully")
         except Exception as ex:
@@ -105,11 +105,11 @@ class CardTemplates:
         return res
 
     @staticmethod
-    def getCardTemplateById(id: int):
+    def getCardTemplateById(templateId: int):
         """Method to fetch card templates by Id"""
         res = ApiResponse("Error in fetching card templates")
         try:
-            templates = SearchCardTemplate.objects.filter(id=id)
+            templates = SearchCardTemplate.objects.filter(id=templateId)
             data = SearchCardTemplateSerializer(templates).data
             res.update(True, "Fetched card templates", data)
         except Exception as ex:
