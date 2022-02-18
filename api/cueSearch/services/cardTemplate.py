@@ -84,12 +84,38 @@ class CardTemplates:
         try:
             res = ApiResponse()
             published = payload.get("published", False)
-            id = payload["id"]
-            templates = SearchCardTemplate.objects.get(id=id)
-            templates.published = published
-            templates.save()
-            res.update(True, "Card Template published successfully")
+            id = payload.get("id", None)
+            if id:
+                templates = SearchCardTemplate.objects.get(id=id)
+                templates.published = published
+                templates.save()
+                res.update(True, "Card Template published successfully")
         except Exception as ex:
             logging.error("Error %s", str(ex))
             res.update(False, "Error occured while publishing Card Template")
+        return res
+
+    def deleteCardTemplate(id):
+        """Method to delete card template"""
+        res = ApiResponse()
+        try:
+            instance = SearchCardTemplate.objects.get(id=id)
+            instance.delete()
+            res.update(True, "Card template deleted successfully")
+        except Exception as ex:
+            logging.error("Error while deleting %s", str(ex))
+            res.update(False, "Error occured while deleting card template")
+        return res
+
+    @staticmethod
+    def getCardTemplateById(id):
+        """Method to fetch card templates by Id"""
+        res = ApiResponse("Error in fetching card templates")
+        try:
+            templates = SearchCardTemplate.objects.filter(id=id)
+            data = SearchCardTemplateSerializer(templates).data
+            res.update(True, "Fetched card templates", data)
+        except Exception as ex:
+            logging.error("Error while get card template by Id %s", str(ex))
+            res.update(False, "Error occured while getting template by id")
         return res
