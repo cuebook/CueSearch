@@ -137,7 +137,11 @@ export default function Admin() {
                   exact
                   component={GlobalDimensionTable}
                 />
-                <Route path="/search/templates" exact component={CardTemplatesTable} />
+                <Route
+                  path="/search/templates"
+                  exact
+                  component={CardTemplatesTable}
+                />
                 <Route path="/search/" exact component={SearchResultPage} />
                 <Route path="/search/card" exact component={SearchCardPage} />
                 <Route
