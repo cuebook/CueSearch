@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cueSearch', '0003_searchcardtemplate_rendertype'),
+        ("cueSearch", "0003_searchcardtemplate_rendertype"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='searchcardtemplate',
-            name='supportedVariables',
+            model_name="searchcardtemplate",
+            name="supportedVariables",
         ),
         migrations.AddField(
-            model_name='searchcardtemplate',
-            name='published',
+            model_name="searchcardtemplate",
+            name="published",
             field=models.BooleanField(default=False),
         ),
     ]
