@@ -44,21 +44,19 @@ urlpatterns = [
     path("runIndexing/", views.elasticSearchIndexingView, name="runIndexing"),
     # Custom Card Templates
     # path("createTemplates/", views.createCardTemplates, name="createCardTemplates"),
-    path("card-templates/", views.getTemplates, name="getTemplates"),
+    path("templates/", views.getTemplates, name="getTemplates"),
+    path("templates/create/", views.createCardTemplates, name="createCardTemplates"),
     path(
-        "card-templates/create/", views.createCardTemplates, name="createCardTemplates"
-    ),
-    path(
-        "card-templates/update/<int:id>",
+        "templates/update/<int:id>",
         views.updateCardTemplate,
         name="updateCardTemplate",
     ),
     # Card Templates
-    path("card-templates/<int:id>", views.getTemplatesById, name="getTemplatesById"),
+    path("templates/<int:id>", views.getTemplatesById, name="getTemplatesById"),
     path(
-        "card-templates/delete/<int:id>",
+        "templates/delete/<int:id>",
         views.deleteCardTemplate,
         name="cardTemplateDelete",
     ),
-    path("card-templates/publish/", views.pubCardTemplate, name="pubCardTemplates"),
+    path("templates/publish/", views.pubCardTemplate, name="pubCardTemplates"),
 ]

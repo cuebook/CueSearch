@@ -2,7 +2,7 @@ import apiService from "./api";
 
 class CardTemplateServices {
     async getCardTemplates() {
-        const response = await apiService.get("cueSearch/card-templates/");
+        const response = await apiService.get("cueSearch/templates/");
         if (response.success) {
             return response.data
         }
@@ -10,8 +10,8 @@ class CardTemplateServices {
             return response
         }
     }
-    async addCardTemplates(payload) {
-        const response = await apiService.post("cueSearch/card-templates/create/", payload);
+    async addCardTemplate(payload) {
+        const response = await apiService.post("cueSearch/templates/create/", payload);
         if (response.success) {
             return response
         }
@@ -20,7 +20,7 @@ class CardTemplateServices {
         }
     }
     async updateCardTemplate(id, payload) {
-        const response = await apiService.post("cueSearch/card-templates/update/" + id, payload);
+        const response = await apiService.post("cueSearch/templates/update/" + id, payload);
         if (response.success) {
             return response
         }
@@ -28,8 +28,8 @@ class CardTemplateServices {
             return response
         }
     }
-    async publishCardTemplates(payload) {
-        const response = await apiService.post("cueSearch/card-templates/publish/", payload);
+    async publishCardTemplate(payload) {
+        const response = await apiService.post("cueSearch/templates/publish/", payload);
         if (response.success) {
             return response
         }
@@ -38,7 +38,7 @@ class CardTemplateServices {
         }
     }
     async deleteCardTemplate(id) {
-        const response = await apiService.delete("cueSearch/card-templates/delete/" + id);
+        const response = await apiService.delete("cueSearch/templates/delete/" + id);
         if (response.success) {
             return response
         }

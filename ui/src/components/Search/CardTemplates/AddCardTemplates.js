@@ -34,7 +34,7 @@ export default function AddCardTemplates(props) {
         payload["renderType"] = values["renderType"]
         console.log("values form submit", values)
 
-        const response = await cardTemplateService.addCardTemplates(payload);
+        const response = await cardTemplateService.addCardTemplate(payload);
         if (response.success) {
             props.onAddCardTemplateSuccess();
         } else {

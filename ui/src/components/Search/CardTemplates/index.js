@@ -46,7 +46,7 @@ export default function CardTemplatesTable(props) {
         let payload = {}
         payload["id"] = id
         payload["published"] = !value
-        const response = await cardTemplateService.publishCardTemplates(payload)
+        const response = await cardTemplateService.publishCardTemplate(payload)
         getTemplates()
     }
     const closeAddDrawer = () => {

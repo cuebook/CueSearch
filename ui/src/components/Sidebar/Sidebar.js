@@ -42,7 +42,7 @@ export default function Sidebar(props) {
 
     {
       label: "Card Templates",
-      path: "/search/card-templates",
+      path: "/search/templates",
       icon: "fa-cube",
     },
   ];
