@@ -3,7 +3,7 @@
     "model": "cueSearch.searchCardTemplate",
     "pk": 1,
     "fields": {
-      "published": "false",
+      "published": false,
       "templateName": "Table of all data",
       "title": "Dataset = <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{dataset}}</span> where <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span>",
       "bodyText": "This table displays raw data for dataset <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{dataset}}</span> with filter <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span> ",
@@ -15,7 +15,7 @@
     "model": "cueSearch.searchCardTemplate",
     "pk": 2,
     "fields": {
-      "published": "false",
+      "published": false,
       "templateName": "Split on Filter Dimension",
       "title": "{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults 'dimension' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} Comparison of <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{metricName}}</span> among <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{filterDim}}</span> values in <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{dataset}}</span> +-; {% endfor %} {% endif %} {% endfor %}",
       "bodyText": "{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults 'dimension' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} This chart displays filtered values on dimension <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{filterDim}}</span> along with other filters applied i.e. <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{filter|safe}}</span> for metric <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{metricName}}</span> on dataset <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{dataset}}</span> +-; {% endfor %} {% endif %} {% endfor %}",
@@ -27,7 +27,7 @@
     "model": "cueSearch.searchCardTemplate",
     "pk": 3,
     "fields": {
-      "published": "false",
+      "published": false,
       "templateName": "Metric Chart",
       "title": " {% for metric in metrics %}  <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\"> {{ metric }}</span> from <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{dataset}}</span> where <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span> +-; {% endfor %}",
       "bodyText": " {% for metric in metrics %} For <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span>  +-; {% endfor %}",
