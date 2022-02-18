@@ -118,7 +118,7 @@ def elasticSearchIndexingView(request: HttpRequest) -> Response:
 def createCardTemplates(request: HttpRequest) -> Response:
     """Method to create card template"""
     payload = request.data
-    res = CardTemplates.createSearchCardTemplate(payload)
+    res = CardTemplates.createCardTemplate(payload)
     return Response(res.json())
 
 
@@ -126,4 +126,12 @@ def createCardTemplates(request: HttpRequest) -> Response:
 def getTemplates(request: HttpRequest) -> Response:
     """Method to get card template"""
     res = CardTemplates.getCardTemplates()
+    return Response(res.json())
+
+
+@api_view(["POST"])
+def updateCardTemplate(request: HttpRequest, id) -> Response:
+    """Method to create card template"""
+    payload = request.data
+    res = CardTemplates.updateCardTemplate(id, payload)
     return Response(res.json())

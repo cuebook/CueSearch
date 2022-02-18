@@ -48,4 +48,9 @@ urlpatterns = [
     path(
         "card-templates/create/", views.createCardTemplates, name="createCardTemplates"
     ),
+    path(
+        "card-templates/update/<int:id>",
+        views.updateCardTemplate,
+        name="updateCardTemplate",
+    ),
 ]

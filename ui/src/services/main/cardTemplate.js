@@ -7,7 +7,7 @@ class CardTemplateServices {
             return response.data
         }
         else {
-            return []
+            return response
         }
     }
     async addCardTemplates(payload) {
@@ -16,7 +16,16 @@ class CardTemplateServices {
             return response
         }
         else {
-            return
+            return response
+        }
+    }
+    async updateCardTemplate(id, payload) {
+        const response = await apiService.post("cueSearch/card-templates/update/" + id, payload);
+        if (response.success) {
+            return response
+        }
+        else {
+            return response
         }
     }
 

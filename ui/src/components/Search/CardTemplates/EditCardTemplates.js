@@ -1,58 +1,81 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Form, Input, Switch, message, Select, textArea } from "antd";
-import { Resizable } from "re-resizable";
-
-import AceEditor from "react-ace";
-
+import { Button, Form, Input, Switch, message, Select } from "antd";
 import style from "./style.module.scss";
 
 import cardTemplateService from "services/main/cardTemplate";
-const { TextArea } = Input;
 
 const { Option } = Select;
+const { TextArea } = Input
 
-export default function AddCardTemplates(props) {
+export default function EditCardTemplate(props) {
     const [form] = Form.useForm();
     const [renderType, setRenderType] = useState("table");
 
-    useEffect(() => {
-        console.log("add drawer open")
-        if (!renderType) {
-            setRenderType(["table", "line"])
-        }
-    }, []);
+    // const [linkedDimension, setLinkedDimension] = useState([]);
+    // const [dimensions, setDimensions] = useState(null);
+    const [selectedTemplate, setSelectedTemplate] = useState(null);
 
-    const onSelectChange = (value) => {
-        console.log("value", value)
-        setRenderType(value);
+    useEffect(() => {
+        // if (props && props.linkedDimension) {
+        //     setLinkedDimension(props.linkedDimension);
+        //     getGlobalDimensionById(props.editDimension.id);
+        // }
+        // if (!dimensions) {
+        //     getDimension();
+        // }
+        let template = props && props.editCardTemplate
+        setSelectedTemplate(template)
+        console.log("editcardtemplatePROPS", props)
+    }, []);
+    const renderTypeMap = {
+        "table": "Table",
+        "line": "Line"
+    };
+    console.log("selectedTemplate", selectedTemplate)
+    let addCardTemplateFormElement = []
+
+    const getDimension = async () => {
+        // const response = await globalDimensionService.getDimensions();
+        // setDimensions(response);
     };
 
-    const addCardTemplateFormSubmit = async (values) => {
+    const onSelectChange = (value) => { setRenderType(value) };
+
+
+    let initialTemplateName = selectedTemplate && selectedTemplate["templateName"]
+    let initialSQL = selectedTemplate && selectedTemplate["sql"]
+    let initialTitle = selectedTemplate && selectedTemplate["title"]
+    let initialBodyText = selectedTemplate && selectedTemplate["bodyText"]
+    let initialRenderType = selectedTemplate && selectedTemplate["renderType"]
+    let initialPublished = selectedTemplate && selectedTemplate["published"]
+
+    const editCardTemplateFormSubmit = async (values) => {
         let payload = {};
+        payload["id"] = props && props.editCardTemplate["id"]
         payload["templateName"] = values["templateName"]
-        payload["title"] = values["title"]
         payload["sql"] = values["sql"]
+        payload["title"] = values["title"]
         payload["bodyText"] = values["bodyText"]
         payload["renderType"] = values["renderType"]
-        console.log("values form submit", values)
-
-        const response = await cardTemplateService.addCardTemplates(payload);
+        payload["published"] = values["published"]
+        const response = await cardTemplateService.updateCardTemplate(
+            payload["id"],
+            payload
+        );
         if (response.success) {
-            props.onAddCardTemplateSuccess();
-        } else {
-            message.error(response.message);
+            props.onEditCardTemplateSuccess();
         }
     };
 
-    let addGlobalDimensionParamElements = [];
+    let addCardTemplateParamElements = [];
 
-    let addCardTemplateFormElement = (
+    addCardTemplateFormElement = (
         <div>
             <Form
                 layout="vertical"
                 className="mb-2"
                 form={form}
-                onFinish={addCardTemplateFormSubmit}
+                onFinish={editCardTemplateFormSubmit}
                 name="addSchedule"
                 scrollToFirstError
                 hideRequiredMark
@@ -62,6 +85,7 @@ export default function AddCardTemplates(props) {
                         <Form.Item
                             hasFeedback
                             name="templateName"
+                            initialValue={initialTemplateName}
                             rules={[
                                 {
                                     required: true,
@@ -78,6 +102,7 @@ export default function AddCardTemplates(props) {
                         <Form.Item
                             hasFeedback
                             name="title"
+                            initialValue={initialTitle}
                             rules={[
                                 {
                                     required: true,
@@ -96,6 +121,7 @@ export default function AddCardTemplates(props) {
                         <Form.Item
                             hasFeedback
                             name="bodyText"
+                            initialValue={initialBodyText}
                             rules={[
                                 {
                                     required: true,
@@ -114,6 +140,7 @@ export default function AddCardTemplates(props) {
                         <Form.Item
                             hasFeedback
                             name="sql"
+                            initialValue={initialSQL}
                             rules={[
                                 {
                                     required: true,
@@ -132,9 +159,10 @@ export default function AddCardTemplates(props) {
                         </Form.Item>
                         <Form.Item
                             name="renderType"
+                            initialValue={initialRenderType}
                             rules={[
                                 {
-                                    required: false,
+                                    required: true,
                                     message: "Please select renderType !",
                                 },
                             ]}
@@ -147,13 +175,11 @@ export default function AddCardTemplates(props) {
                                 placeholder="Select Render Type"
                                 onChange={onSelectChange}
                             >
-
                                 <Option value="table">Table</Option>
                                 <Option value="line"> Line</Option>
                             </Select>
-                        </Form.Item>
-                    </div>
-                    {addGlobalDimensionParamElements}
+                        </Form.Item> </div>
+                    {addCardTemplateParamElements}
                 </div>
                 <div className={style.submitButton}>
                     <Button icon="" type="primary" className="mr-2" htmlType="submit">
@@ -164,10 +190,11 @@ export default function AddCardTemplates(props) {
         </div>
     );
 
+
     return (
         <div>
             <div className="row">
-                <div>{addCardTemplateFormElement}</div>
+                <div>{selectedTemplate ? addCardTemplateFormElement : null}</div>
             </div>
         </div>
     );

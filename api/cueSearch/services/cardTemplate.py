@@ -1,3 +1,4 @@
+import logging
 from typing import Dict
 from utils.apiResponse import ApiResponse
 from django.template import Template, Context
@@ -14,7 +15,7 @@ class CardTemplates:
     """
 
     @staticmethod
-    def createSearchCardTemplate(payload: dict):
+    def createCardTemplate(payload: dict):
         """
         Create search card template
         """
@@ -40,7 +41,7 @@ class CardTemplates:
         return res
 
     @staticmethod
-    def getcardTemplate():
+    def getCardTemplates():
         """
         Service to fetch all card templates
         """
@@ -54,33 +55,31 @@ class CardTemplates:
             res.update(False, [])
         return res
 
-    def updateSearchCardTemplate(id, payload):
+    def updateCardTemplate(id, payload):
         try:
-            res = ApiResponse()
+            res = ApiResponse("Error while updating card template")
 
-            renderType = "table"
-            templateName = payload["templateName"]
-            title = payload["title"]
-            bodyText = payload["bodyText"]
-            sql = payload["sql"]
-            published = True
+            renderType = payload.get("renderType", "table")
 
-            targetTemplate = SearchCardTemplate.objects.get(id=id)
-            newId = targetTemplate.id
-            targetTemplate.delete()
-            updatedTemplate = SearchCardTemplate(
-                id=newId,
-                templateName=templateName,
-                title=title,
-                bodyText=bodyText,
-                sql=sql,
-                renderType=renderType,
-                published=published,
-            )
-            updatedTemplate.save()
+            templateName = payload.get("templateName", "")
+            title = payload.get("title", "")
+            bodyText = payload.get("bodyText", "")
+            sql = payload.get("sql", "")
+            published = payload.get("published", False)
 
+            templateObj = SearchCardTemplate.objects.get(id=id)
+            templateObj.published = published
+            templateObj.sql = sql
+            templateObj.bodyText = bodyText
+            templateObj.title = title
+            templateObj.templateName = templateName
+            templateObj.renderType = renderType
+            templateObj.save()
+            res.update(True, "Successfully updated template")
         except Exception as ex:
-            pass
+            logging.error("Error %s", str(ex))
+            res.update(False, "Error while updating template")
+        return res
 
     def deleteSearchCardTemplate():
         pass

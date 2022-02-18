@@ -13,19 +13,19 @@ import cardTemplateService from "services/main/cardTemplate";
 
 import style from "./style.module.scss";
 import AddCardTemplates from "./AddCardTemplates";
+import EditCardTemplate from "./EditCardTemplates";
 
 const { Search } = Input;
 const ButtonGroup = Button.Group;
 
 export default function CardTemplatesTable(props) {
     const [templates, setTemplates] = useState("");
-
+    const [editCardTemplate, setEditCardTemplate] = useState(false)
     const [isAddDrawerVisible, setIsAddDrawerVisible] = useState(false);
     const [isEditDrawerVisible, setIsEditDrawerVisible] = useState(false);
 
     useEffect(() => {
         if (!templates) {
-            console.log("something working")
             getTemplates()
         }
     }, []);
@@ -36,7 +36,6 @@ export default function CardTemplatesTable(props) {
     const getTemplates = async () => {
         const response = await cardTemplateService.getCardTemplates()
         setTemplates(response)
-        console.log("response", response)
     }
 
 
@@ -51,6 +50,19 @@ export default function CardTemplatesTable(props) {
         // getData();
         setIsAddDrawerVisible(false);
     };
+
+    const onEditCardTemplateSuccess = () => {
+        // getData();
+        setIsEditDrawerVisible(false);
+    };
+
+    const onClickEdit = (val) => {
+        console.log("onclickedit", val)
+        setIsEditDrawerVisible(true);
+        setEditCardTemplate(val);
+    };
+
+
     const columns = [
         {
             title: "Publish",
@@ -98,8 +110,7 @@ export default function CardTemplatesTable(props) {
             render: (text, record) => (
                 <div className={style.actions}>
                     <Tooltip title={"Edit Templates"}>
-                        {/* onClick={(e) => onClickEdit(record)} */}
-                        <EditOutlined />
+                        <EditOutlined onClick={(e) => onClickEdit(record)} />
                     </Tooltip>
 
                     <Popconfirm
@@ -137,7 +148,7 @@ export default function CardTemplatesTable(props) {
             />
             <Drawer
                 title={"Add Templates"}
-                width={1000}
+                width={720}
                 onClose={closeAddDrawer}
                 visible={isAddDrawerVisible}
             >
@@ -150,17 +161,16 @@ export default function CardTemplatesTable(props) {
 
             <Drawer
                 title={"Edit Templates"}
-                width={1000}
+                width={720}
                 onClose={closeAddDrawer}
                 visible={isEditDrawerVisible}
             >
-                {/* {isEditDrawerVisible ? (
-                    <EditGlobalDimension
-                        editDimension={editDimension}
-                        linkedDimension={linkedDimensionArray}
-                        onEditGlobalDimensionSuccess={onEditGlobalDimensionSuccess}
+                {isEditDrawerVisible ? (
+                    <EditCardTemplate
+                        editCardTemplate={editCardTemplate}
+                        onEditCardTemplateSuccess={onEditCardTemplateSuccess}
                     />
-                ) : null} */}
+                ) : null}
             </Drawer>
 
 
