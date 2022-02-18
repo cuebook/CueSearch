@@ -32,7 +32,7 @@ class SearchCardTemplate(models.Model):
     bodyText = models.TextField(null=True, blank=True)
     sql = models.TextField(null=True, blank=True)
     renderType = models.CharField(default=RENDER_TYPE_TABLE, max_length=200)
-    supportedVariables = models.TextField(null=True, blank=True)
+    published = models.BooleanField(default=False)
 
     def __repr__(self):
         return self.templateName

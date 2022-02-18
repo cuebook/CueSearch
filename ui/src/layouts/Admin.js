@@ -28,6 +28,9 @@ import GlobalDimensionTable from "views/admin/GlobalDimension";
 import SearchResultPage from "views/admin/SearchResults";
 import SearchCardPage from "views/admin/SearchCard";
 
+// CardTemplates
+import CardTemplatesTable from "views/admin/CardTemplates";
+
 // Telemetry
 import installationServices from "services/main/installation";
 import { telemetry } from "telemetry/index.js";
@@ -134,6 +137,7 @@ export default function Admin() {
                   exact
                   component={GlobalDimensionTable}
                 />
+                <Route path="/search/templates" exact component={CardTemplatesTable} />
                 <Route path="/search/" exact component={SearchResultPage} />
                 <Route path="/search/card" exact component={SearchCardPage} />
                 <Route

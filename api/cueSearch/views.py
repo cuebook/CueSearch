@@ -6,6 +6,7 @@ from django.http import HttpRequest
 from cueSearch.services import GlobalDimensionServices, SearchCardTemplateServices
 from cueSearch.elasticSearch import ESIndexingUtils
 from utils.apiResponse import ApiResponse
+from cueSearch.services.cardTemplate import CardTemplates
 
 
 # Create your views here.
@@ -109,4 +110,49 @@ def elasticSearchIndexingView(request: HttpRequest) -> Response:
     ESIndexingUtils.indexGlobalDimensionsData()
     logging.info("************** Indexing Completed !****************")
     res.update(True, "Indexing completed !", [])
+    return Response(res.json())
+
+
+@api_view(["POST"])
+def createCardTemplates(request: HttpRequest) -> Response:
+    """Method to create card template"""
+    payload = request.data
+    res = CardTemplates.createCardTemplate(payload)
+    return Response(res.json())
+
+
+@api_view(["GET"])
+def getTemplates(request: HttpRequest) -> Response:
+    """Method to get card template"""
+    res = CardTemplates.getCardTemplates()
+    return Response(res.json())
+
+
+@api_view(["POST"])
+def updateCardTemplate(request: HttpRequest, id) -> Response:
+    """Method to create card template"""
+    payload = request.data
+    res = CardTemplates.updateCardTemplate(id, payload)
+    return Response(res.json())
+
+
+@api_view(["GET"])
+def getTemplatesById(request: HttpRequest, id) -> Response:
+    """Method to get card template"""
+    res = CardTemplates.getCardTemplateById(id)
+    return Response(res.json())
+
+
+@api_view(["DELETE"])
+def deleteCardTemplate(request: HttpRequest, id) -> Response:
+    """Method to get card template"""
+    res = CardTemplates.deleteCardTemplate(id)
+    return Response(res.json())
+
+
+@api_view(["POST"])
+def pubCardTemplate(request: HttpRequest) -> Response:
+    """Method to create card template"""
+    payload = request.data
+    res = CardTemplates.publishedCardTemplate(payload)
     return Response(res.json())
