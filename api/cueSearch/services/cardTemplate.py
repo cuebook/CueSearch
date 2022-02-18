@@ -52,17 +52,15 @@ class CardTemplates:
         return res
 
     def updateCardTemplate(id: int, payload: dict):
+        """Method to update card template"""
         try:
             res = ApiResponse("Error while updating card template")
-
             renderType = payload.get("renderType", "table")
-
             templateName = payload.get("templateName", "")
             title = payload.get("title", "")
             bodyText = payload.get("bodyText", "")
             sql = payload.get("sql", "")
             published = payload.get("published", False)
-
             templateObj = SearchCardTemplate.objects.get(id=id)
             templateObj.published = published
             templateObj.sql = sql
@@ -79,6 +77,7 @@ class CardTemplates:
 
     @staticmethod
     def publishedCardTemplate(payload: dict):
+        """Method to publish/unpublish card template"""
         try:
             res = ApiResponse()
             published = payload.get("published", False)
