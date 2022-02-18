@@ -1,8 +1,8 @@
-from dbConnections.utils import limitSql
 import json
 import logging
 import pandas as pd
 from psycopg2 import connect
+from .constants import LIMIT
 
 logger = logging.getLogger(__name__)
 
@@ -43,9 +43,12 @@ class Postgres:
             )
             curs = conn.cursor()
             if limit:
-                sql = limitSql(sql)
-            chunksize = None
-            dataframe = pd.read_sql(sql, conn, chunksize=chunksize)
+                chunksize = LIMIT
+                dataframes = pd.read_sql(sql, conn, chunksize=chunksize)
+                for dataframe in dataframes:
+                    break
+            else:
+                dataframe = pd.read_sql(sql, conn)
 
         except Exception as ex:
             logger.error("Can't connect to db with this credentials %s", str(ex))
