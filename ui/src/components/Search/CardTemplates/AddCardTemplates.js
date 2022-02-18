@@ -15,13 +15,8 @@ export default function AddCardTemplates(props) {
     const [form] = Form.useForm();
     const [renderType, setRenderType] = useState("table");
 
-    useEffect(() => {
-        console.log("add drawer open")
-
-    }, []);
 
     const onSelectChange = (value) => {
-        console.log("value", value)
         setRenderType(value);
     };
 
@@ -32,7 +27,6 @@ export default function AddCardTemplates(props) {
         payload["sql"] = values["sql"]
         payload["bodyText"] = values["bodyText"]
         payload["renderType"] = values["renderType"]
-        console.log("values form submit", values)
 
         const response = await cardTemplateService.addCardTemplate(payload);
         if (response.success) {

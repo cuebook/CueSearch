@@ -1,10 +1,8 @@
 import logging
 from typing import Dict
 from utils.apiResponse import ApiResponse
-from django.template import Template, Context
 from cueSearch.serializers import SearchCardTemplateSerializer
 from cueSearch.models import SearchCardTemplate
-from dataset.services import Datasets
 
 
 class CardTemplates:
@@ -24,7 +22,6 @@ class CardTemplates:
             title = payload["title"]
             bodyText = payload["bodyText"]
             sql = payload["sql"]
-            # published = True
 
             cardTemplateObj = SearchCardTemplate.objects.create(
                 templateName=templateName,
@@ -35,6 +32,7 @@ class CardTemplates:
             )
             res.update(True, "Search card template created successfully")
         except Exception as ex:
+            logging.error("Error %s", str(ex))
             res.update(False, "Exception occured while creating templates")
         return res
 
@@ -50,7 +48,8 @@ class CardTemplates:
             res.update(True, "Fetched card templates", data)
 
         except Exception as ex:
-            res.update(False, [])
+            logging.error("Error %s", str(ex))
+            res.update(False, "Error while fetching card templates")
         return res
 
     def updateCardTemplate(id, payload):

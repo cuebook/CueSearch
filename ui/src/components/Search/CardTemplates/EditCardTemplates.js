@@ -19,7 +19,6 @@ export default function EditCardTemplate(props) {
         setSelectedTemplate(template)
     }, []);
 
-    console.log("selectedTemplate", selectedTemplate)
     let addCardTemplateFormElement = []
 
 
