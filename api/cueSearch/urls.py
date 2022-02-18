@@ -32,7 +32,7 @@ urlpatterns = [
         views.updateGlobalDimension,
         name="updateGlobalDimension",
     ),
-    # Card Templates
+    # Search Card Templates
     path("cardTemplates/", views.getCardTemplates, name="getCardTemplate"),
     path("getSearchCards/", views.getSearchCards, name="getSearchCards"),
     path("getSearchCardData/", views.getSearchCardData, name="getSearchCardData"),
@@ -53,4 +53,12 @@ urlpatterns = [
         views.updateCardTemplate,
         name="updateCardTemplate",
     ),
+    # Card Templates
+    path("card-templates/<int:id>", views.getTemplatesById, name="getTemplatesById"),
+    path(
+        "card-templates/delete/<int:id>",
+        views.deleteCardTemplate,
+        name="cardTemplateDelete",
+    ),
+    path("card-templates/publish/", views.pubCardTemplate, name="pubCardTemplates"),
 ]

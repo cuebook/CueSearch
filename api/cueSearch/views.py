@@ -135,3 +135,25 @@ def updateCardTemplate(request: HttpRequest, id) -> Response:
     payload = request.data
     res = CardTemplates.updateCardTemplate(id, payload)
     return Response(res.json())
+
+
+@api_view(["GET"])
+def getTemplatesById(request: HttpRequest, id) -> Response:
+    """Method to get card template"""
+    res = CardTemplates.getCardTemplateById(id=id)
+    return Response(res.json())
+
+
+@api_view(["GET"])
+def deleteCardTemplate(request: HttpRequest, id) -> Response:
+    """Method to get card template"""
+    res = CardTemplates.deleteCardTemplate(id=id)
+    return Response(res.json())
+
+
+@api_view(["POST"])
+def pubCardTemplate(request: HttpRequest) -> Response:
+    """Method to create card template"""
+    payload = request.data
+    res = CardTemplates.publishedCardTemplate(payload)
+    return Response(res.json())

@@ -17,9 +17,7 @@ export default function AddCardTemplates(props) {
 
     useEffect(() => {
         console.log("add drawer open")
-        if (!renderType) {
-            setRenderType(["table", "line"])
-        }
+
     }, []);
 
     const onSelectChange = (value) => {
@@ -132,6 +130,7 @@ export default function AddCardTemplates(props) {
                         </Form.Item>
                         <Form.Item
                             name="renderType"
+                            initialValue={renderType}
                             rules={[
                                 {
                                     required: false,

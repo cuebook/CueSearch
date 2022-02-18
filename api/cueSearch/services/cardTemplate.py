@@ -4,8 +4,6 @@ from utils.apiResponse import ApiResponse
 from django.template import Template, Context
 from cueSearch.serializers import SearchCardTemplateSerializer
 from cueSearch.models import SearchCardTemplate
-from dataset.models import Dataset
-from cueSearch.elasticSearch import ESQueryingUtils, ESIndexingUtils
 from dataset.services import Datasets
 
 
@@ -81,5 +79,17 @@ class CardTemplates:
             res.update(False, "Error while updating template")
         return res
 
-    def deleteSearchCardTemplate():
-        pass
+    @staticmethod
+    def publishedCardTemplate(payload):
+        try:
+            res = ApiResponse()
+            published = payload.get("published", False)
+            id = payload["id"]
+            templates = SearchCardTemplate.objects.get(id=id)
+            templates.published = published
+            templates.save()
+            res.update(True, "Card Template published successfully")
+        except Exception as ex:
+            logging.error("Error %s", str(ex))
+            res.update(False, "Error occured while publishing Card Template")
+        return res

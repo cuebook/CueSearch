@@ -11,33 +11,17 @@ export default function EditCardTemplate(props) {
     const [form] = Form.useForm();
     const [renderType, setRenderType] = useState("table");
 
-    // const [linkedDimension, setLinkedDimension] = useState([]);
-    // const [dimensions, setDimensions] = useState(null);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
 
     useEffect(() => {
-        // if (props && props.linkedDimension) {
-        //     setLinkedDimension(props.linkedDimension);
-        //     getGlobalDimensionById(props.editDimension.id);
-        // }
-        // if (!dimensions) {
-        //     getDimension();
-        // }
+
         let template = props && props.editCardTemplate
         setSelectedTemplate(template)
-        console.log("editcardtemplatePROPS", props)
     }, []);
-    const renderTypeMap = {
-        "table": "Table",
-        "line": "Line"
-    };
+
     console.log("selectedTemplate", selectedTemplate)
     let addCardTemplateFormElement = []
 
-    const getDimension = async () => {
-        // const response = await globalDimensionService.getDimensions();
-        // setDimensions(response);
-    };
 
     const onSelectChange = (value) => { setRenderType(value) };
 
