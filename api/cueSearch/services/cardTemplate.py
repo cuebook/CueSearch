@@ -116,7 +116,7 @@ class CardTemplates:
         """Method to fetch card templates by Id"""
         res = ApiResponse("Error in fetching card templates")
         try:
-            templates = SearchCardTemplate.objects.filter(id=templateId)
+            templates = SearchCardTemplate.objects.get(id=templateId)
             data = SearchCardTemplateSerializer(templates).data
             res.update(True, "Fetched card templates", data)
         except Exception as ex:

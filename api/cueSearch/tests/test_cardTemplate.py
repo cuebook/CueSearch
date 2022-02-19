@@ -1,12 +1,14 @@
-from urllib import response
 import pytest
-from unittest import mock
 from django.urls import reverse
 from mixer.backend.django import mixer
 
 
 @pytest.mark.django_db(transaction=True)
 def testCardTemplates(client, mocker):
+    # connection Type
+    connectionType = mixer.blend(
+        "dataset.connectionType", name="TEST_DRUID", id=1, label="test_druid"
+    )
     path = reverse("createCardTemplates")
     payload = {
         "templateName": "Sample",
@@ -14,6 +16,7 @@ def testCardTemplates(client, mocker):
         "sql": "Sample",
         "bodyText": "Sample",
         "renderType": "table",
+        "connectionTypeId": 1,
     }
     response = client.post(path, payload, content_type="application/json")
     assert response.data["success"]
@@ -48,6 +51,7 @@ def testCardTemplates(client, mocker):
         "sql": "Sample",
         "bodyText": "Sample",
         "renderType": "table",
+        "connectionTypeId": 1,
     }
     path = reverse("updateCardTemplate", kwargs={"id": id})
     response = client.post(path, payload, content_type="application/json")
