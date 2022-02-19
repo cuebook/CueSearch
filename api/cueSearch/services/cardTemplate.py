@@ -2,6 +2,7 @@ import logging
 from utils.apiResponse import ApiResponse
 from cueSearch.serializers import SearchCardTemplateSerializer
 from cueSearch.models import SearchCardTemplate
+from dataset.models import ConnectionType
 
 
 class CardTemplates:
@@ -16,11 +17,13 @@ class CardTemplates:
         """
         try:
             res = ApiResponse("Error occur while creating search card template")
-            renderType = payload["renderType"]
-            templateName = payload["templateName"]
-            title = payload["title"]
-            bodyText = payload["bodyText"]
-            sql = payload["sql"]
+            connectionTypeId = int(payload.get("connectionTypeId", 1))
+            connectionType = ConnectionType.objects.get(id=connectionTypeId)
+            renderType = payload.get("renderType", "table")
+            templateName = payload.get("templateName", "")
+            title = payload.get("title", "")
+            bodyText = payload.get("bodyText", "")
+            sql = payload.get("sql", "")
 
             cardTemplateObj = SearchCardTemplate.objects.create(
                 templateName=templateName,
@@ -28,6 +31,7 @@ class CardTemplates:
                 bodyText=bodyText,
                 sql=sql,
                 renderType=renderType,
+                connectionType=connectionType,
             )
             res.update(True, "Search card template created successfully")
         except Exception as ex:
@@ -55,6 +59,8 @@ class CardTemplates:
         """Method to update card template"""
         try:
             res = ApiResponse("Error while updating card template")
+            connectionTypeId = int(payload.get("connectionTypeId"))
+            connectionType = ConnectionType.objects.get(id=connectionTypeId)
             renderType = payload.get("renderType", "table")
             templateName = payload.get("templateName", "")
             title = payload.get("title", "")
@@ -68,6 +74,7 @@ class CardTemplates:
             templateObj.title = title
             templateObj.templateName = templateName
             templateObj.renderType = renderType
+            templateObj.connectionType = connectionType
             templateObj.save()
             res.update(True, "Successfully updated template")
         except Exception as ex:

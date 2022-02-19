@@ -7,6 +7,8 @@ import AceEditor from "react-ace";
 import style from "./style.module.scss";
 
 import cardTemplateService from "services/main/cardTemplate";
+import connectionService from "services/main/connection.js";
+
 const { TextArea } = Input;
 
 const { Option } = Select;
@@ -14,14 +16,27 @@ const { Option } = Select;
 export default function AddCardTemplates(props) {
     const [form] = Form.useForm();
     const [renderType, setRenderType] = useState("table");
-
+    const [connectionType, setConnectionType] = useState()
+    useEffect(() => {
+        getConnectionType()
+    }, []);
 
     const onSelectChange = (value) => {
         setRenderType(value);
     };
-
+    const onSelectConnectionTypeChange = (val) => {
+    }
+    const getConnectionType = async () => {
+        const response = await connectionService.getConnectionTypes()
+        if (response.success) {
+            setConnectionType(response["data"])
+        }
+    }
     const addCardTemplateFormSubmit = async (values) => {
         let payload = {};
+        let connType = values["connectionType"].split(".")
+        payload["connectionTypeId"] = connType[0]
+        payload["connectionTypeName"] = connType[1]
         payload["templateName"] = values["templateName"]
         payload["title"] = values["title"]
         payload["sql"] = values["sql"]
@@ -35,6 +50,19 @@ export default function AddCardTemplates(props) {
             message.error(response.message);
         }
     };
+
+    let connectionTypeSuggestion = []
+    connectionTypeSuggestion = connectionType && connectionType.map((item) => (
+        <Option
+            value={
+                item["id"] + "." + item["name"]
+            }
+            key={item["id"]}
+        >
+            {" "}
+            {item["name"]}{" "}
+        </Option>
+    ));
 
     let addGlobalDimensionParamElements = [];
 
@@ -122,6 +150,24 @@ export default function AddCardTemplates(props) {
                                 placeholder={"SQL"}
                             />
                         </Form.Item>
+                        <Form.Item
+                            name="connectionType"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please select connectionType !",
+                                },
+                            ]}
+                        >
+                            <Select
+                                style={{ width: "100%" }}
+                                placeholder="Card Template Connection Type"
+                                onChange={onSelectConnectionTypeChange}
+                            >
+                                {connectionTypeSuggestion}
+                            </Select>
+                        </Form.Item>
+
                         <Form.Item
                             name="renderType"
                             initialValue={renderType}

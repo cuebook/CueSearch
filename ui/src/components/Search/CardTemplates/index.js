@@ -94,6 +94,12 @@ export default function CardTemplatesTable(props) {
             dataIndex: "templateName",
             // width: "10%",
         },
+        {
+
+            title: "ConnectionType Name",
+            dataIndex: "connectionTypeName",
+            // width: "10%",
+        },
 
         {
 
@@ -123,7 +129,7 @@ export default function CardTemplatesTable(props) {
                     </Tooltip>
 
                     <Popconfirm
-                        title={"Are you sure to delete template" + record.templateName + " ?"}
+                        title={"Are you sure to delete template " + record.templateName + " ?"}
                         onConfirm={(e) => deleteCardTemplate(record)}
                         okText="Yes"
                         cancelText="No"
