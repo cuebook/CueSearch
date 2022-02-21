@@ -1,4 +1,6 @@
 import logging
+import re
+from urllib import request
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -147,6 +149,13 @@ def getTemplatesById(request: HttpRequest, id) -> Response:
 def deleteCardTemplate(request: HttpRequest, id) -> Response:
     """Method to get card template"""
     res = CardTemplates.deleteCardTemplate(id)
+    return Response(res.json())
+
+@api_view(['GET'])
+def verifyCardTemplate(request: HttpRequest) -> Response:
+    """Method to verify sql"""
+    payload = request.data
+    res = CardTemplates.verifyCardTemplate
     return Response(res.json())
 
 
