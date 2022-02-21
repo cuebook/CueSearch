@@ -110,6 +110,8 @@ def test_getSearchCard(client, mocker):
     mockResponse.stop()
     assert response.data["success"]
     assert response.status_code == 200
+    assert response.json()['data'][0]['params']['searchResults'][0]['value'] == 'AD'
+    assert response.json()['data'][0]['params']['datasetId'] == dataset.id
 
     # Get Search Card(Detailed test case)
     searchResult = [
