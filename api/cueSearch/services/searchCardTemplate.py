@@ -127,7 +127,7 @@ class SearchCardTemplateServices:
         )
 
         groupedResults: GroupedResults = groupSearchResultsByDataset(searchResults)
-        searchTemplates = SearchCardTemplate.objects.all()
+        searchTemplates = SearchCardTemplate.objects.filter(published=True)
 
         results = []
         for searchTemplate in searchTemplates:
