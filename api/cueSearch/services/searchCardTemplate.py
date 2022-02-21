@@ -72,7 +72,9 @@ class SearchCardTemplateServices:
     #         return result
 
     @staticmethod
-    def ElasticSearchQueryResultsForOnSearchQuery(searchPayload: dict) -> List[SearchResults]:
+    def ElasticSearchQueryResultsForOnSearchQuery(
+        searchPayload: dict,
+    ) -> List[SearchResults]:
         """
         Praveen write it's documentation
         """
@@ -118,10 +120,10 @@ class SearchCardTemplateServices:
         res = ApiResponse()
         finalResults = []
         searchResults = []
-        searchResults: List[SearchResults] = (
-            SearchCardTemplateServices.ElasticSearchQueryResultsForOnSearchQuery(
-                searchPayload
-            )
+        searchResults: List[
+            SearchResults
+        ] = SearchCardTemplateServices.ElasticSearchQueryResultsForOnSearchQuery(
+            searchPayload
         )
 
         groupedResults: GroupedResults = groupSearchResultsByDataset(searchResults)
@@ -130,13 +132,17 @@ class SearchCardTemplateServices:
         results = []
         for searchTemplate in searchTemplates:
             for result in groupedResults:
-                for datasetId, datasetSearchResult in result.items(): 
+                for datasetId, datasetSearchResult in result.items():
                     dataset = Dataset.objects.get(id=int(datasetId))
                     paramDict = {}
                     paramDict["datasetId"] = int(datasetId)
 
                     paramDict["searchResults"] = datasetSearchResult
-                    paramDict["groupedResultsForFilter"] = SearchCardTemplateServices.__groupResultsForFilter(datasetSearchResult)
+                    paramDict[
+                        "groupedResultsForFilter"
+                    ] = SearchCardTemplateServices.__groupResultsForFilter(
+                        datasetSearchResult
+                    )
                     paramDict["filter"] = makeFilter(datasetSearchResult)
                     paramDict["filterDimensions"] = addDimensionsInParam(
                         datasetSearchResult
@@ -243,7 +249,7 @@ class SearchCardTemplateServices:
         """
         res = ApiResponse("Error in fetching data")
         try:
-            finalData = { "data": None, "chartMetaData": None}
+            finalData = {"data": None, "chartMetaData": None}
             data = Datasets.getDatasetData(params).data
             chartMetaData = getChartMetaData(params, data)
             finaldata = {"data": data, "chartMetaData": chartMetaData}
@@ -253,15 +259,17 @@ class SearchCardTemplateServices:
         return res
 
     @staticmethod
-    def __groupResultsForFilter(datasetSearchResult: List[SearchResults]) -> List[List[SearchResults]]:
+    def __groupResultsForFilter(
+        datasetSearchResult: List[SearchResults],
+    ) -> List[List[SearchResults]]:
         """
         Groups OR filter inside each AND filter
-        :param datasetSearchResult: 
+        :param datasetSearchResult:
         """
 
         groupedResultsForFilter = []
-        sortedResults = sorted(datasetSearchResult, key=lambda x: x['dimension'])
-        for k, g in groupby(sortedResults, lambda x: x['dimension']):
+        sortedResults = sorted(datasetSearchResult, key=lambda x: x["dimension"])
+        for k, g in groupby(sortedResults, lambda x: x["dimension"]):
             groupedResultsForFilter.append(list(g))
 
         return groupedResultsForFilter

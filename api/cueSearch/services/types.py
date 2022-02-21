@@ -7,6 +7,7 @@ class SearchCardsPayload(TypedDict):
     """
     Payload for getting search cards
     """
+
     value: str
     user_entity_identifier: str
     id: str
@@ -18,8 +19,8 @@ class SearchCardsPayload(TypedDict):
 
 
 class SearchResults(TypedDict):
-    """
-    """
+    """ """
+
     value: str
     dimension: str
     globalDimensionName: str
@@ -31,6 +32,6 @@ class SearchResults(TypedDict):
 
 
 class GroupedResults(TypedDict, total=False):
-    """
-    """
+    """ """
+
     int: List[SearchResults]
