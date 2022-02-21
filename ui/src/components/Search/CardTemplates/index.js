@@ -28,7 +28,7 @@ export default function CardTemplatesTable(props) {
     if (!templates) {
       getTemplates();
     }
-  }, []);
+  });
   const renderTypeMap = {
     table: "Table",
     line: "Line",
@@ -92,6 +92,11 @@ export default function CardTemplatesTable(props) {
       dataIndex: "templateName",
       // width: "10%",
     },
+    {
+      title: "ConnectionType Name",
+      dataIndex: "connectionTypeName",
+      // width: "10%",
+    },
 
     {
       title: "Render Type",
@@ -117,7 +122,7 @@ export default function CardTemplatesTable(props) {
 
           <Popconfirm
             title={
-              "Are you sure to delete template" + record.templateName + " ?"
+              "Are you sure to delete template " + record.templateName + " ?"
             }
             onConfirm={(e) => deleteCardTemplate(record)}
             okText="Yes"

@@ -1,5 +1,5 @@
 from django.db import models
-from dataset.models import Dataset
+from dataset.models import Dataset, ConnectionType
 
 # Create your models here.
 
@@ -26,7 +26,9 @@ class GlobalDimensionValues(models.Model):
 class SearchCardTemplate(models.Model):
     RENDER_TYPE_TABLE = "table"
     RENDER_TYPE_LINE = "line"
-
+    connectionType = models.ForeignKey(
+        ConnectionType, on_delete=models.SET_NULL, null=True, blank=True
+    )
     templateName = models.TextField(null=True, blank=True)
     title = models.TextField(null=True, blank=True)
     bodyText = models.TextField(null=True, blank=True)

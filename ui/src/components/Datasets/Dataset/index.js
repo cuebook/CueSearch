@@ -48,7 +48,7 @@ export default function Dataset(props) {
   const history = useHistory();
 
   useEffect(() => {
-    if (params.datasetId && !isDataReceived) {
+    if (params.datasetId && !isNaN(params.datasetId) && !isDataReceived) {
       getDataset();
     }
   }, []);
