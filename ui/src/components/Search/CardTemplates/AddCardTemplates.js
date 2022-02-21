@@ -39,7 +39,13 @@ export default function AddCardTemplates(props) {
     payload["bodyText"] = values["bodyText"];
     payload["renderType"] = values["renderType"];
 
+    const response = await cardTemplateService.verifyCardTemplate(payload)
+    if (response.success){
     const response = await cardTemplateService.addCardTemplate(payload);
+    } else {
+      message.error(response.message);
+    }
+
     if (response.success) {
       props.onAddCardTemplateSuccess();
     } else {

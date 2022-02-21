@@ -20,6 +20,20 @@ class CardTemplateServices {
       return response;
     }
   }
+
+  async verifyCardTemplate(payload) {
+    const response = await apiService.post(
+      "cueSearch/templates/verify/",
+      payload
+    );
+    if (response.success) {
+      return response;
+    } else {
+      return response;
+    }
+  }
+
+
   async updateCardTemplate(id, payload) {
     const response = await apiService.post(
       "cueSearch/templates/update/" + id,

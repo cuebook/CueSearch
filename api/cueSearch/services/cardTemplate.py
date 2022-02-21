@@ -128,6 +128,7 @@ class CardTemplates:
 
     @staticmethod
     def verifyCardTemplate(param: dict):
+        res = ApiResponse()
         response = []
         delimiter = "+-;"
         try:
@@ -138,7 +139,10 @@ class CardTemplates:
                 if str.isspace(sqls[i]):
                     continue
                 response.append({"sql": sqls[i]})
+                res.update(True,"Successfully Verified")
 
         except Exception as ex:
+            res.update(False,"Error in rendering templates")
             logger.error("Error in rendering templates: %s", str(ex))
             logger.error(param)
+        return res
