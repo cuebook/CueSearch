@@ -3,6 +3,7 @@ import { Button, Form, Input, Switch, message, Select } from "antd";
 import style from "./style.module.scss";
 
 import cardTemplateService from "services/main/cardTemplate";
+import connectionService from "services/main/connection.js";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -10,37 +11,59 @@ const { TextArea } = Input;
 export default function EditCardTemplate(props) {
   const [form] = Form.useForm();
   const [renderType, setRenderType] = useState("table");
-
+  const [allConnectionType, setAllConnectionType] = useState(null)
+  const [connectionType, setConnectionType] = useState()
+  const [publish, setPublish] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   useEffect(() => {
-    let template = props && props.editCardTemplate;
-    setSelectedTemplate(template);
+
+    let template = props && props.editCardTemplate
+    let connection = template["connectionTypeId"] + "." + template["connectionTypeName"]
+    let published = template["published"]
+    setConnectionType(connection)
+    setSelectedTemplate(template)
+    setPublish(published)
+    getConnectionType()
   }, []);
 
-  let addCardTemplateFormElement = [];
+  let addCardTemplateFormElement = []
 
-  const onSelectChange = (value) => {
-    setRenderType(value);
-  };
 
-  let initialTemplateName =
-    selectedTemplate && selectedTemplate["templateName"];
-  let initialSQL = selectedTemplate && selectedTemplate["sql"];
-  let initialTitle = selectedTemplate && selectedTemplate["title"];
-  let initialBodyText = selectedTemplate && selectedTemplate["bodyText"];
-  let initialRenderType = selectedTemplate && selectedTemplate["renderType"];
-  let initialPublished = selectedTemplate && selectedTemplate["published"];
+  const onSelectChange = (value) => { setRenderType(value) };
+  const getConnectionType = async () => {
+    const response = await connectionService.getConnectionTypes()
+    if (response.success) {
+      setAllConnectionType(response["data"])
+    }
+  }
+
+  const onSelectConnectionTypeChange = (val) => {
+    setConnectionType(val)
+  }
+
+  let initialTemplateName = selectedTemplate && selectedTemplate["templateName"]
+  let initialSQL = selectedTemplate && selectedTemplate["sql"]
+  let initialTitle = selectedTemplate && selectedTemplate["title"]
+  let initialBodyText = selectedTemplate && selectedTemplate["bodyText"]
+  let initialRenderType = selectedTemplate && selectedTemplate["renderType"]
+  let initialPublished = selectedTemplate && selectedTemplate["published"]
+  let initialConnectionType = selectedTemplate && selectedTemplate["connectionTypeName"]
+
 
   const editCardTemplateFormSubmit = async (values) => {
+
     let payload = {};
-    payload["id"] = props && props.editCardTemplate["id"];
-    payload["templateName"] = values["templateName"];
-    payload["sql"] = values["sql"];
-    payload["title"] = values["title"];
-    payload["bodyText"] = values["bodyText"];
-    payload["renderType"] = values["renderType"];
-    payload["published"] = values["published"];
+    payload["id"] = props && props.editCardTemplate["id"]
+    let connType = connectionType && connectionType.split(".")
+    payload["connectionTypeId"] = connType[0]
+    payload["connectionTypeName"] = connType[1]
+    payload["templateName"] = values["templateName"]
+    payload["sql"] = values["sql"]
+    payload["title"] = values["title"]
+    payload["bodyText"] = values["bodyText"]
+    payload["renderType"] = values["renderType"]
+    payload["published"] = publish
     const response = await cardTemplateService.updateCardTemplate(
       payload["id"],
       payload
@@ -50,6 +73,18 @@ export default function EditCardTemplate(props) {
     }
   };
 
+  let connectionTypeSuggestion = []
+  connectionTypeSuggestion = allConnectionType && allConnectionType.map((item) => (
+    <Option
+      value={
+        item["id"] + "." + item["name"]
+      }
+      key={item["id"]}
+    >
+      {" "}
+      {item["name"]}{" "}
+    </Option>
+  ));
   let addCardTemplateParamElements = [];
 
   addCardTemplateFormElement = (
@@ -99,6 +134,7 @@ export default function EditCardTemplate(props) {
                 className={style.inputArea}
                 placeholder={"Title"}
               />
+
             </Form.Item>
             <Form.Item
               hasFeedback
@@ -112,6 +148,7 @@ export default function EditCardTemplate(props) {
                 },
               ]}
             >
+
               <TextArea
                 rows={2}
                 className={style.inputArea}
@@ -130,6 +167,7 @@ export default function EditCardTemplate(props) {
                 },
               ]}
             >
+
               <TextArea
                 rows={3}
                 className={style.inputArea}
@@ -137,6 +175,25 @@ export default function EditCardTemplate(props) {
                 placeholder={"SQL"}
               />
             </Form.Item>
+            <Form.Item
+              name="connectionType"
+              initialValue={initialConnectionType}
+              rules={[
+                {
+                  required: true,
+                  message: "Please select connectionType !",
+                },
+              ]}
+            >
+              <Select
+                style={{ width: "100%" }}
+                placeholder="Card Template Connection Type"
+                onChange={onSelectConnectionTypeChange}
+              >
+                {connectionTypeSuggestion}
+              </Select>
+            </Form.Item>
+
             <Form.Item
               name="renderType"
               initialValue={initialRenderType}
@@ -158,8 +215,7 @@ export default function EditCardTemplate(props) {
                 <Option value="table">Table</Option>
                 <Option value="line"> Line</Option>
               </Select>
-            </Form.Item>{" "}
-          </div>
+            </Form.Item> </div>
           {addCardTemplateParamElements}
         </div>
         <div className={style.submitButton}>
