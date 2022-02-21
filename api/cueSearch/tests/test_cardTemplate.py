@@ -69,3 +69,15 @@ def testCardTemplates(client, mocker):
     response = client.delete(path, payload, content_type="application/json")
     assert response.data["success"]
     assert response.status_code == 200
+
+
+    # Verify the card templete by giving the wrong value
+    path = reverse("verifyCardTemplates")
+    payload = {
+        "sql": "Sample",
+    }
+    response = client.post(path, payload, content_type="application/json")
+    assert response.data["success"] == False
+    assert response.status_code == 200
+    assert response.json()['message'] == 'Error in rendering templates'
+
