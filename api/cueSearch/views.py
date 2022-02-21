@@ -156,3 +156,10 @@ def pubCardTemplate(request: HttpRequest) -> Response:
     payload = request.data
     res = CardTemplates.publishedCardTemplate(payload)
     return Response(res.json())
+
+@api_view(['GET'])
+def verifyCardTemplate(request: HttpRequest) -> Response:
+    """Method to verify sql"""
+    payload = request.data
+    res = CardTemplates.verifyCardTemplate(payload)
+    return Response(res.json())

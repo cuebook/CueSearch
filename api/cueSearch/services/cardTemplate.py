@@ -3,7 +3,9 @@ from utils.apiResponse import ApiResponse
 from cueSearch.serializers import SearchCardTemplateSerializer
 from cueSearch.models import SearchCardTemplate
 from dataset.models import ConnectionType
+from django.template import Template, Context
 
+logger = logging.getLogger(__name__)
 
 class CardTemplates:
     """
@@ -123,3 +125,20 @@ class CardTemplates:
             logging.error("Error while get card template by Id %s", str(ex))
             res.update(False, "Error occured while getting template by id")
         return res
+
+    @staticmethod
+    def verifyCardTemplate(param: dict):
+        response = []
+        delimiter = "+-;"
+        try:
+            sqls = (
+                Template(param["templateSql"]).render(Context(param)).split(delimiter)
+            )
+            for i in range(len(sqls)):
+                if str.isspace(sqls[i]):
+                    continue
+                response.append({"sql": sqls[i]})
+
+        except Exception as ex:
+            logger.error("Error in rendering templates: %s", str(ex))
+            logger.error(param)
