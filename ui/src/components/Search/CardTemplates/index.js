@@ -28,10 +28,10 @@ export default function CardTemplatesTable(props) {
     if (!templates) {
       getTemplates();
     }
-  })
+  });
   const renderTypeMap = {
-    "table": "Table",
-    "line": "Line"
+    table: "Table",
+    line: "Line",
   };
   const getTemplates = async () => {
     const response = await cardTemplateService.getCardTemplates();
@@ -57,12 +57,12 @@ export default function CardTemplatesTable(props) {
     setIsAddDrawerVisible(true);
   };
   const onAddCardTemplateSuccess = () => {
-    getTemplates()
+    getTemplates();
     setIsAddDrawerVisible(false);
   };
 
   const onEditCardTemplateSuccess = () => {
-    getTemplates()
+    getTemplates();
     setIsEditDrawerVisible(false);
   };
 
@@ -70,7 +70,6 @@ export default function CardTemplatesTable(props) {
     setIsEditDrawerVisible(true);
     setEditCardTemplate(val);
   };
-
 
   const columns = [
     {
@@ -89,29 +88,22 @@ export default function CardTemplatesTable(props) {
       },
     },
     {
-
       title: "Template Name",
       dataIndex: "templateName",
       // width: "10%",
     },
     {
-
       title: "ConnectionType Name",
       dataIndex: "connectionTypeName",
       // width: "10%",
     },
 
     {
-
       title: "Render Type",
       dataIndex: "renderType",
       render: (text, record) => {
-        return (
-          <div>
-            {renderTypeMap[text]}
-          </div>
-        )
-      }
+        return <div>{renderTypeMap[text]}</div>;
+      },
       // width: "10%",
     },
 
@@ -129,7 +121,9 @@ export default function CardTemplatesTable(props) {
           </Tooltip>
 
           <Popconfirm
-            title={"Are you sure to delete template " + record.templateName + " ?"}
+            title={
+              "Are you sure to delete template " + record.templateName + " ?"
+            }
             onConfirm={(e) => deleteCardTemplate(record)}
             okText="Yes"
             cancelText="No"
@@ -151,7 +145,6 @@ export default function CardTemplatesTable(props) {
         <Button onClick={openAddCardTemplate} type="primary">
           Add Templates
         </Button>
-
       </div>
       <Table
         rowKey={"id"}
