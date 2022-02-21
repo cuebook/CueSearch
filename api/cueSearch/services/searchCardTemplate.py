@@ -1,7 +1,7 @@
 import logging
 import json
 import aiohttp
-from typing import Dict
+from typing import List, Dict
 from itertools import groupby
 import concurrent.futures
 from utils.apiResponse import ApiResponse
@@ -16,6 +16,8 @@ from cueSearch.services.utils import (
     makeFilter,
     getChartMetaData,
 )
+
+from cueSearch.services.types import SearchCardsPayload, SearchResults, GroupedResults
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +72,10 @@ class SearchCardTemplateServices:
     #         return result
 
     @staticmethod
-    def ElasticSearchQueryResultsForOnSearchQuery(searchPayload: dict):
+    def ElasticSearchQueryResultsForOnSearchQuery(searchPayload: dict) -> List[SearchResults]:
+        """
+        Praveen write it's documentation
+        """
         searchResults = []
         for payload in searchPayload:
             data = []
@@ -105,7 +110,7 @@ class SearchCardTemplateServices:
         return searchResults
 
     @staticmethod
-    def getSearchCards(searchPayload: dict):
+    def getSearchCards(searchPayload: List[SearchCardsPayload]):
         """
         Service to fetch and create search cards on the fly
         :param searchPayload: Dict containing the search payload
@@ -113,23 +118,25 @@ class SearchCardTemplateServices:
         res = ApiResponse()
         finalResults = []
         searchResults = []
-        searchResults = (
+        searchResults: List[SearchResults] = (
             SearchCardTemplateServices.ElasticSearchQueryResultsForOnSearchQuery(
                 searchPayload
             )
         )
-        groupedResults = groupSearchResultsByDataset(searchResults)
+
+        groupedResults: GroupedResults = groupSearchResultsByDataset(searchResults)
         searchTemplates = SearchCardTemplate.objects.all()
 
         results = []
         for searchTemplate in searchTemplates:
             for result in groupedResults:
-                for datasetId, datasetSearchResult in result.items():
+                for datasetId, datasetSearchResult in result.items(): 
                     dataset = Dataset.objects.get(id=int(datasetId))
                     paramDict = {}
                     paramDict["datasetId"] = int(datasetId)
 
                     paramDict["searchResults"] = datasetSearchResult
+                    paramDict["groupedResultsForFilter"] = SearchCardTemplateServices.__groupResultsForFilter(datasetSearchResult)
                     paramDict["filter"] = makeFilter(datasetSearchResult)
                     paramDict["filterDimensions"] = addDimensionsInParam(
                         datasetSearchResult
@@ -228,24 +235,43 @@ class SearchCardTemplateServices:
         res.update(True, "success", data)
         return res
 
+    @staticmethod
     def getSearchCardData(params: dict):
         """
         Utility service to fetch data for a payload
         :param params: Dict containing dataset name, and dataset dimension
         """
         res = ApiResponse("Error in fetching data")
-        data = Datasets.getDatasetData(params).data
-        chartMetaData = getChartMetaData(params, data)
-        finaldata = {"data": data, "chartMetaData": chartMetaData}
-        res.update(True, "Successfully fetched data", finaldata)
+        try:
+            finalData = { "data": None, "chartMetaData": None}
+            data = Datasets.getDatasetData(params).data
+            chartMetaData = getChartMetaData(params, data)
+            finaldata = {"data": data, "chartMetaData": chartMetaData}
+            res.update(True, "Successfully fetched data", finaldata)
+        except Exception as ex:
+            logging.error("Error in fetching data :%s", str(ex))
         return res
+
+    @staticmethod
+    def __groupResultsForFilter(datasetSearchResult: List[SearchResults]) -> List[List[SearchResults]]:
+        """
+        Groups OR filter inside each AND filter
+        :param datasetSearchResult: 
+        """
+
+        groupedResultsForFilter = []
+        sortedResults = sorted(datasetSearchResult, key=lambda x: x['dimension'])
+        for k, g in groupby(sortedResults, lambda x: x['dimension']):
+            groupedResultsForFilter.append(list(g))
+
+        return groupedResultsForFilter
 
 
 def key_func(k):
     return k["datasetId"]
 
 
-def groupSearchResultsByDataset(searchResults):
+def groupSearchResultsByDataset(searchResults: List[SearchResults]) -> GroupedResults:
     results = []
     searchResults = sorted(searchResults, key=key_func)
     for key, value in groupby(searchResults, key_func):
