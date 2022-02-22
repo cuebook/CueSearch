@@ -120,20 +120,24 @@ class SearchCardTemplateServices:
         res = ApiResponse()
         finalResults = []
         searchResults = []
+        if not searchPayload:
+            searchPayload = []
         searchResults: List[
             SearchResults
         ] = SearchCardTemplateServices.ElasticSearchQueryResultsForOnSearchQuery(
             searchPayload
         )
-
         groupedResults: GroupedResults = groupSearchResultsByDataset(searchResults)
-        searchTemplates = SearchCardTemplate.objects.all()
-
+        searchTemplates = SearchCardTemplate.objects.filter(published=True)
         results = []
-        for searchTemplate in searchTemplates:
-            for result in groupedResults:
-                for datasetId, datasetSearchResult in result.items():
-                    dataset = Dataset.objects.get(id=int(datasetId))
+        # for searchTemplate in searchTemplates:
+        for result in groupedResults:
+            for datasetId, datasetSearchResult in result.items():
+                dataset = Dataset.objects.get(id=int(datasetId))
+                connectionTypeId = dataset.connection.connectionType_id
+                for searchTemplate in searchTemplates.filter(
+                    connectionType=connectionTypeId
+                ):
                     paramDict = {}
                     paramDict["datasetId"] = int(datasetId)
 
