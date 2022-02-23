@@ -256,7 +256,7 @@ class ESIndexingUtils:
                 "mappings": {
                     "properties": {
                         "globalDimensionId": {"type": "integer"},
-                        "globalDimensionDisplayValue": {"type": "text"},
+                        "globalDimensionDisplayValue": {"type": "keyword"},
                         "globalDimensionValue": {
                             "type": "text",
                             "search_analyzer": "my_analyzer",
