@@ -56,7 +56,7 @@ class ESQueryingUtils:
 
         logging.info("Querying global dimensions for: %s", query)
 
-        query = "" if query is None else query.lower()
+        query = "" if query is None else query
         client = ESQueryingUtils._getESClient()
 
         searchQuery = Search(index=ESQueryingUtils.GLOBAL_DIMENSIONS_INDEX_DATA).using(
@@ -71,7 +71,7 @@ class ESQueryingUtils:
             )
 
         if query:
-            searchQuery = searchQuery.query("match", globalDimensionDisplayValue=query)
+            searchQuery = searchQuery.query("term", globalDimensionDisplayValue=query)
         else:
             searchQuery = searchQuery.query("match_all")
 

@@ -87,7 +87,9 @@ class SearchCardTemplateServices:
                 if payload["searchType"] == "GLOBALDIMENSION":
                     futures = [
                         executor.submit(
-                            ESQueryingUtils.findGlobalDimensionResults, query=query
+                            ESQueryingUtils.findGlobalDimensionResults,
+                            query=query,
+                            globalDimension=payload["id"],
                         ),
                     ]
                 elif payload["searchType"] == "DATASETDIMENSION":
