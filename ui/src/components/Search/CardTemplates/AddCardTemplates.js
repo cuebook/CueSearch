@@ -39,6 +39,7 @@ export default function AddCardTemplates(props) {
     payload["sql"] = values["sql"];
     payload["bodyText"] = values["bodyText"];
     payload["renderType"] = values["renderType"];
+
     let verifyPayload ={};
     verifyPayload = {
       "templateTitle": payload['title'],
@@ -46,8 +47,6 @@ export default function AddCardTemplates(props) {
       "templateSql":payload['sql'],
     }
     const response = await cardTemplateService.verifyCardTemplate(verifyPayload);
-
-    console.log(response);
     
     if (response.success){
     const response = await cardTemplateService.addCardTemplate(payload);

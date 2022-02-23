@@ -192,7 +192,6 @@ class SearchCardTemplateServices:
             sqls = (
                 Template(param["templateSql"]).render(Context(param)).split(delimiter)
             )
-
             if len(titles) != len(texts) or len(titles) != len(sqls):
                 raise ValueError(
                     "Inconsistent use of delimiter (%s) in title, text, sql of template"

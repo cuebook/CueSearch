@@ -1,4 +1,5 @@
 import pytest
+from unittest import mock
 from django.urls import reverse
 from mixer.backend.django import mixer
 
@@ -70,14 +71,29 @@ def testCardTemplates(client, mocker):
     assert response.data["success"]
     assert response.status_code == 200
 
+    
 
-    # Verify the card templete by giving the wrong value
+    # Testing the card templete api
     path = reverse("verifyCardTemplates")
     payload = {
-        "sql": "Sample",
+      "templateTitle": 'Split on Filter Dimension',
+      "templateText" : '<span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{dataset}}</span>',
+      "templateSql": "SELECT * FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} limit 500",
+    }
+    response = client.post(path, payload, content_type="application/json")
+    assert response.data["success"] == True
+    assert response.status_code == 200
+    assert response.json()['message'] == 'Template rendered successfully'
+
+
+
+    path = reverse("verifyCardTemplates")
+    payload = {
+      "templateTitle": 'Metric Chart',
+      "templateText" : '<span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{dataset}}</span>',
+      "templateSql":"{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults 'dimension' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} SELECT ({{ timestampColumn }}), {{ filterDim }}, SUM({{ metricName }}) as {{metricName}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1, 2 limit 500 +-; {% endfor %} {% endif %} {% endfor %}",
     }
     response = client.post(path, payload, content_type="application/json")
     assert response.data["success"] == False
     assert response.status_code == 200
-    assert response.json()['message'] == 'Error in rendering templates'
-
+    assert response.json()['message'] == 'Error occur during rendering'

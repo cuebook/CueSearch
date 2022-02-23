@@ -5,7 +5,7 @@ from cueSearch.models import SearchCardTemplate
 from dataset.models import ConnectionType
 from django.template import Template, Context
 from cueSearch.services.searchCardTemplate import SearchCardTemplateServices
-from cueSearch.services.paramValue import *
+from cueSearch.services.sampleParams import *
 
 logger = logging.getLogger(__name__)
 
@@ -131,12 +131,12 @@ class CardTemplates:
     @staticmethod
     def verifyCardTemplate(payload: dict):
         res = ApiResponse()
-        paramValues = params
+        sampleParams = params
         param = {
             "templateTitle": payload['templateTitle'],
             "templateText": payload['templateText'],
             "templateSql": payload['templateSql'],
-            "param": paramValues,
+            "param": sampleParams,
         }
         response = SearchCardTemplateServices.renderTemplates(param)
         if len(response) == 0:
