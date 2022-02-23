@@ -1,3 +1,4 @@
+import json
 import logging
 from utils.apiResponse import ApiResponse
 from cueSearch.serializers import SearchCardTemplateSerializer
@@ -5,7 +6,7 @@ from cueSearch.models import SearchCardTemplate
 from dataset.models import ConnectionType
 from django.template import Template, Context
 from cueSearch.services.searchCardTemplate import SearchCardTemplateServices
-from cueSearch.services.sampleParams import *
+from cueSearch.services.sampleParams import SAMPLE_PARAMS
 
 logger = logging.getLogger(__name__)
 
@@ -131,7 +132,7 @@ class CardTemplates:
     @staticmethod
     def verifyCardTemplate(payload: dict):
         res = ApiResponse()
-        sampleParams = params
+        sampleParams = json.loads(json.dumps(SAMPLE_PARAMS))
         param = {
             "templateTitle": payload['templateTitle'],
             "templateText": payload['templateText'],
