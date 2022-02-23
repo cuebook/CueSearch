@@ -4,6 +4,8 @@ from cueSearch.serializers import SearchCardTemplateSerializer
 from cueSearch.models import SearchCardTemplate
 from dataset.models import ConnectionType
 from django.template import Template, Context
+from cueSearch.services.searchCardTemplate import SearchCardTemplateServices
+from cueSearch.services.paramValue import *
 
 logger = logging.getLogger(__name__)
 
@@ -127,22 +129,18 @@ class CardTemplates:
         return res
 
     @staticmethod
-    def verifyCardTemplate(param: dict):
+    def verifyCardTemplate(payload: dict):
         res = ApiResponse()
-        response = []
-        delimiter = "+-;"
-        try:
-            sqls = (
-                Template(param["templateSql"]).render(Context(param)).split(delimiter)
-            )
-            for i in range(len(sqls)):
-                if str.isspace(sqls[i]):
-                    continue
-                response.append({"sql": sqls[i]})
-                res.update(True,"Successfully Verified")
-
-        except Exception as ex:
-            res.update(False,"Error in rendering templates")
-            logger.error("Error in rendering templates: %s", str(ex))
-            logger.error(param)
+        paramValues = params
+        param = {
+            "templateTitle": payload['templateTitle'],
+            "templateText": payload['templateText'],
+            "templateSql": payload['templateSql'],
+            "param": paramValues,
+        }
+        response = SearchCardTemplateServices.renderTemplates(param)
+        if len(response) == 0:
+            res.update(False,"Error occur during rendering")
+        else:
+            res.update(True,"Template rendered successfully")
         return res

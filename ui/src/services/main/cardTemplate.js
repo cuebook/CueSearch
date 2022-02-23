@@ -26,11 +26,7 @@ class CardTemplateServices {
       "cueSearch/templates/verify/",
       payload
     );
-    if (response.success) {
-      return response;
-    } else {
-      return response;
-    }
+    return response;
   }
 
 

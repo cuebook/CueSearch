@@ -5,6 +5,7 @@ import style from "./style.module.scss";
 
 import cardTemplateService from "services/main/cardTemplate";
 import connectionService from "services/main/connection.js";
+import { template } from "lodash";
 
 const { TextArea } = Input;
 
@@ -38,8 +39,16 @@ export default function AddCardTemplates(props) {
     payload["sql"] = values["sql"];
     payload["bodyText"] = values["bodyText"];
     payload["renderType"] = values["renderType"];
+    let verifyPayload ={};
+    verifyPayload = {
+      "templateTitle": payload['title'],
+      "templateText" : payload['bodyText'],
+      "templateSql":payload['sql'],
+    }
+    const response = await cardTemplateService.verifyCardTemplate(verifyPayload);
 
-    const response = await cardTemplateService.verifyCardTemplate(payload)
+    console.log(response);
+    
     if (response.success){
     const response = await cardTemplateService.addCardTemplate(payload);
     } else {
