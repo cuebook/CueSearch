@@ -77,8 +77,8 @@ def testCardTemplates(client, mocker):
     path = reverse("verifyCardTemplates")
     payload = {
       "templateTitle": 'Split on Filter Dimension',
-      "templateText" : '<span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{dataset}}</span>',
-      "templateSql": "SELECT * FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} limit 500",
+      "templateText" : 'This table displays raw data for dataset <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{dataset}}</span> with filter <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{filter}}</span>',
+      "templateSql": "SELECT * FROM ({{ datasetSql|safe }}) AS templatetable WHERE {% for orResults in groupedResultsForFilter %} {% for orResult in orResults %} \"templatetable\".\"{{ orResult.dimension }}\" = '{{ orResult.value }}' OR {% endfor %} True AND {% endfor %} True limit 500",
     }
     response = client.post(path, payload, content_type="application/json")
     assert response.data["success"] == True
