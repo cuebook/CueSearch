@@ -98,6 +98,7 @@ class SearchCardTemplateServices:
                             ESQueryingUtils.findNonGlobalDimensionResults,
                             globalDimension=payload["globalDimensionId"],
                             query=query,
+                            datasource=payload["datasetId"],
                         ),
                     ]
                 for future in concurrent.futures.as_completed(futures):
