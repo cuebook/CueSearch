@@ -22,8 +22,6 @@ class CardTemplates:
         """
         try:
             res = ApiResponse("Error occur while creating search card template")
-            connectionTypeId = int(payload.get("connectionTypeId", 1))
-            connectionType = ConnectionType.objects.get(id=connectionTypeId)
             renderType = payload.get("renderType", "table")
             templateName = payload.get("templateName", "")
             title = payload.get("title", "")
@@ -36,8 +34,14 @@ class CardTemplates:
                 bodyText=bodyText,
                 sql=sql,
                 renderType=renderType,
-                connectionType=connectionType,
             )
+
+            connectionTypeId = list(payload.get("connectionTypeId"))
+            for id in connectionTypeId:
+                value = ConnectionType.objects.get(id=id)
+                cardTemplateObj.connectionType.add(value)
+           
+            
             res.update(True, "Search card template created successfully")
         except Exception as ex:
             logging.error("Error %s", str(ex))
@@ -64,8 +68,7 @@ class CardTemplates:
         """Method to update card template"""
         try:
             res = ApiResponse("Error while updating card template")
-            connectionTypeId = int(payload.get("connectionTypeId"))
-            connectionType = ConnectionType.objects.get(id=connectionTypeId)
+
             renderType = payload.get("renderType", "table")
             templateName = payload.get("templateName", "")
             title = payload.get("title", "")
@@ -79,8 +82,13 @@ class CardTemplates:
             templateObj.title = title
             templateObj.templateName = templateName
             templateObj.renderType = renderType
-            templateObj.connectionType = connectionType
             templateObj.save()
+
+            connectionTypeId = list(payload.get("connectionTypeId"))
+            for id in connectionTypeId:
+                value = ConnectionType.objects.get(id=id)
+                templateObj.connectionType.add(value)
+                
             res.update(True, "Successfully updated template")
         except Exception as ex:
             logging.error("Error %s", str(ex))
