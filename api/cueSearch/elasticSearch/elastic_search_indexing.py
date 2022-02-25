@@ -29,7 +29,8 @@ class ESIndexingUtils:
     )
     GLOBAL_DIMENSIONS_INDEX_NAME = "global_dimensions_name_index_cuesearch"
     GLOBAL_DIMENSIONS_INDEX_DATA = "cuesearch_global_dimensions_data_index"
-    AUTO_GLOBAL_DIMENSIONS_INDEX_DATA = (
+    AUTO_GLOBAL_DIMENSIONS_INDEX_DATA = "cuesearch_auto_global_dimensions_data_index"
+    AUTO_GLOBAL_DIMENSIONS_INDEX_DATA_SEARCH_SUGGESTION = (
         "cuesearch_auto_global_dimensions_search_suggestion_data_index"
     )
     GLOBAL_DIMENSIONS_INDEX_SEARCH_SUGGESTION_DATA = (
@@ -168,6 +169,10 @@ class ESIndexingUtils:
             target=ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion
         )
         cardIndexer3.start()
+        cardIndexer4 = threading.Thread(
+            targe=ESIndexingUtils.indexNonGlobalDimensionsData()
+        )
+        cardIndexer4.start()
         logging.info("Indexing completed !! ")
 
     @staticmethod
@@ -521,7 +526,9 @@ class ESIndexingUtils:
                 },
             }
 
-            indexName = ESIndexingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA
+            indexName = (
+                ESIndexingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA_SEARCH_SUGGESTION
+            )
 
             aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
             logging.info("IndexName %s", indexName)
@@ -605,3 +612,101 @@ class ESIndexingUtils:
             len(indexingDocuments),
         )
         return indexingDocuments
+
+    @staticmethod
+    def indexNonGlobalDimensionsData(joblogger=None):
+        """
+        Method to index Non global dimensions data
+        """
+        from cueSearch.services import GlobalDimensionServices
+
+        logging.info(
+            "*************************** Indexing Starts of Non Global Dimension Data **************************"
+        )
+
+        response = GlobalDimensionServices.nonGlobalDimensionForIndexing()
+        if response["success"]:
+            datsetDimensions = response.get("data", [])
+            logging.debug("Dataset dimensions: %s", datsetDimensions)
+
+            indexDefinition = {
+                "settings": {
+                    "analysis": {
+                        "analyzer": {
+                            "my_analyzer": {
+                                "tokenizer": "my_tokenizer",
+                                "filter": ["lowercase"],
+                            }
+                        },
+                        "default_search": {"type": "my_analyzer"},
+                        "tokenizer": {
+                            "my_tokenizer": {
+                                "type": "edge_ngram",
+                                "min_gram": 1,
+                                "max_gram": 10,
+                                "token_chars": ["letter", "digit"],
+                            }
+                        },
+                    }
+                },
+                "mappings": {
+                    "properties": {
+                        "globalDimensionId": {"type": "text"},
+                        "globalDimensionDisplayValue": {"type": "keyword"},
+                        "globalDimensionValue": {
+                            "type": "text",
+                            "search_analyzer": "my_analyzer",
+                            "analyzer": "my_analyzer",
+                            "fields": {
+                                "ngram": {"type": "text", "analyzer": "my_analyzer"}
+                            },
+                        },
+                        "globalDimensionName": {
+                            "type": "text",
+                            "search_analyzer": "my_analyzer",
+                            "analyzer": "my_analyzer",
+                            "fields": {
+                                "ngram": {"type": "text", "analyzer": "my_analyzer"}
+                            },
+                        },
+                        "dimension": {
+                            "type": "text",
+                            "search_analyzer": "my_analyzer",
+                            "analyzer": "my_analyzer",
+                            "fields": {
+                                "ngram": {"type": "text", "analyzer": "my_analyzer"}
+                            },
+                        },
+                        "dataset": {"type": "text"},
+                        "datasetId": {"type": "integer"},
+                    }
+                },
+            }
+
+            indexName = ESIndexingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA
+
+            aliasIndex = ESIndexingUtils.initializeIndex(indexName, indexDefinition)
+            logging.info("IndexName %s", indexName)
+            logging.info("aliasIndex %s", aliasIndex)
+            # datsetDimensions is an array
+            try:
+                documentsToIndex = (
+                    ESIndexingUtils.fetchNonGlobalDimensionsValueForIndexing(
+                        datsetDimensions
+                    )
+                )
+
+                ESIndexingUtils.ingestIndex(documentsToIndex, aliasIndex)
+            except (Exception) as error:
+                logging.error(str(error))
+
+                pass
+
+            ESIndexingUtils.deleteOldIndex(indexName, aliasIndex)
+            logging.info(
+                "*************************** Indexing Completed of Non Dimensional Data **************************"
+            )
+
+        else:
+            logging.error("Error in fetching global dimensions.")
+            raise RuntimeError("Error in fetching global dimensions")

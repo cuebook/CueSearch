@@ -12,6 +12,8 @@ def indexingJob():
         ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion()  # Used for search suggestion
         ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion()  # Used for index auto global dimension
         ESIndexingUtils.indexGlobalDimensionsData()
+        ESIndexingUtils.indexNonGlobalDimensionsData()
+
         logging.info(
             "*********************** Indexing Job completed ! ********************** "
         )
