@@ -143,7 +143,7 @@ class ESQueryingUtils:
             searchQuery = searchQuery.query("match_all")
 
         if datasource:
-            searchQuery = searchQuery.filter("match", dataset=datasource)
+            searchQuery = searchQuery.filter("match", datasetId=datasource)
         searchQuery = searchQuery[offset : offset + limit]
 
         logging.info("Calling Elasticsearch with the query")
