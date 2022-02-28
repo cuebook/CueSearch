@@ -83,13 +83,18 @@ class CardTemplates:
             templateObj.templateName = templateName
             templateObj.renderType = renderType
             templateObj.save()
-            
-            templateObj.objects.filter(id=templateId).update(connectionType=None)
+
+            oldConnTypeId = templateObj.connectionType.values()
+
+            for item in oldConnTypeId:
+                connId = item['id']
+                templateObj.connectionType.remove(connId,None)
 
             connectionTypeId = list(payload.get("connectionTypeId"))
             for id in connectionTypeId:
                 value = ConnectionType.objects.get(id=id)
                 templateObj.connectionType.add(value)
+
 
             res.update(True, "Successfully updated template")
         except Exception as ex:
