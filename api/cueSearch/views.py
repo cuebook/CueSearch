@@ -108,6 +108,7 @@ def elasticSearchIndexingView(request: HttpRequest) -> Response:
     ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion()  # Used for search suggestion
     ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion()  # Used for index auto global dimension
     ESIndexingUtils.indexGlobalDimensionsData()
+    ESIndexingUtils.indexNonGlobalDimensionsData()
     logging.info("************** Indexing Completed !****************")
     res.update(True, "Indexing completed !", [])
     return Response(res.json())
@@ -157,10 +158,10 @@ def pubCardTemplate(request: HttpRequest) -> Response:
     res = CardTemplates.publishedCardTemplate(payload)
     return Response(res.json())
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 def verifyCardTemplate(request: HttpRequest) -> Response:
     """Method to verify sql"""
     payload = request.data
     res = CardTemplates.verifyCardTemplate(payload)
     return Response(res.json())
-

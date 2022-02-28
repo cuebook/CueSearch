@@ -27,7 +27,7 @@ class CardTemplates:
             title = payload.get("title", "")
             bodyText = payload.get("bodyText", "")
             sql = payload.get("sql", "")
-
+            
             cardTemplateObj = SearchCardTemplate.objects.create(
                 templateName=templateName,
                 title=title,
@@ -41,7 +41,6 @@ class CardTemplates:
                 value = ConnectionType.objects.get(id=id)
                 cardTemplateObj.connectionType.add(value)
        
-            
             res.update(True, "Search card template created successfully")
         except Exception as ex:
             logging.error("Error %s", str(ex))
