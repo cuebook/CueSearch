@@ -27,7 +27,7 @@ class SearchCardTemplate(models.Model):
     RENDER_TYPE_TABLE = "table"
     RENDER_TYPE_LINE = "line"
 
-    connectionType = models.ManyToManyField(ConnectionType, blank=True)
+    connectionType = models.ManyToManyField(ConnectionType, blank=True) #on_delete=models.SET_NULL
     templateName = models.TextField(null=True, blank=True)
     title = models.TextField(null=True, blank=True)
     bodyText = models.TextField(null=True, blank=True)

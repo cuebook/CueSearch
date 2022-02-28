@@ -40,7 +40,7 @@ class CardTemplates:
             for id in connectionTypeId:
                 value = ConnectionType.objects.get(id=id)
                 cardTemplateObj.connectionType.add(value)
-           
+       
             
             res.update(True, "Search card template created successfully")
         except Exception as ex:
@@ -83,12 +83,14 @@ class CardTemplates:
             templateObj.templateName = templateName
             templateObj.renderType = renderType
             templateObj.save()
+            
+            templateObj.objects.filter(id=templateId).update(connectionType=None)
 
             connectionTypeId = list(payload.get("connectionTypeId"))
             for id in connectionTypeId:
                 value = ConnectionType.objects.get(id=id)
                 templateObj.connectionType.add(value)
-                
+
             res.update(True, "Successfully updated template")
         except Exception as ex:
             logging.error("Error %s", str(ex))
