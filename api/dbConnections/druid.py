@@ -35,7 +35,7 @@ class Druid:
         """
         Fetch dataframe for given sql
         """
-        dataframe = pd.DataFrame()
+        dataframe = None
         try:
             host = params.get("host", "")
             port = params.get("port", 8888)
@@ -46,6 +46,7 @@ class Druid:
             dataframe = pd.read_sql(sql, conn, chunksize=chunksize)
 
         except Exception as ex:
-            logger.error("Can't connect to db with this credentials %s", str(ex))
+            logger.error("Can't fetch data with this credentials %s", str(ex))
+            dataframe = str(ex)
 
         return dataframe

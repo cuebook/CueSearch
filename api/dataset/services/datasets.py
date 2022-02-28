@@ -127,9 +127,17 @@ class Datasets:
         :param params: Dict containing dataset name, and dataset dimension
         """
         res = ApiResponse("Error in fetching data")
-        dataset = Dataset.objects.get(id=params["datasetId"])
-        dataDf = Data.fetchDatasetDataframe(dataset, params["sql"])
-        data = dataDf.to_dict("records")
+        try:
+            dataset = Dataset.objects.get(id=params["datasetId"])
+            # params["sql"] = params["sql"] + "some went wrong"
+            dataDf = Data.fetchDatasetDataframe(dataset, params["sql"])
+            if isinstance(dataDf, str):
+                res.update(False, "Error occured while fetching data", dataDf)
+            else:
+                data = dataDf.to_dict("records")
+                res.update(True, "Successfully fetched data", data)
 
-        res.update(True, "Successfully fetched data", data)
+        except Exception as ex:
+            logging.error("Error occured due to %s", str(ex))
+            # data = str(ex)
         return res

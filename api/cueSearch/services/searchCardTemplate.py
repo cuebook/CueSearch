@@ -260,12 +260,22 @@ class SearchCardTemplateServices:
         res = ApiResponse("Error in fetching data")
         try:
             finalData = {"data": None, "chartMetaData": None}
-            data = Datasets.getDatasetData(params).data
-            chartMetaData = getChartMetaData(params, data)
-            finaldata = {"data": data, "chartMetaData": chartMetaData}
-            res.update(True, "Successfully fetched data", finaldata)
+            data = []
+            # data = Datasets.getDatasetData(params).data
+            res = Datasets.getDatasetData(params)
+            if res.success:
+                data = res.data
+                chartMetaData = getChartMetaData(params, data)
+                finaldata = {"data": data, "chartMetaData": chartMetaData}
+                res.update(True, "Successfully fetched data", finaldata)
+
+            else:
+                data = res.data
+                finaldata = {"data": data, "chartMetaData": None}
+                res.update(False, "Error occured while fetching data", data)
         except Exception as ex:
             logging.error("Error in fetching data :%s", str(ex))
+            res.update(False, "Error occured in get chart meta data", data)
         return res
 
     @staticmethod

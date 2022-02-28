@@ -170,7 +170,7 @@ class ESIndexingUtils:
         )
         cardIndexer3.start()
         cardIndexer4 = threading.Thread(
-            targe=ESIndexingUtils.indexNonGlobalDimensionsData()
+            target=ESIndexingUtils.indexNonGlobalDimensionsData()
         )
         cardIndexer4.start()
         logging.info("Indexing completed !! ")

@@ -258,7 +258,7 @@ class ESQueryingUtils:
         client = ESQueryingUtils._getESClient()
 
         searchQuery = Search(
-            index=ESQueryingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA
+            index=ESQueryingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA_SEARCH_SUGGESTION
         ).using(client)
 
         if globalDimension:
