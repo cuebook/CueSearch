@@ -10,7 +10,6 @@ from cueSearch.services.sampleParams import SAMPLE_PARAMS
 
 logger = logging.getLogger(__name__)
 
-
 class CardTemplates:
     """
     Service to create, read, update & delete operation on Search card template
@@ -22,27 +21,30 @@ class CardTemplates:
         Create search card template
         """
         try:
-            res = ApiResponse("Error occurred while creating search card template")
-            connectionTypeId = int(payload.get("connectionTypeId", 1))
-            connectionType = ConnectionType.objects.get(id=connectionTypeId)
+            res = ApiResponse("Error occur while creating search card template")
             renderType = payload.get("renderType", "table")
             templateName = payload.get("templateName", "")
             title = payload.get("title", "")
             bodyText = payload.get("bodyText", "")
             sql = payload.get("sql", "")
-
+            
             cardTemplateObj = SearchCardTemplate.objects.create(
                 templateName=templateName,
                 title=title,
                 bodyText=bodyText,
                 sql=sql,
                 renderType=renderType,
-                connectionType=connectionType,
             )
+
+            connectionTypeId = list(payload.get("connectionTypeId"))
+            for id in connectionTypeId:
+                value = ConnectionType.objects.get(id=id)
+                cardTemplateObj.connectionType.add(value)
+       
             res.update(True, "Search card template created successfully")
         except Exception as ex:
             logging.error("Error %s", str(ex))
-            res.update(False, "Exception occurred while creating templates")
+            res.update(False, "Exception occured while creating templates")
         return res
 
     @staticmethod
@@ -65,8 +67,7 @@ class CardTemplates:
         """Method to update card template"""
         try:
             res = ApiResponse("Error while updating card template")
-            connectionTypeId = int(payload.get("connectionTypeId"))
-            connectionType = ConnectionType.objects.get(id=connectionTypeId)
+
             renderType = payload.get("renderType", "table")
             templateName = payload.get("templateName", "")
             title = payload.get("title", "")
@@ -80,8 +81,20 @@ class CardTemplates:
             templateObj.title = title
             templateObj.templateName = templateName
             templateObj.renderType = renderType
-            templateObj.connectionType = connectionType
             templateObj.save()
+
+            oldConnTypeId = templateObj.connectionType.values()
+
+            for item in oldConnTypeId:
+                connId = item['id']
+                templateObj.connectionType.remove(connId,None)
+
+            connectionTypeId = list(payload.get("connectionTypeId"))
+            for id in connectionTypeId:
+                value = ConnectionType.objects.get(id=id)
+                templateObj.connectionType.add(value)
+
+
             res.update(True, "Successfully updated template")
         except Exception as ex:
             logging.error("Error %s", str(ex))
@@ -102,7 +115,7 @@ class CardTemplates:
                 res.update(True, "Card Template published successfully")
         except Exception as ex:
             logging.error("Error %s", str(ex))
-            res.update(False, "Error occurred while publishing Card Template")
+            res.update(False, "Error occured while publishing Card Template")
         return res
 
     def deleteCardTemplate(templateId: int):
@@ -114,7 +127,7 @@ class CardTemplates:
             res.update(True, "Card template deleted successfully")
         except Exception as ex:
             logging.error("Error while deleting %s", str(ex))
-            res.update(False, "Error occurred while deleting card template")
+            res.update(False, "Error occured while deleting card template")
         return res
 
     @staticmethod
@@ -127,23 +140,22 @@ class CardTemplates:
             res.update(True, "Fetched card templates", data)
         except Exception as ex:
             logging.error("Error while get card template by Id %s", str(ex))
-            res.update(False, "Error occurred while getting template by id")
+            res.update(False, "Error occured while getting template by id")
         return res
 
     @staticmethod
     def verifyCardTemplate(payload: dict):
         res = ApiResponse()
-        try:
-            sampleParams = json.loads(json.dumps(SAMPLE_PARAMS))
-            param = {
-                **sampleParams,
-                "templateTitle": payload["templateTitle"],
-                "templateText": payload["templateText"],
-                "templateSql": payload["templateSql"],
-            }
-            response = SearchCardTemplateServices.renderTemplatesUnsafe(param)
-            res.update(True, "Template rendered successfully")
-        except Exception as ex:
-            logger.error("Error in rendering templates: %s", str(ex))
-            res.update(False, "Error occurred during rendering", str(ex))
+        sampleParams = json.loads(json.dumps(SAMPLE_PARAMS))
+        param = {
+            "templateTitle": payload['templateTitle'],
+            "templateText": payload['templateText'],
+            "templateSql": payload['templateSql'],
+            "param": sampleParams,
+        }
+        response = SearchCardTemplateServices.renderTemplates(param)
+        if len(response) == 0:
+            res.update(False,"Error occur during rendering")
+        else:
+            res.update(True,"Template rendered successfully")
         return res
