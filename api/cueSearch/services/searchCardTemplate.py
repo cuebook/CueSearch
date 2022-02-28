@@ -76,7 +76,10 @@ class SearchCardTemplateServices:
         searchPayload: dict,
     ) -> List[SearchResults]:
         """
-        Praveen write it's documentation
+        Responsible for query on elastic search, based on searchPayload
+        :searchPayload: [{"searchType":"GLOBALDIMENSION", "label":str, "value": str},{"searchType":"DATASETDIMENSION", "label":str, "value": str,datasetId:int}]
+        :returns : [{'value': str, 'dimension':str, 'globalDimensionName': str, 'user_entity_identifier': str, 'id': str, 'dataset': str, 'datasetId': int, 'type': 'DATASETDIMENSION/GLOBALDIMENSION'}]
+
         """
         searchResults = []
         for payload in searchPayload:
@@ -268,12 +271,22 @@ class SearchCardTemplateServices:
         res = ApiResponse("Error in fetching data")
         try:
             finalData = {"data": None, "chartMetaData": None}
-            data = Datasets.getDatasetData(params).data
-            chartMetaData = getChartMetaData(params, data)
-            finaldata = {"data": data, "chartMetaData": chartMetaData}
-            res.update(True, "Successfully fetched data", finaldata)
+            data = []
+            # data = Datasets.getDatasetData(params).data
+            res = Datasets.getDatasetData(params)
+            if res.success:
+                data = res.data
+                chartMetaData = getChartMetaData(params, data)
+                finaldata = {"data": data, "chartMetaData": chartMetaData}
+                res.update(True, "Successfully fetched data", finaldata)
+
+            else:
+                data = res.data
+                finaldata = {"data": data, "chartMetaData": None}
+                res.update(False, "Error occured while fetching data", data)
         except Exception as ex:
             logging.error("Error in fetching data :%s", str(ex))
+            res.update(False, "Error occured in get chart meta data", data)
         return res
 
     @staticmethod

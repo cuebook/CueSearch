@@ -108,6 +108,7 @@ def elasticSearchIndexingView(request: HttpRequest) -> Response:
     ESIndexingUtils.indexGlobalDimensionsDataForSearchSuggestion()  # Used for search suggestion
     ESIndexingUtils.indexNonGlobalDimensionsDataForSearchSuggestion()  # Used for index auto global dimension
     ESIndexingUtils.indexGlobalDimensionsData()
+    ESIndexingUtils.indexNonGlobalDimensionsData()
     logging.info("************** Indexing Completed !****************")
     res.update(True, "Indexing completed !", [])
     return Response(res.json())
