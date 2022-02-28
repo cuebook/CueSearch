@@ -189,7 +189,7 @@ class SearchCardTemplateServices:
         """
         response = []
         try:
-            response = renderTemplatesUnsafe(param)
+            response = SearchCardTemplateServices.renderTemplatesUnsafe(param)
         except Exception as ex:
             logger.error("Error in rendering templates: %s", str(ex))
             logger.error(param)
