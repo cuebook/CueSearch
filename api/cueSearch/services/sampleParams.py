@@ -1,107 +1,111 @@
-SAMPLE_PARAMS = {
-    "datasetId": 1,
-    "searchResults": [
-        {
-            "value": "BR",
-            "dimension": "DeliveryRegion",
-            "globalDimensionName": "Data8",
-            "user_entity_identifier": "Data8",
-            "id": 8,
-            "dataset": "Test data",
-            "datasetId": 1,
-            "type": "GLOBALDIMENSION"
-        },
-        {
-            "value": "GA",
-            "dimension": "DeliveryRegion",
-            "globalDimensionName": "Data8",
-            "user_entity_identifier": "Data8",
-            "id": 8,
-            "dataset": "Test data",
-            "datasetId": 1,
-            "type": "GLOBALDIMENSION"
-        },
-        {
-            "value": "KA",
-            "dimension": "DeliveryRegion",
-            "globalDimensionName": "Data8",
-            "user_entity_identifier": "Data8",
-            "id": 8,
-            "dataset": "Test data",
-            "datasetId": 1,
-            "type": "GLOBALDIMENSION"
-        },
-        {
-            "value": "MH",
-            "dimension": "DeliveryRegion",
-            "globalDimensionName": "Data8",
-            "user_entity_identifier": "Data8",
-            "id": 8,
-            "dataset": "Test data",
-            "datasetId": 1,
-            "type": "GLOBALDIMENSION"
-        }
+SAMPLE_PARAMS ={
+    'dataset': 'Orders',
+    'datasetId': 2,
+    'datasetSql': "SELECT DATE_TRUNC('DAY', __time) as OrderDate,\n"'Brand, Color, State,\n''SUM("count") as Orders, ROUND(sum(OrderAmount),2) as ''OrderAmount, sum(OrderQuantity) as OrderQuantity\n''FROM FAKEORDERS\n'"WHERE __time >= CURRENT_TIMESTAMP - INTERVAL '13' MONTH \n"'GROUP BY 1, 2, 3, 4\n''ORDER BY 1',
+    'dimensions': [
+        'Brand',
+        'Color',
+        'State'
     ],
-    "groupedResultsForFilter": [
+    'filter': "( ( Brand = 'Adidas' OR Brand = 'Nike' ) ) AND ( State = 'MS' OR ""State = 'KS' )",
+    'filterDimensions': [
+        'Brand',
+        'State'
+    ],
+    'granularity': 'day',
+    'groupedResultsForFilter': [
         [
             {
-                "value": "BR",
-                "dimension": "DeliveryRegion",
-                "globalDimensionName": "Data8",
-                "user_entity_identifier": "Data8",
-                "id": 8,
-                "dataset": "Test data",
-                "datasetId": 1,
-                "type": "GLOBALDIMENSION"
+                'dataset': 'Orders',
+                'datasetId': 2,
+                'dimension': 'Brand',
+                'globalDimensionName': 'Brand',
+                'id': 2,
+                'type': 'GLOBALDIMENSION',
+                'user_entity_identifier': 'Brand',
+                'value': 'Adidas'
             },
             {
-                "value": "GA",
-                "dimension": "DeliveryRegion",
-                "globalDimensionName": "Data8",
-                "user_entity_identifier": "Data8",
-                "id": 8,
-                "dataset": "Test data",
-                "datasetId": 1,
-                "type": "GLOBALDIMENSION"
+                'dataset': 'Orders',
+                'datasetId': 2,
+                'dimension': 'Brand',
+                'globalDimensionName': 'Brand',
+                'id': 2,
+                'type': 'GLOBALDIMENSION',
+                'user_entity_identifier': 'Brand',
+                'value': 'Nike'
+            }
+        ],
+        [
+            {
+                'dataset': 'Orders',
+                'datasetId': 2,
+                'dimension': 'State',
+                'globalDimensionName': 'Region',
+                'id': 1,
+                'type': 'GLOBALDIMENSION',
+                'user_entity_identifier': 'Region',
+                'value': 'MS'
             },
             {
-                "value": "KA",
-                "dimension": "DeliveryRegion",
-                "globalDimensionName": "Data8",
-                "user_entity_identifier": "Data8",
-                "id": 8,
-                "dataset": "Test data",
-                "datasetId": 1,
-                "type": "GLOBALDIMENSION"
-            },
-            {
-                "value": "MH",
-                "dimension": "DeliveryRegion",
-                "globalDimensionName": "Data8",
-                "user_entity_identifier": "Data8",
-                "id": 8,
-                "dataset": "Test data",
-                "datasetId": 1,
-                "type": "GLOBALDIMENSION"
+                'dataset': 'Orders',
+                'datasetId': 2,
+                'dimension': 'State',
+                'globalDimensionName': 'Region',
+                'id': 1,
+                'type': 'GLOBALDIMENSION',
+                'user_entity_identifier': 'Region',
+                'value': 'KS'
             }
         ]
     ],
-    "filter": "( DeliveryRegion = 'Delhi' OR DeliveryRegion = 'Goa' OR DeliveryRegion = 'Maharastra' OR DeliveryRegion = 'Karnataka' )",
-    "filterDimensions": [
-        "DeliveryRegion"
+    'metrics': [
+        'Orders',
+        'OrderAmount',
+        'OrderQuantity'
     ],
-    "renderType": "table",
-    "dataset": "Test data",
-    "dimensions": [
-        "DeliveryRegion",
-        "Brand",
-        "WarehouseCode"
+    'renderType': 'line',
+    'searchResults': [
+        {
+            'dataset': 'Orders',
+            'datasetId': 2,
+            'dimension': 'State',
+            'globalDimensionName': 'Region',
+            'id': 1,
+            'type': 'GLOBALDIMENSION',
+            'user_entity_identifier': 'Region',
+            'value': 'MS'
+        },
+        {
+            'dataset': 'Orders',
+            'datasetId': 2,
+            'dimension': 'State',
+            'globalDimensionName': 'Region',
+            'id': 1,
+            'type': 'GLOBALDIMENSION',
+            'user_entity_identifier': 'Region',
+            'value': 'KS'
+        },
+        {
+            'dataset': 'Orders',
+            'datasetId': 2,
+            'dimension': 'Brand',
+            'globalDimensionName': 'Brand',
+            'id': 2,
+            'type': 'GLOBALDIMENSION',
+            'user_entity_identifier': 'Brand',
+            'value': 'Adidas'
+        },
+        {
+            'dataset': 'Orders',
+            'datasetId': 2,
+            'dimension': 'Brand',
+            'globalDimensionName': 'Brand',
+            'id': 2,
+            'type': 'GLOBALDIMENSION',
+            'user_entity_identifier': 'Brand',
+            'value': 'Nike'
+        }
     ],
-    "metrics": [
-        "ReturnEntries",
-        "RefundAmount"
-    ],
-    "timestampColumn": "ReturnDate",
-    "datasetSql": "SELECT DATE_TRUNC('DAY', __time) as ReturnDate,\nDeliveryRegionCode as DeliveryRegion, P_BRANDCODE as Brand, WarehouseCode,\nSUM(\"count\") as ReturnEntries, sum(P_FINALREFUNDAMOUNT) as RefundAmount\nFROM RETURNENTRY\nWHERE __time >= CURRENT_TIMESTAMP - INTERVAL '13' MONTH \nGROUP BY 1, 2, 3, 4\nORDER BY 1",
-    "granularity": "day",
+    'timestampColumn': 'OrderDate'
 }

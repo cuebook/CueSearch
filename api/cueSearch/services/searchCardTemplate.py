@@ -188,33 +188,45 @@ class SearchCardTemplateServices:
         returns: [{ title: str, text: str, sql: str }]
         """
         response = []
-        delimiter = "+-;"
         try:
-            titles = (
-                Template(param["templateTitle"]).render(Context(param)).split(delimiter)
-            )
-            texts = (
-                Template(param["templateText"]).render(Context(param)).split(delimiter)
-            )
-            sqls = (
-                Template(param["templateSql"]).render(Context(param)).split(delimiter)
-            )
-            if len(titles) != len(texts) or len(titles) != len(sqls):
-                raise ValueError(
-                    "Inconsistent use of delimiter (%s) in title, text, sql of template"
-                    % delimiter
-                )
-
-            for i in range(len(sqls)):
-                if str.isspace(sqls[i]):
-                    continue
-                response.append({"title": titles[i], "text": texts[i], "sql": sqls[i]})
-
+            response = renderTemplatesUnsafe(param)
         except Exception as ex:
             logger.error("Error in rendering templates: %s", str(ex))
             logger.error(param)
 
         return response
+
+    @staticmethod
+    def renderTemplatesUnsafe(param: dict):
+        """
+        Renders template with passed variables, without error handling
+        :param param: dict with values needed for rendering
+        returns: [{ title: str, text: str, sql: str }]
+        """
+        response = []
+        delimiter = "+-;"
+        titles = (
+            Template(param["templateTitle"]).render(Context(param)).split(delimiter)
+        )
+        texts = (
+            Template(param["templateText"]).render(Context(param)).split(delimiter)
+        )
+        sqls = (
+            Template(param["templateSql"]).render(Context(param)).split(delimiter)
+        )
+        if len(titles) != len(texts) or len(titles) != len(sqls):
+            raise ValueError(
+                "Inconsistent use of delimiter (%s) in title, text, sql of template"
+                % delimiter
+            )
+
+        for i in range(len(sqls)):
+            if str.isspace(sqls[i]):
+                continue
+            response.append({"title": titles[i], "text": texts[i], "sql": sqls[i]})
+
+        return response
+
 
     @staticmethod
     def getSearchSuggestions(query):
