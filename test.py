@@ -1,4 +1,1 @@
-param = {
-    "id":1,
-    "color":"black"
-}
+param = {"id": 1, "color": "black"}

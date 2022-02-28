@@ -71,16 +71,14 @@ def testCardTemplates(client, mocker):
     assert response.status_code == 200
     assert response.data["success"]
 
-    
-
 
 @pytest.mark.django_db(transaction=True)
 def testVerifyCardTemplates(client, mocker):
 
-    templateTitle = "{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults 'dimension' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} Comparison of <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{metricName}}</span> among <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{filterDim}}</span> values in <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{dataset}}</span> +-; {% endfor %} {% endif %} {% endfor %}"
-    templateText = "{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults 'dimension' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} This chart displays filtered values on dimension <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{filterDim}}</span> along with other filters applied i.e. <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{filter|safe}}</span> for metric <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{metricName}}</span> on dataset <span style=\"background:#eee; padding: 0 4px; border-radius: 4px;\">{{dataset}}</span> +-; {% endfor %} {% endif %} {% endfor %}"
-    templateSql = "{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults 'dimension' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} SELECT \"templatetable\".\"{{ timestampColumn }}\", \"templatetable\".\"{{ filterDim }}\", SUM(\"templatetable\".\"{{ metricName }}\") as {{metricName}} FROM ({{ datasetSql|safe }}) AS templatetable WHERE {% for orResults in groupedResultsForFilter %} {% for orResult in orResults %} \"templatetable\".\"{{ orResult.dimension }}\" = '{{ orResult.value }}' OR {% endfor %} True AND {% endfor %} True GROUP BY 1, 2 limit 500 +-; {% endfor %} {% endif %} {% endfor %}"
-    noVariableTemplateSql = "{% load event_tags %} {% for filterDim in filterDimensionx %} {% conditionalCount searchResults 'dimension' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} SELECT \"templatetable\".\"{{ timestampColumn }}\", \"templatetable\".\"{{ filterDim }}\", SUM(\"templatetable\".\"{{ metricName }}\") as {{metricName}} FROM ({{ datasetSql|safe }}) AS templatetable WHERE {% for orResults in groupedResultsForFilter %} {% for orResult in orResults %} \"templatetable\".\"{{ orResult.dimension }}\" = '{{ orResult.value }}' OR {% endfor %} True AND {% endfor %} True GROUP BY 1, 2 limit 500 +-; {% endfor %} {% endif %} {% endfor %}"
+    templateTitle = '{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults \'dimension\' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} Comparison of <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{metricName}}</span> among <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{filterDim}}</span> values in <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{dataset}}</span> +-; {% endfor %} {% endif %} {% endfor %}'
+    templateText = '{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults \'dimension\' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} This chart displays filtered values on dimension <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{filterDim}}</span> along with other filters applied i.e. <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{filter|safe}}</span> for metric <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{metricName}}</span> on dataset <span style="background:#eee; padding: 0 4px; border-radius: 4px;">{{dataset}}</span> +-; {% endfor %} {% endif %} {% endfor %}'
+    templateSql = '{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults \'dimension\' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} SELECT "templatetable"."{{ timestampColumn }}", "templatetable"."{{ filterDim }}", SUM("templatetable"."{{ metricName }}") as {{metricName}} FROM ({{ datasetSql|safe }}) AS templatetable WHERE {% for orResults in groupedResultsForFilter %} {% for orResult in orResults %} "templatetable"."{{ orResult.dimension }}" = \'{{ orResult.value }}\' OR {% endfor %} True AND {% endfor %} True GROUP BY 1, 2 limit 500 +-; {% endfor %} {% endif %} {% endfor %}'
+    noVariableTemplateSql = '{% load event_tags %} {% for filterDim in filterDimensionx %} {% conditionalCount searchResults \'dimension\' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} SELECT "templatetable"."{{ timestampColumn }}", "templatetable"."{{ filterDim }}", SUM("templatetable"."{{ metricName }}") as {{metricName}} FROM ({{ datasetSql|safe }}) AS templatetable WHERE {% for orResults in groupedResultsForFilter %} {% for orResult in orResults %} "templatetable"."{{ orResult.dimension }}" = \'{{ orResult.value }}\' OR {% endfor %} True AND {% endfor %} True GROUP BY 1, 2 limit 500 +-; {% endfor %} {% endif %} {% endfor %}'
 
     # Testing the card templete api
     path = reverse("verifyCardTemplates")
@@ -92,7 +90,6 @@ def testVerifyCardTemplates(client, mocker):
     response = client.post(path, payload, content_type="application/json")
     assert response.status_code == 200
     assert response.data["success"] == True
-
 
     path = reverse("verifyCardTemplates")
     payload = {
@@ -125,4 +122,3 @@ def testVerifyCardTemplates(client, mocker):
     response = client.post(path, payload, content_type="application/json")
     assert response.status_code == 200
     assert response.data["success"] == True
-

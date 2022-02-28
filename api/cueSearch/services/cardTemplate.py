@@ -10,6 +10,7 @@ from cueSearch.services.sampleParams import SAMPLE_PARAMS
 
 logger = logging.getLogger(__name__)
 
+
 class CardTemplates:
     """
     Service to create, read, update & delete operation on Search card template
@@ -136,13 +137,13 @@ class CardTemplates:
             sampleParams = json.loads(json.dumps(SAMPLE_PARAMS))
             param = {
                 **sampleParams,
-                "templateTitle": payload['templateTitle'],
-                "templateText": payload['templateText'],
-                "templateSql": payload['templateSql'],
+                "templateTitle": payload["templateTitle"],
+                "templateText": payload["templateText"],
+                "templateSql": payload["templateSql"],
             }
             response = SearchCardTemplateServices.renderTemplatesUnsafe(param)
-            res.update(True,"Template rendered successfully")
+            res.update(True, "Template rendered successfully")
         except Exception as ex:
             logger.error("Error in rendering templates: %s", str(ex))
-            res.update(False,"Error occurred during rendering", str(ex))
+            res.update(False, "Error occurred during rendering", str(ex))
         return res

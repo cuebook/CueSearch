@@ -211,12 +211,8 @@ class SearchCardTemplateServices:
         titles = (
             Template(param["templateTitle"]).render(Context(param)).split(delimiter)
         )
-        texts = (
-            Template(param["templateText"]).render(Context(param)).split(delimiter)
-        )
-        sqls = (
-            Template(param["templateSql"]).render(Context(param)).split(delimiter)
-        )
+        texts = Template(param["templateText"]).render(Context(param)).split(delimiter)
+        sqls = Template(param["templateSql"]).render(Context(param)).split(delimiter)
         if len(titles) != len(texts) or len(titles) != len(sqls):
             raise ValueError(
                 "Inconsistent use of delimiter (%s) in title, text, sql of template"
@@ -229,7 +225,6 @@ class SearchCardTemplateServices:
             response.append({"title": titles[i], "text": texts[i], "sql": sqls[i]})
 
         return response
-
 
     @staticmethod
     def getSearchSuggestions(query):
