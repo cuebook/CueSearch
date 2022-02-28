@@ -40,16 +40,18 @@ export default function AddCardTemplates(props) {
     payload["bodyText"] = values["bodyText"];
     payload["renderType"] = values["renderType"];
 
-    let verifyPayload ={};
+    let verifyPayload = {};
     verifyPayload = {
-      "templateTitle": payload['title'],
-      "templateText" : payload['bodyText'],
-      "templateSql":payload['sql'],
-    }
-    const response = await cardTemplateService.verifyCardTemplate(verifyPayload);
-    
-    if (response.success){
-    const response = await cardTemplateService.addCardTemplate(payload);
+      templateTitle: payload["title"],
+      templateText: payload["bodyText"],
+      templateSql: payload["sql"],
+    };
+    const response = await cardTemplateService.verifyCardTemplate(
+      verifyPayload
+    );
+
+    if (response.success) {
+      const response = await cardTemplateService.addCardTemplate(payload);
     } else {
       message.error(response.message);
     }
