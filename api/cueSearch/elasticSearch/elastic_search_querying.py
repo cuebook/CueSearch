@@ -18,9 +18,10 @@ class ESQueryingUtils:
         "cuesearch_global_dimensions_names_for_search_index"
     )
     GLOBAL_DIMENSIONS_INDEX_DATA = "cuesearch_global_dimensions_data_index"
-    AUTO_GLOBAL_DIMENSIONS_INDEX_DATA = (
+    AUTO_GLOBAL_DIMENSIONS_INDEX_DATA_SEARCH_SUGGESTION = (
         "cuesearch_auto_global_dimensions_search_suggestion_data_index"
     )
+    AUTO_GLOBAL_DIMENSIONS_INDEX_DATA = "cuesearch_auto_global_dimensions_data_index"
     DATASET_MEASURES_INDEX_NAME = "dataset_measures_index_cuesearch"
 
     @staticmethod
@@ -123,7 +124,7 @@ class ESQueryingUtils:
 
         logging.info("Querying global dimensions for: %s", query)
 
-        query = "" if query is None else query.lower()
+        query = "" if query is None else query
         client = ESQueryingUtils._getESClient()
 
         searchQuery = Search(
@@ -138,7 +139,7 @@ class ESQueryingUtils:
             )
 
         if query:
-            searchQuery = searchQuery.query("match", globalDimensionDisplayValue=query)
+            searchQuery = searchQuery.query("term", globalDimensionDisplayValue=query)
         else:
             searchQuery = searchQuery.query("match_all")
 
@@ -257,7 +258,7 @@ class ESQueryingUtils:
         client = ESQueryingUtils._getESClient()
 
         searchQuery = Search(
-            index=ESQueryingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA
+            index=ESQueryingUtils.AUTO_GLOBAL_DIMENSIONS_INDEX_DATA_SEARCH_SUGGESTION
         ).using(client)
 
         if globalDimension:

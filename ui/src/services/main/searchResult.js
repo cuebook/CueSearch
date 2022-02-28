@@ -22,10 +22,14 @@ class SearchResultService {
     );
     if (response.success) {
       return response;
-    } else {
-      message.error(response.message);
-      return response;
     }
+    else {
+      return response
+    }
+    // else {
+    //   message.error(response.message);
+    //   return response;
+    // }
   }
 
   async getSearchSuggestions(payload) {
