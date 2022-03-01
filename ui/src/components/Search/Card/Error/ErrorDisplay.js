@@ -14,7 +14,7 @@ export default function ErrorDisplayCard(props) {
         >
             <div className={style.errorMessageStyle}>
                 <h2 style={{ color: "black", textSizeAdjust: "20px" }}> No Data </h2>
-                <p style={{ maxWidth: "300px", wordWrap: "break-word" }}> {errorSqlMessage}</p>
+                <p > {errorSqlMessage}</p>
             </div>
 
         </div>
