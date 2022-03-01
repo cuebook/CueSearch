@@ -12,6 +12,7 @@ import {
   G2,
   Guide,
 } from "bizcharts";
+import ErrorDisplayCard from "../../Error/ErrorDisplay";
 const { Html } = Guide;
 
 track(false);
@@ -37,6 +38,7 @@ class ChartCard extends React.Component {
 
   render() {
     const cardData = this.props.cardData;
+    const errorSqlMessage = this.props.errorMessage
     const showPercentageButton = cardData && cardData.rowsTotal;
     let data = [];
     let chartMetaData = {};
@@ -126,17 +128,25 @@ class ChartCard extends React.Component {
         />
         {geomElements}
       </Chart>
-    ) : (
-      <div
-        className={`${style.loadingDiv} pt-5 mt-2`}
-        style={{ height: height }}
-      >
-        <div>
-          <i className="fa fa-exclamation-triangle"></i>
-          <p>No Data</p>
+    ) : errorSqlMessage ? <ErrorDisplayCard
+
+      loadingData={this.props.loadingData}
+      errorMessage={errorSqlMessage}
+
+    /> :
+
+      (
+        <div
+          className={`${style.loadingDiv} pt-5 mt-2`}
+          style={{ height: height }}
+        >
+          <div>
+            <i className="fa fa-exclamation-triangle"></i>
+            <p>No Data</p>
+          </div>
         </div>
-      </div>
-    );
+      );
+
 
     return (
       <div>

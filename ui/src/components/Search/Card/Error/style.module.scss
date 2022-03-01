@@ -1,0 +1,30 @@
+
+// html {
+//   scroll-behaviour: smooth;
+//  }
+
+.antdTable {
+    height: 100%;
+    border: none;
+    overflow: auto;
+    td{
+      padding: 2px !important;
+    }
+  }
+  
+  .loadingDiv {
+    /*width: 100%;*/
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    /*height: 100%;*/
+    text-align: center;
+  }
+  .errorMessageStyle{
+    position: initial;
+    overflow: scroll;
+    word-wrap: break-word;
+    height: 150px;
+    width: auto;
+  }
+  
