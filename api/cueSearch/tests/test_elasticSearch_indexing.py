@@ -455,115 +455,116 @@ def testFindNonGlobalDimensionSuggestionResult(client, mocker):
     ################################ Delete all indexes ##############
 
 
-# @pytest.mark.django_db(transaction=True)
-# def testFindNonGlobalDimensionResultData(client, mocker):
-#     """Method to test non global dimension index"""
-#     ESIndexingUtils.deleteAllIndex()
+@pytest.mark.django_db(transaction=True)
+def testFindNonGlobalDimensionResultData(client, mocker):
+    """Method to test non global dimension index"""
+    ESIndexingUtils.deleteAllIndex()
 
-#     connection = mixer.blend("dataset.connection")
-#     testDataset = mixer.blend(
-#         "dataset.dataset",
-#         name="orders",
-#         id=1,
-#         dimensions='["Brand", "Color", "State"]',
-#         metrics='["Orders", "OrderAmount", "OrderQuantity"]',
-#         granularity="day",
-#         timestampColumn="TestDate",
-#         sql="Select * from testTable",
-#     )
-#     mockResponse = mocker.patch(
-#         "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
-#         new=mock.MagicMock(autospec=True, return_value=True),
-#     )
-#     mockResponse.start()
-#     path = reverse("createDataset")
-#     data = {
-#         "name": "demo_dataset",
-#         "sql": "SELECT * from TEST_TABLE",
-#         "connectionId": connection.id,
-#         "metrics": ["Amount", "Quantity"],
-#         "dimensions": ["Category", "Region"],
-#         "timestamp": "CreatedAt",
-#         "granularity": "day",
-#         "isNonRollup": False,
-#     }
-#     response = client.post(path, data=data, content_type="application/json")
+    connection = mixer.blend("dataset.connection")
+    testDataset = mixer.blend(
+        "dataset.dataset",
+        name="orders",
+        id=1,
+        dimensions='["Brand", "Color", "State"]',
+        metrics='["Orders", "OrderAmount", "OrderQuantity"]',
+        granularity="day",
+        timestampColumn="TestDate",
+        sql="Select * from testTable",
+    )
+    mockResponse = mocker.patch(
+        "cueSearch.elasticSearch.elastic_search_indexing.ESIndexingUtils.runAllIndexDimension",
+        new=mock.MagicMock(autospec=True, return_value=True),
+    )
+    mockResponse.start()
+    path = reverse("createDataset")
+    data = {
+        "name": "demo_dataset",
+        "sql": "SELECT * from TEST_TABLE",
+        "connectionId": connection.id,
+        "metrics": ["Amount", "Quantity"],
+        "dimensions": ["Category", "Region"],
+        "timestamp": "CreatedAt",
+        "granularity": "day",
+        "isNonRollup": False,
+    }
+    response = client.post(path, data=data, content_type="application/json")
 
-#     # create dimension for testing
-#     dataset = Dataset.objects.get(id=1)
-#     mockResponse.start()
-#     path = reverse("globalDimensionCreate")
-#     gd_data = {
-#         "name": "test",
-#         "dimensionalValues": [
-#             {
-#                 "datasetId": dataset.id,
-#                 "dataset": "Returns",
-#                 "dimension": "WarehouseCode",
-#             }
-#         ],
-#     }
-#     response = client.post(path, gd_data, content_type="application/json")
-#     assert response.data["success"] == True
-#     assert response.status_code == 200
+    # create dimension for testing
+    dataset = Dataset.objects.get(id=1)
+    mockResponse.start()
+    path = reverse("globalDimensionCreate")
+    gd_data = {
+        "name": "test",
+        "dimensionalValues": [
+            {
+                "datasetId": dataset.id,
+                "dataset": "Returns",
+                "dimension": "WarehouseCode",
+            }
+        ],
+    }
+    response = client.post(path, gd_data, content_type="application/json")
+    assert response.data["success"] == True
+    assert response.status_code == 200
 
-#     globalDimsId = GlobalDimensionServices.getGlobalDimensions()
-#     globalDimensionId = globalDimsId.data[0]["values"][0]["id"]
+    globalDimsId = GlobalDimensionServices.getGlobalDimensions()
+    globalDimensionId = globalDimsId.data[0]["values"][0]["id"]
 
-#     # Publishing global dimension by id
-#     path = reverse("pubGlobalDimension")
-#     payload = {"id": globalDimensionId, "published": True}
-#     response = client.post(path, payload)
-#     mockResponse.stop()
-#     listToIndex = [
-#         {"dataset": "Test data", "datasetId": 1, "dimension": "Brand"},
-#         {"dataset": "Test data", "datasetId": 1, "dimension": "WarehouseCode"},
-#     ]
-#     res = {"success": True, "data": listToIndex}
+    # Publishing global dimension by id
+    path = reverse("pubGlobalDimension")
+    payload = {"id": globalDimensionId, "published": True}
+    response = client.post(path, payload)
+    mockResponse.stop()
+    listToIndex = [
+        {"dataset": "Test data", "datasetId": 1, "dimension": "Brand"},
+        {"dataset": "Test data", "datasetId": 1, "dimension": "WarehouseCode"},
+    ]
+    res = {"success": True, "data": listToIndex}
 
-#     mockResponse = mocker.patch(
-#         "cueSearch.services.globalDimension.GlobalDimensionServices.nonGlobalDimensionForIndexing",
-#         new=mock.MagicMock(autospec=True, return_value=res),
-#     )
-#     mockResponse.start()
-#     ESIndexingUtils.indexNonGlobalDimensionsData()
-#     mockResponse.stop()
+    mockResponse = mocker.patch(
+        "cueSearch.services.globalDimension.GlobalDimensionServices.nonGlobalDimensionForIndexing",
+        new=mock.MagicMock(autospec=True, return_value=res),
+    )
+    mockResponse.start()
+    ESIndexingUtils.indexNonGlobalDimensionsData()
+    mockResponse.stop()
 
-#     expectedResults = [
-#         {
-#             "value": "TestData",
-#             "dimension": "Brand",
-#             "globalDimensionName": "Test data_Brand",
-#             "user_entity_identifier": "Test data_Brand",
-#             "id": "Brand_TestData_1",
-#             "dataset": "Test data",
-#             "datasetId": testDataset.id,
-#             "type": "DATASETDIMENSION",
-#         },
-#         {
-#             "value": "TestData",
-#             "dimension": "WarehouseCode",
-#             "globalDimensionName": "Test data_WarehouseCode",
-#             "user_entity_identifier": "Test data_WarehouseCode",
-#             "id": "WarehouseCode_TestData_1",
-#             "dataset": "Test data",
-#             "datasetId": testDataset.id,
-#             "type": "DATASETDIMENSION",
-#         },
-#     ]
-#     query = "TestData"
-#     result = ESQueryingUtils.findNonGlobalDimensionResults(query=query)
-#     count = 0
-#     while not result:
-#         count += 1
-#         result = ESQueryingUtils.findNonGlobalDimensionResults(query=query)
+    expectedResults = [
+        {
+            "value": "TestData",
+            "dimension": "Brand",
+            "globalDimensionName": "Test data_Brand",
+            "user_entity_identifier": "Test data_Brand",
+            "id": "Brand_TestData_1",
+            "dataset": "Test data",
+            "datasetId": testDataset.id,
+            "type": "DATASETDIMENSION",
+        },
+        {
+            "value": "TestData",
+            "dimension": "WarehouseCode",
+            "globalDimensionName": "Test data_WarehouseCode",
+            "user_entity_identifier": "Test data_WarehouseCode",
+            "id": "WarehouseCode_TestData_1",
+            "dataset": "Test data",
+            "datasetId": testDataset.id,
+            "type": "DATASETDIMENSION",
+        },
+    ]
+    query = "TestData"
+    result = ESQueryingUtils.findNonGlobalDimensionResults(query=query)
+    count = 0
+    while not result:
+        count += 1
+        result = ESQueryingUtils.findNonGlobalDimensionResults(query=query)
 
-#         if count == 10:
-#             result = []
-#             return result
+        if count == 10:
+            result = []
+            return result
 
-#     assert result == expectedResults
-#     ################################ Delete all indexes ##############
+    assert result == expectedResults
+
+    ################################ Delete all indexes ##############
 
 
 def testRunAllIndexing(client, mocker):

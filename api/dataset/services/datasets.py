@@ -129,7 +129,6 @@ class Datasets:
         res = ApiResponse("Error in fetching data")
         try:
             dataset = Dataset.objects.get(id=params["datasetId"])
-            # params["sql"] = params["sql"] + "some went wrong"
             dataDf = Data.fetchDatasetDataframe(dataset, params["sql"])
             if isinstance(dataDf, str):
                 res.update(False, "Error occured while fetching data", dataDf)
