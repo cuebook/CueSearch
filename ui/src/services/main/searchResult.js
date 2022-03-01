@@ -22,9 +22,8 @@ class SearchResultService {
     );
     if (response.success) {
       return response;
-    }
-    else {
-      return response
+    } else {
+      return response;
     }
     // else {
     //   message.error(response.message);

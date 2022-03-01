@@ -59,4 +59,5 @@ urlpatterns = [
         name="cardTemplateDelete",
     ),
     path("templates/publish/", views.pubCardTemplate, name="pubCardTemplates"),
+    path("templates/verify/", views.verifyCardTemplate, name="verifyCardTemplates"),
 ]
