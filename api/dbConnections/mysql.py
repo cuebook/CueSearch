@@ -46,6 +46,8 @@ class MySQL:
             )
             if limit:
                 sql = limitSql(sql)
+
+            # passing chunksize here instead of LIMIT, takes longer
             chunksize = None
             dataframe = pd.read_sql(sql, conn, chunksize=chunksize)
 

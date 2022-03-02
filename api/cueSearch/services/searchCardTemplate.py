@@ -76,7 +76,10 @@ class SearchCardTemplateServices:
         searchPayload: dict,
     ) -> List[SearchResults]:
         """
-        Praveen write it's documentation
+        Responsible for query on elastic search, based on searchPayload
+        :searchPayload: [{"searchType":"GLOBALDIMENSION", "label":str, "value": str},{"searchType":"DATASETDIMENSION", "label":str, "value": str,datasetId:int}]
+        :returns : [{'value': str, 'dimension':str, 'globalDimensionName': str, 'user_entity_identifier': str, 'id': str, 'dataset': str, 'datasetId': int, 'type': 'DATASETDIMENSION/GLOBALDIMENSION'}]
+
         """
         searchResults = []
         for payload in searchPayload:
@@ -87,7 +90,9 @@ class SearchCardTemplateServices:
                 if payload["searchType"] == "GLOBALDIMENSION":
                     futures = [
                         executor.submit(
-                            ESQueryingUtils.findGlobalDimensionResults, query=query
+                            ESQueryingUtils.findGlobalDimensionResults,
+                            query=query,
+                            globalDimension=payload["id"],
                         ),
                     ]
                 elif payload["searchType"] == "DATASETDIMENSION":
@@ -96,6 +101,7 @@ class SearchCardTemplateServices:
                             ESQueryingUtils.findNonGlobalDimensionResults,
                             globalDimension=payload["globalDimensionId"],
                             query=query,
+                            datasource=payload["datasetId"],
                         ),
                     ]
                 for future in concurrent.futures.as_completed(futures):
@@ -120,20 +126,24 @@ class SearchCardTemplateServices:
         res = ApiResponse()
         finalResults = []
         searchResults = []
+        if not searchPayload:
+            searchPayload = []
         searchResults: List[
             SearchResults
         ] = SearchCardTemplateServices.ElasticSearchQueryResultsForOnSearchQuery(
             searchPayload
         )
-
         groupedResults: GroupedResults = groupSearchResultsByDataset(searchResults)
-        searchTemplates = SearchCardTemplate.objects.all()
-
+        searchTemplates = SearchCardTemplate.objects.filter(published=True)
         results = []
-        for searchTemplate in searchTemplates:
-            for result in groupedResults:
-                for datasetId, datasetSearchResult in result.items():
-                    dataset = Dataset.objects.get(id=int(datasetId))
+        # for searchTemplate in searchTemplates:
+        for result in groupedResults:
+            for datasetId, datasetSearchResult in result.items():
+                dataset = Dataset.objects.get(id=int(datasetId))
+                connectionTypeId = dataset.connection.connectionType_id
+                for searchTemplate in searchTemplates.filter(
+                    connectionType=connectionTypeId
+                ):
                     paramDict = {}
                     paramDict["datasetId"] = int(datasetId)
 
@@ -181,31 +191,38 @@ class SearchCardTemplateServices:
         returns: [{ title: str, text: str, sql: str }]
         """
         response = []
-        delimiter = "+-;"
         try:
-            titles = (
-                Template(param["templateTitle"]).render(Context(param)).split(delimiter)
-            )
-            texts = (
-                Template(param["templateText"]).render(Context(param)).split(delimiter)
-            )
-            sqls = (
-                Template(param["templateSql"]).render(Context(param)).split(delimiter)
-            )
-            if len(titles) != len(texts) or len(titles) != len(sqls):
-                raise ValueError(
-                    "Inconsistent use of delimiter (%s) in title, text, sql of template"
-                    % delimiter
-                )
-
-            for i in range(len(sqls)):
-                if str.isspace(sqls[i]):
-                    continue
-                response.append({"title": titles[i], "text": texts[i], "sql": sqls[i]})
-
+            response = SearchCardTemplateServices.renderTemplatesUnsafe(param)
         except Exception as ex:
             logger.error("Error in rendering templates: %s", str(ex))
             logger.error(param)
+
+        return response
+
+    @staticmethod
+    def renderTemplatesUnsafe(param: dict):
+        """
+        Renders template with passed variables, without error handling
+        :param param: dict with values needed for rendering
+        returns: [{ title: str, text: str, sql: str }]
+        """
+        response = []
+        delimiter = "+-;"
+        titles = (
+            Template(param["templateTitle"]).render(Context(param)).split(delimiter)
+        )
+        texts = Template(param["templateText"]).render(Context(param)).split(delimiter)
+        sqls = Template(param["templateSql"]).render(Context(param)).split(delimiter)
+        if len(titles) != len(texts) or len(titles) != len(sqls):
+            raise ValueError(
+                "Inconsistent use of delimiter (%s) in title, text, sql of template"
+                % delimiter
+            )
+
+        for i in range(len(sqls)):
+            if str.isspace(sqls[i]):
+                continue
+            response.append({"title": titles[i], "text": texts[i], "sql": sqls[i]})
 
         return response
 
@@ -249,12 +266,22 @@ class SearchCardTemplateServices:
         res = ApiResponse("Error in fetching data")
         try:
             finalData = {"data": None, "chartMetaData": None}
-            data = Datasets.getDatasetData(params).data
-            chartMetaData = getChartMetaData(params, data)
-            finaldata = {"data": data, "chartMetaData": chartMetaData}
-            res.update(True, "Successfully fetched data", finaldata)
+            data = []
+            # data = Datasets.getDatasetData(params).data
+            res = Datasets.getDatasetData(params)
+            if res.success:
+                data = res.data
+                chartMetaData = getChartMetaData(params, data)
+                finaldata = {"data": data, "chartMetaData": chartMetaData}
+                res.update(True, "Successfully fetched data", finaldata)
+
+            else:
+                data = res.data
+                finaldata = {"data": data, "chartMetaData": None}
+                res.update(False, "Error occured while fetching data", data)
         except Exception as ex:
             logging.error("Error in fetching data :%s", str(ex))
+            res.update(False, "Error occured in get chart meta data", data)
         return res
 
     @staticmethod

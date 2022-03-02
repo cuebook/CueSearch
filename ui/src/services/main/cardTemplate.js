@@ -29,7 +29,6 @@ class CardTemplateServices {
     return response;
   }
 
-
   async updateCardTemplate(id, payload) {
     const response = await apiService.post(
       "cueSearch/templates/update/" + id,

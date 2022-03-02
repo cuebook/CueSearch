@@ -5,7 +5,7 @@ from unittest import mock
 from django.urls import reverse
 from mixer.backend.django import mixer
 from utils.apiResponse import ApiResponse
-from dataset.models import Dataset
+from dataset.models import ConnectionType, Dataset
 
 
 @pytest.mark.django_db(transaction=True)
@@ -13,7 +13,10 @@ def test_getSearchCard(client, mocker):
     """
     Test case for delete global dimension
     """
-    connection = mixer.blend("dataset.connection")
+    connectionType = mixer.blend(
+        "dataset.connectionType", name="Test Druid", label="test druid"
+    )
+    connection = mixer.blend("dataset.connection", connectionType=connectionType)
 
     testDataset = mixer.blend(
         "dataset.dataset",
@@ -24,6 +27,7 @@ def test_getSearchCard(client, mocker):
         granularity="day",
         timestampColumn="TestDate",
         sql="Select * from testTable",
+        connection=connection,
     )
     searchCardTemplateForTable = mixer.blend(
         "cueSearch.searchCardTemplate",
@@ -33,6 +37,8 @@ def test_getSearchCard(client, mocker):
         supportedVariables="granularity, datasetName, dimension, value",
         sql="SELECT * FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} limit 500",
         renderType="table",
+        published=True,
+        connectionType=connectionType,
     )
     searchCardTemplateForChart = mixer.blend(
         "cueSearch.searchCardTemplate",
@@ -42,6 +48,8 @@ def test_getSearchCard(client, mocker):
         supportedVariables="granularity, datasetName, dimension, value",
         sql="{% load event_tags %} {% for filterDim in filterDimensions %} {% conditionalCount searchResults 'dimension' filterDim as dimCount %} {% if dimCount > 1 %} {% for metricName in metrics %} SELECT ({{ timestampColumn }}), {{ filterDim }}, SUM({{ metricName }}) as {{metricName}} FROM ({{ datasetSql|safe }}) WHERE {{filter|safe}} GROUP BY 1, 2 limit 500 +-; {% endfor %} {% endif %} {% endfor %}",
         renderType="line",
+        published=True,
+        connectionType=connectionType,
     )
 
     # create demo data for global dimension
