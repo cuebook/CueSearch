@@ -14,7 +14,7 @@ const { Option } = Select;
 export default function AddCardTemplates(props) {
   const [form] = Form.useForm();
   const [renderType, setRenderType] = useState("table");
-  const [connectionType, setConnectionType] = useState();
+  const [connectionType, setConnectionType] = useState([]);
   useEffect(() => {
     getConnectionType();
   }, []);
@@ -32,6 +32,7 @@ export default function AddCardTemplates(props) {
   const addCardTemplateFormSubmit = async (values) => {
     let payload = {};
     let connType = values["connectionType"].split(".");
+    console.log(connType);
     payload["connectionTypeId"] = connType[0];
     payload["connectionTypeName"] = connType[1];
     payload["templateName"] = values["templateName"];
@@ -164,6 +165,8 @@ export default function AddCardTemplates(props) {
               ]}
             >
               <Select
+                showSearch
+                mode="tags"
                 style={{ width: "100%" }}
                 placeholder="Card Template Connection Type"
                 onChange={onSelectConnectionTypeChange}
