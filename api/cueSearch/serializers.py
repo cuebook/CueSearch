@@ -2,7 +2,7 @@ import json
 from rest_framework import serializers
 from dataset.models import ConnectionType, Dataset
 from cueSearch.models import GlobalDimension, SearchCardTemplate
-
+from dataset.serializers import ConnectionTypeSerializer
 
 class AllDimensionsSerializer(serializers.ModelSerializer):
     """
@@ -81,18 +81,9 @@ class GlobalDimensionSerializer(serializers.ModelSerializer):
 class SearchCardTemplateSerializer(serializers.ModelSerializer):
     """Serializers for get Search card template"""
 
-    connectionTypeName = serializers.SerializerMethodField()
-    connectionTypeId = serializers.SerializerMethodField()
+    connectionTypeName = ConnectionTypeSerializer(many=True, read_only=True)
+    connectionTypeId = ConnectionTypeSerializer(many=True, read_only=True)
 
-    def get_connectionTypeName(self, obj):
-        name = ""
-        if obj.connectionType:
-            name = obj.connectionType.name
-        return name
-
-    def get_connectionTypeId(self, obj):
-        if obj.connectionType:
-            return obj.connectionType.id
 
     class Meta:
         model = SearchCardTemplate

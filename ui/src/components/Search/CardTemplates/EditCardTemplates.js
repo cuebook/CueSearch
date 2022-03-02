@@ -181,6 +181,8 @@ export default function EditCardTemplate(props) {
               ]}
             >
               <Select
+                showSearch
+                mode="tags"
                 style={{ width: "100%" }}
                 placeholder="Card Template Connection Type"
                 onChange={onSelectConnectionTypeChange}
